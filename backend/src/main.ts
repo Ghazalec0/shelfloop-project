@@ -33,7 +33,21 @@ async function bootstrap() {
 
   app.enableCors({
     origin: allowedOrigins,
+    methods: [
+      'GET',
+      'HEAD',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE',
+      'OPTIONS',
+    ],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+    ],
     credentials: true,
+    optionsSuccessStatus: 204,
   });
 
   app.useGlobalInterceptors(new ResponseInterceptor());
@@ -41,7 +55,8 @@ async function bootstrap() {
 
   const port = Number(process.env.PORT) || 3000;
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
+
   console.log(`Application started on port ${port}`);
 }
 
