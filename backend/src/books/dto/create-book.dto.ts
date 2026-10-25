@@ -1,4 +1,11 @@
-import { IsString, IsInt, Min, IsNotEmpty, IsOptional } from 'class-validator';
+
+import {
+  IsString,
+  IsInt,
+  Min,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -15,11 +22,11 @@ export class CreateBookDto {
 
   @IsString()
   @IsOptional()
-  category?: string; 
+  category?: string;
 
   @IsString()
   @IsOptional()
-  coverUrl?: string; 
+  coverUrl?: string;
 
   @IsInt()
   @Min(1)
