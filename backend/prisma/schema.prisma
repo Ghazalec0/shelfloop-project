@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  WALLET
+}
+
+model User {
+  id              String      @id @default(cuid())
+  email           String      @unique
+  password        String
+  name            String?
+  role            Role        @default(USER)
+  isDeleted       Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  borrowings      Borrowing[]
+  favorites       Favorite[]
+  fines           Fine[]
+  purchases       Purchase[]
+  otpCode         String?
+  otpExpiresAt    DateTime?
+  otpVerified     Boolean     @default(false)
+}
+
+model Book {
+  id              String      @id @default(cuid())
+  title           String
+  author          String
+  totalCopies     Int         @default(5)
+  availableCopies Int         @default(5)
+  category        String      @default("Programming")
+  coverUrl        String?
+  isbn            String?
+  price           Float       @default(0.0)
+  purchases       Purchase[]
+  borrowings      Borrowing[]
+  favorites       Favorite[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Borrowing {
+  id         String    @id @default(cuid())
+  userId     String
+  bookId     String
+  borrowDate DateTime  @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  isReturned Boolean   @default(false)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  fine       Fine?
+}
+
+model Fine {
+  id          String        @id @default(cuid())
+  borrowingId String        @unique
+  borrowing   Borrowing     @relation(fields: [borrowingId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Float
+  daysLate    Int
+  status      PaymentStatus @default(PENDING)
+  method      PaymentMethod?
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Favorite {
+  id     String @id @default(uuid())
+  userId String
+  bookId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+}
+
+model Purchase {
+  id        String        @id @default(cuid())
+  userId    String
+  bookId    String
+  quantity  Int           @default(1)
+  price     Float         @default(0.0)
+  method    PaymentMethod @default(CARD)
+  status    PaymentStatus @default(PENDING)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
