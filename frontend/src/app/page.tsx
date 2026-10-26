@@ -664,11 +664,8 @@ export default function Page() {
         totalCopies: newTotal,
         category: editingBook.category || "Programming",
         price: Number(editingBook.price || 0),
+        coverUrl: uploadedCoverUrl,
       };
-
-      if (uploadedCoverUrl) {
-        payload.coverUrl = uploadedCoverUrl;
-      }
 
       await api.put(`/books/${bookId}`, payload);
       setMsg({ text: "Book updated successfully!", type: "success" });
