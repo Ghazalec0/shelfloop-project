@@ -18,11 +18,15 @@ const errMsg = (err: any) => err?.response?.data?.message || err?.message || "So
 
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
-    if (book.coverUrl.startsWith("http://") || book.coverUrl.startsWith("https://")) {
-      return book.coverUrl.replace("http://", "https://");
+    let url = book.coverUrl.trim();
+    if (url.startsWith("http://")) {
+      url = url.replace("http://", "https://");
+    }
+    if (url.startsWith("https://")) {
+      return url;
     }
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://shelfloop-backend.onrender.com";
-    return `${backendUrl.replace(/\/$/, "")}${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
+    return `${backendUrl.replace(/\/$/, "")}${url.startsWith('/') ? '' : '/'}${url}`;
   }
   return "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=1000&auto=format&fit=crop";
 };
@@ -637,39 +641,40 @@ export default function Page() {
     e.preventDefault();
     if (!editingBook) return;
     try {
-      let uploadedCoverUrl = editingBook.coverUrl;
-
+      const bookId = getBookId(editingBook);
       if (editCoverFile) {
         const formData = new FormData();
         formData.append("file", editCoverFile);
-        const uploadRes = await api.post("/books/upload", formData, {
+        const coverRes = await api.put(`/books/${bookId}/cover`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        const unwrapUpload = unwrap(uploadRes);
-        if (typeof unwrapUpload === 'string') {
-          uploadedCoverUrl = unwrapUpload;
-        } else {
-          uploadedCoverUrl = unwrapUpload?.secure_url || unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
-        }
+        const coverData = unwrap(coverRes);
+        const newTotal = Number(editingBook.totalCopies ?? editingBook.total_copies ?? 5);
+        const payload: any = {
+          title: editingBook.title,
+          author: editingBook.author,
+          totalCopies: newTotal,
+          category: editingBook.category || "Programming",
+          price: Number(editingBook.price || 0),
+        };
+        await api.put(`/books/${bookId}`, payload);
+      } else {
+        const newTotal = Number(editingBook.totalCopies ?? editingBook.total_copies ?? 5);
+        const payload: any = {
+          title: editingBook.title,
+          author: editingBook.author,
+          totalCopies: newTotal,
+          category: editingBook.category || "Programming",
+          price: Number(editingBook.price || 0),
+          coverUrl: editingBook.coverUrl,
+        };
+        await api.put(`/books/${bookId}`, payload);
       }
-
-      const bookId = getBookId(editingBook);
-      const newTotal = Number(editingBook.totalCopies ?? editingBook.total_copies ?? 5);
-
-      const payload: any = {
-        title: editingBook.title,
-        author: editingBook.author,
-        totalCopies: newTotal,
-        category: editingBook.category || "Programming",
-        price: Number(editingBook.price || 0),
-        coverUrl: uploadedCoverUrl,
-      };
-
-      await api.put(`/books/${bookId}`, payload);
-      setMsg({ text: "Book updated successfully!", type: "success" });
+      setMsg({ text: "Book updated successfully! Old image deleted.", type: "success" });
       setEditingBook(null);
       setEditCoverFile(null);
-      fetchAll();
+      await fetchAll();
+      setTimeout(() => fetchAll(), 500);
     } catch (err: any) {
       setMsg({ text: errMsg(err), type: "error" });
     }
@@ -824,7 +829,6 @@ export default function Page() {
   const addBook = async () => {
     try {
       let uploadedCoverUrl = "";
-
       if (coverFile) {
         const formData = new FormData();
         formData.append("file", coverFile);
@@ -832,13 +836,8 @@ export default function Page() {
           headers: { "Content-Type": "multipart/form-data" },
         });
         const unwrapUpload = unwrap(uploadRes);
-        if (typeof unwrapUpload === 'string') {
-          uploadedCoverUrl = unwrapUpload;
-        } else {
-          uploadedCoverUrl = unwrapUpload?.secure_url || unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
-        }
+        uploadedCoverUrl = unwrapUpload?.url || unwrapUpload?.secure_url || (uploadRes.data as any)?.data?.url || (uploadRes.data as any)?.url || "";
       }
-
       const payload = {
         title: newBook.title,
         author: newBook.author,
@@ -848,7 +847,6 @@ export default function Page() {
         coverUrl: uploadedCoverUrl || undefined,
         isbn: "987-" + Math.floor(100000000 + Math.random() * 900000000)
       };
-
       await api.post("/books", payload);
       setMsg({ text: "Book added successfully!", type: "success" });
       setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
@@ -1558,7 +1556,8 @@ export default function Page() {
                 return (
                   <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-3xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
                     <div className="aspect-[3/4] relative overflow-hidden bg-stone-950">
-                      <img src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
+                      <img key={`${getBookId(book)}-${book.coverUrl}`}
+                      src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                       
                       <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
@@ -1691,7 +1690,8 @@ export default function Page() {
                   return (
                     <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-3xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
                       <div className="aspect-[3/4] relative overflow-hidden bg-stone-950">
-                        <img src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
+                        <img key={`${getBookId(book)}-${book.coverUrl}`}
+                      src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                         
                         <button 
@@ -1772,7 +1772,8 @@ export default function Page() {
                   return (
                     <motion.div key={b.id || b.bookId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-3xl border backdrop-blur-xl flex flex-col justify-between shadow-xl ${isDark ? "bg-stone-900/60 border-amber-500/20" : "bg-white border-amber-200"}`}>
                       <div className="flex gap-5">
-                        <img src={getCover(b.book)} className="w-20 h-28 rounded-2xl object-cover shadow-lg" />
+                        <img key={`${getBookId(b.book)}-${b.book?.coverUrl}`}
+                      src={getCover(b.book)} className="w-20 h-28 rounded-2xl object-cover shadow-lg" />
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
                             <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(b.book?.category || "PROGRAMMING", lang)}</span>
