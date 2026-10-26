@@ -46,8 +46,32 @@ export class BooksController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() dto: CreateBookDto) {
-    return this.booksService.create(dto);
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: MAX_IMAGE_SIZE, files: 1 },
+      fileFilter: (req, file, callback) => {
+        if (file && !ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+          callback(new BadRequestException('Only JPEG, PNG, and WebP images are allowed'), false);
+          return;
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async create(
+    @Body() dto: CreateBookDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    let coverUrl = dto.coverUrl;
+    if (file) {
+      const result = await this.cloudinaryService.uploadBookImage(file.buffer);
+      coverUrl = result.url;
+    }
+    return this.booksService.create({
+      ...dto,
+      coverUrl: coverUrl || dto.coverUrl,
+    });
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -103,8 +127,33 @@ export class BooksController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateBookDto) {
-    return this.booksService.update(id, dto);
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: MAX_IMAGE_SIZE, files: 1 },
+      fileFilter: (req, file, callback) => {
+        if (file && !ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+          callback(new BadRequestException('Only JPEG, PNG, and WebP images are allowed'), false);
+          return;
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    let coverUrl = dto.coverUrl;
+    if (file) {
+      const result = await this.cloudinaryService.uploadBookImage(file.buffer);
+      coverUrl = result.url;
+    }
+    return this.booksService.update(id, {
+      ...dto,
+      ...(coverUrl ? { coverUrl } : {}),
+    } as any);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
