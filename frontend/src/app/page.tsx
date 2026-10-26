@@ -839,16 +839,74 @@ export default function Page() {
     }
   };
 
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      if (file.size < 1024 * 1024) {
+        resolve(file);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 1024;
+          if (width > height) {
+            if (width > maxSize) {
+              height = (height * maxSize) / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width = (width * maxSize) / height;
+              height = maxSize;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(file);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                resolve(file);
+                return;
+              }
+              const compressed = new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressed);
+            },
+            'image/jpeg',
+            0.7
+          );
+        };
+        img.onerror = () => resolve(file);
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    });
+  };
+
   const addBook = async () => {
     if (!newBook.title?.trim() || !newBook.author?.trim()) {
       setMsg({ text: "Please fill Book Title and Author", type: "error" });
       return;
     }
-    if (coverFile && coverFile.size > 5 * 1024 * 1024) {
-      setMsg({ text: "Image too large (max 5MB)", type: "error" });
-      return;
-    }
     try {
+      setMsg({ text: "Compressing and uploading...", type: "info" });
+      let fileToUpload: File | null = null;
+      if (coverFile) {
+        fileToUpload = await compressImage(coverFile);
+      }
       const formData = new FormData();
       formData.append("title", newBook.title.trim());
       formData.append("author", newBook.author.trim());
@@ -856,18 +914,37 @@ export default function Page() {
       formData.append("category", newBook.category?.trim() || "Programming");
       formData.append("price", String(Number(newBook.price) || 0));
       formData.append("isbn", "987-" + Math.floor(100000000 + Math.random() * 900000000));
-      if (coverFile) {
-        formData.append("file", coverFile);
+      if (fileToUpload) {
+        formData.append("file", fileToUpload);
       }
-      // Single request - creates book WITH cover in one step
-      await api.post("/books", formData);
+      await api.post("/books", formData, {
+        timeout: 60000,
+      });
       setMsg({ text: "Book added successfully with cover!", type: "success" });
       setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
       setCoverFile(null);
       fetchAll();
     } catch (err: any) {
       console.error("Add book error:", err?.response?.data || err.message);
-      setMsg({ text: errMsg(err), type: "error" });
+      if (err?.code === 'ECONNABORTED' || err?.message?.includes('Network Error')) {
+        setMsg({ text: "Upload timed out on mobile. Try a smaller image or use WiFi. Book will be created without cover if upload fails.", type: "error" });
+        try {
+          const fallbackForm = new FormData();
+          fallbackForm.append("title", newBook.title.trim());
+          fallbackForm.append("author", newBook.author.trim());
+          fallbackForm.append("totalCopies", String(Number(newBook.totalCopies) || 5));
+          fallbackForm.append("category", newBook.category?.trim() || "Programming");
+          fallbackForm.append("price", String(Number(newBook.price) || 0));
+          fallbackForm.append("isbn", "987-" + Math.floor(100000000 + Math.random() * 900000000));
+          await api.post("/books", fallbackForm, { timeout: 30000 });
+          setMsg({ text: "Book created without cover due to mobile timeout. You can edit cover later.", type: "info" });
+          setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
+          setCoverFile(null);
+          fetchAll();
+        } catch {}
+      } else {
+        setMsg({ text: errMsg(err), type: "error" });
+      }
     }
   };
 
