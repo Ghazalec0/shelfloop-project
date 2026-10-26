@@ -698,22 +698,32 @@ export default function Page() {
         setTimeout(() => fetchAll(), 300);
       }
       if (mode === "register") {
+        const emailToVerify = form.email;
         await api.post("/auth/register", { name: form.name, email: form.email, password: form.password });
         setMsg({ text: "OTP sent to your email. Please verify below.", type: "success" });
-        setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
+        setForm({ name: "", email: emailToVerify, password: "", otp: "", newPass: "" });
         setMode("otp");
+        return;
       }
       if (mode === "otp") {
-        await api.post("/auth/verify-register", { email: form.email, otp: form.otp });
+        if (!form.email || !form.email.trim()) {
+          setMsg({ text: "Email is missing. Please enter your email again.", type: "error" });
+          setMode("register");
+          return;
+        }
+        await api.post("/auth/verify-register", { email: form.email.trim(), otp: form.otp.trim() });
         setMsg({ text: "Account created successfully! Please sign in.", type: "success" });
         setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
         setMode("login");
+        return;
       }
       if (mode === "forgot") {
+        const emailToVerify = form.email;
         await api.post("/auth/forgot-password", { email: form.email });
         setMsg({ text: "OTP code sent to your email", type: "success" });
-        setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
+        setForm({ name: "", email: emailToVerify, password: "", otp: "", newPass: "" });
         setMode("otp");
+        return;
       }
       if (mode === "reset") {
         await api.post("/auth/reset-password", { email: form.email, otp: form.otp, newPassword: form.newPass });
