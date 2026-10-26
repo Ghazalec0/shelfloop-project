@@ -1604,26 +1604,62 @@ export default function Page() {
         </AnimatePresence>
       </header>
 
-      <AnimatePresence>
+            <AnimatePresence>
         {msg && (
-          <div className="fixed top-28 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 pointer-events-none">
-            <motion.div 
-              initial={{ opacity: 0, y: -20, scale: 0.95 }} 
-              animate={{ opacity: 1, y: 0, scale: 1 }} 
-              exit={{ opacity: 0, y: -20, scale: 0.95 }} 
-              className={`pointer-events-auto p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-center justify-between shadow-2xl backdrop-blur-2xl ${
-                msg.type === "error" 
-                  ? "bg-rose-950/90 border-rose-800 text-rose-200 shadow-rose-950/50" 
-                  : "bg-emerald-950/90 border-emerald-800 text-emerald-200 shadow-emerald-950/50"
-              }`}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMsg(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.85, y: 30, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.85, y: 30, opacity: 0 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`relative w-full max-w-[360px] rounded-[22px] shadow-[0_20px_60px_rgba(0,0,0,0.25)] border overflow-hidden ${isDark ? "bg-[#11100f] border-stone-800" : "bg-white border-stone-200"}`}
             >
-              <div className="flex items-center gap-3">
-                {msg.type === "error" ? <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0"/> : <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/>}
-                <span>{msg.text}</span>
+              <div className="px-7 pt-8 pb-7 flex flex-col items-center text-center">
+                <div className="relative w-[88px] h-[88px] mb-5">
+                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-100 dark:bg-rose-950/50" : "bg-[#e6f7ed] dark:bg-emerald-950/40"}`} />
+                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-50" : "bg-[#f0faf3]"} scale-[1.18] -z-10`} />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400" />
+                  <div className="absolute -top-2 left-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  <div className="absolute top-1 -left-1 w-2 h-2 rounded-full bg-emerald-300" />
+                  <div className="absolute -bottom-1 right-2 w-1.5 h-1.5 rounded-full bg-orange-300" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 rounded-full bg-violet-300" />
+                  <div className={`relative w-[88px] h-[88px] rounded-full flex items-center justify-center shadow-inner ${msg.type === "error" ? "bg-[#ef4444]" : "bg-[#22c55e]"}`}>
+                    {msg.type === "error" ? (
+                      <X className="w-10 h-10 text-white" strokeWidth={3} />
+                    ) : (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.15, type: "spring", stiffness: 400 }}>
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12.5L10 17.5L19 7.5" />
+                        </svg>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+                <h3 className={`text-[17px] font-bold leading-snug tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`}>
+                  {msg.text}
+                </h3>
+                <p className={`mt-2 text-[13px] leading-relaxed ${isDark ? "text-stone-400" : "text-stone-500"}`}>
+                  {msg.type === "error" ? (lang === "ar" ? "حاول مرة أخرى" : "Please try again") : (lang === "ar" ? "تمت العملية بنجاح" : "Operation completed successfully")}
+                </p>
+                <div className="mt-6 flex items-center gap-2.5 w-full">
+                  <button
+                    onClick={() => setMsg(null)}
+                    className={`flex-1 h-11 rounded-xl text-sm font-bold transition ${msg.type === "error" ? "bg-stone-900 text-white hover:bg-black dark:bg-white dark:text-stone-900 dark:hover:bg-stone-100" : "bg-[#11100f] text-white hover:bg-black dark:bg-white dark:text-stone-900 dark:hover:bg-stone-100"}`}
+                  >
+                    {lang === "ar" ? "حسنا" : "Okay"}
+                  </button>
+                </div>
               </div>
-              <button onClick={() => setMsg(null)} className="text-xs opacity-70 hover:opacity-100 ml-4 p-1">✕</button>
+              <div className={`h-1.5 w-full ${msg.type === "error" ? "bg-rose-500" : "bg-[#22c55e]"}`} />
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
