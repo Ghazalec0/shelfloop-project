@@ -1,10 +1,5 @@
-import {
-  IsString,
-  IsInt,
-  Min,
-  IsOptional,
-  IsNumber,
-} from 'class-validator';
+import { IsString, IsInt, Min, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateBookDto {
   @IsString()
@@ -27,11 +22,13 @@ export class UpdateBookDto {
   @IsOptional()
   coverUrl?: string;
 
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
   totalCopies?: number;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
