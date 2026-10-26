@@ -648,7 +648,11 @@ export default function Page() {
           headers: { "Content-Type": "multipart/form-data" },
         });
         const unwrapUpload = unwrap(uploadRes);
-        uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || uploadRes.data || "";
+        if (typeof unwrapUpload === 'string') {
+          uploadedCoverUrl = unwrapUpload;
+        } else {
+          uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
+        }
       }
 
       const bookId = getBookId(editingBook);
@@ -833,7 +837,11 @@ export default function Page() {
           headers: { "Content-Type": "multipart/form-data" },
         });
         const unwrapUpload = unwrap(uploadRes);
-        uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || uploadRes.data || "";
+        if (typeof unwrapUpload === 'string') {
+          uploadedCoverUrl = unwrapUpload;
+        } else {
+          uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
+        }
       }
 
       const payload = {
