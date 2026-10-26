@@ -188,6 +188,11 @@ const t = {
     prev: "Previous",
     page: "Page",
     of: "of",
+    pageXOfY: "Page",
+    booksCount: "books",
+    booksInPages: "books in",
+    pagesCount: "pages",
+    perPage: "per page",
     zoomIn: "Zoom In",
     zoomOut: "Zoom Out",
     resetZoom: "Reset"
@@ -311,6 +316,11 @@ const t = {
     prev: "السابق",
     page: "صفحة",
     of: "من",
+    pageXOfY: "صفحة",
+    booksCount: "كتاب",
+    booksInPages: "كتاب في",
+    pagesCount: "صفحة",
+    perPage: "في الصفحة",
     zoomIn: "تكبير",
     zoomOut: "تصغير",
     resetZoom: "إعادة الضبط"
@@ -1715,7 +1725,7 @@ export default function Page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto"
+            className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto overscroll-contain"
             onClick={() => setConfirmModal(null)}
           >
             <motion.div
@@ -1870,28 +1880,28 @@ export default function Page() {
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                       
-                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 z-20">
+                      <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
                         <button 
                           onClick={() => toggleFavorite(getBookId(book))}
-                          className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl backdrop-blur-md border transition shadow-lg active:scale-95 ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/90 text-stone-300 border-stone-700/50 hover:text-amber-400"}`}
+                          className={`p-2.5 rounded-xl backdrop-blur-md border transition shadow-lg ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/80 text-stone-300 border-stone-800 hover:text-amber-400"}`}
                           title="Favorite"
                         >
-                          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
+                          <Heart className={`w-4 h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
                         </button>
 
                         {user?.role === "ADMIN" && (
                           <>
-                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-700/50 backdrop-blur-md transition shadow-md active:scale-95" title="Edit Book">
-                              <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
+                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-800 backdrop-blur-md transition shadow-md" title="Edit Book">
+                              <Edit3 className="w-4 h-4"/>
                             </button>
-                            <button onClick={() => deleteBook(getBookId(book))} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md active:scale-95" title="Delete Book">
-                              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
+                            <button onClick={() => deleteBook(getBookId(book))} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md" title="Delete Book">
+                              <Trash2 className="w-4 h-4"/>
                             </button>
                           </>
                         )}
                       </div>
 
-                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-1 sm:py-1 rounded-full bg-stone-950/85 backdrop-blur-md border border-amber-500/25 text-[9px] sm:text-[11px] font-bold font-mono text-amber-400 shadow-md z-10">
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-stone-950/80 backdrop-blur-md border border-amber-500/20 text-[11px] font-mono text-amber-400">
                         {av}/{tot} {text.availableCopies}
                       </div>
 
@@ -1933,23 +1943,24 @@ export default function Page() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        {/* تحسين أزرار الشراء والاستعارة لتكون احترافية ومتجاوبة */}
+                        <div className="grid grid-cols-2 gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full min-w-0 py-2.5 px-1 sm:px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-black transition shadow-md flex items-center justify-center gap-1 sm:gap-1.5"
+                            className="w-full py-2.5 px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-black transition shadow-md flex items-center justify-center gap-1.5"
                           >
-                            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="whitespace-nowrap leading-none">{text.borrowBtn}</span>
+                            <BookOpen className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`w-full min-w-0 py-2.5 px-1 sm:px-2 rounded-xl border text-[10px] sm:text-xs font-black transition shadow-sm flex items-center justify-center gap-1 sm:gap-1.5 ${
+                            className={`w-full py-2.5 px-2 rounded-xl border text-xs font-black transition shadow-sm flex items-center justify-center gap-1.5 truncate ${
                               purchased 
                                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" 
                                 : isDark 
@@ -1957,8 +1968,8 @@ export default function Page() {
                                 : "border-amber-300 bg-white text-amber-800 hover:bg-amber-50"
                             }`}
                           >
-                            <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="whitespace-nowrap leading-none">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
+                            <ShoppingBag className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -2016,12 +2027,16 @@ export default function Page() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs" dir={lang === "ar" ? "rtl" : "ltr"}>
                   <span className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[11px] sm:text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
                     {text.page} {currentPage} {text.of} {totalPages}
                   </span>
                   <span className="hidden sm:block text-stone-400">•</span>
-                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "/page"}</span>
+                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs">
+                    {lang === "ar" 
+                      ? `${filtered.length} ${text.booksInPages} ${totalPages} ${text.pagesCount}`
+                      : `${filtered.length} ${text.booksCount} ${text.of} ${totalPages} ${text.pagesCount}`}
+                  </span>
                 </div>
               </div>
             )}
@@ -2862,27 +2877,27 @@ export default function Page() {
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
                   <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
                 </h4>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[70vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {books.map((b: any) => (
-                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group w-full flex flex-col gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all hover:shadow-md overflow-hidden ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
-                      <div className="flex gap-3 w-full min-w-0">
-                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-14 h-20 sm:w-12 sm:h-16 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
-                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                          <div className={`text-[13px] sm:text-sm font-bold leading-tight line-clamp-2 break-words ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{b.title}</div>
-                          <div className="text-[11px] sm:text-xs text-stone-400 truncate mt-1" title={b.author}>{b.author}</div>
-                          <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
-                            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">{b.price ?? 0} EGP</span>
-                            <span className="text-[10px] text-stone-500 font-medium">{getAvail(b)}/{getTotal(b)} avail</span>
+                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
+                      <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
+                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-11 sm:h-14 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-[13px] sm:text-xs font-bold truncate leading-tight ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{b.title}</div>
+                          <div className="text-[11px] sm:text-[10px] text-stone-400 truncate mt-0.5" title={b.author}>{b.author}</div>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">{b.price ?? 0} EGP</span>
+                            <span className="text-[9px] text-stone-500">{getAvail(b)}/{getTotal(b)} avail</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 w-full pt-2 border-t border-stone-800/50 sm:border-t-0 sm:pt-0">
-                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 h-10 sm:h-9 justify-center rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[12px] sm:text-xs font-bold transition border border-amber-500/20 flex items-center gap-1.5 active:scale-[0.98]">
+                      <div className="flex items-center gap-2 w-full w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
+                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
                           <Edit3 className="w-3.5 h-3.5"/>
                           <span>{text.editBook}</span>
                         </button>
-                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 h-10 sm:h-9 justify-center rounded-xl bg-rose-950/50 hover:bg-rose-900 text-rose-300 hover:text-white text-[12px] sm:text-xs font-bold transition border border-rose-800/40 flex items-center gap-1.5 active:scale-[0.98]">
+                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
                           <Trash2 className="w-3.5 h-3.5"/>
                           <span>{text.deleteBook}</span>
                         </button>
@@ -2958,8 +2973,8 @@ export default function Page() {
 
       <AnimatePresence>
         {editingBook && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.editBookTitle}</h3>
                 <button onClick={() => setEditingBook(null)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
@@ -3277,8 +3292,8 @@ export default function Page() {
 
       <AnimatePresence>
         {hint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(hint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBorrowTitle}: "{hint.title}"</h3>
               
@@ -3300,8 +3315,8 @@ export default function Page() {
 
       <AnimatePresence>
         {buyHint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{buyHint.title}"</h3>
               
