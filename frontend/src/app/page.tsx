@@ -1870,28 +1870,28 @@ export default function Page() {
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                       
-                      <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
+                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 z-20">
                         <button 
                           onClick={() => toggleFavorite(getBookId(book))}
-                          className={`p-2.5 rounded-xl backdrop-blur-md border transition shadow-lg ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/80 text-stone-300 border-stone-800 hover:text-amber-400"}`}
+                          className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl backdrop-blur-md border transition shadow-lg active:scale-95 ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/90 text-stone-300 border-stone-700/50 hover:text-amber-400"}`}
                           title="Favorite"
                         >
-                          <Heart className={`w-4 h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
+                          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
                         </button>
 
                         {user?.role === "ADMIN" && (
                           <>
-                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-800 backdrop-blur-md transition shadow-md" title="Edit Book">
-                              <Edit3 className="w-4 h-4"/>
+                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-700/50 backdrop-blur-md transition shadow-md active:scale-95" title="Edit Book">
+                              <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
                             </button>
-                            <button onClick={() => deleteBook(getBookId(book))} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md" title="Delete Book">
-                              <Trash2 className="w-4 h-4"/>
+                            <button onClick={() => deleteBook(getBookId(book))} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md active:scale-95" title="Delete Book">
+                              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
                             </button>
                           </>
                         )}
                       </div>
 
-                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-stone-950/80 backdrop-blur-md border border-amber-500/20 text-[11px] font-mono text-amber-400">
+                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-1 sm:py-1 rounded-full bg-stone-950/85 backdrop-blur-md border border-amber-500/25 text-[9px] sm:text-[11px] font-bold font-mono text-amber-400 shadow-md z-10">
                         {av}/{tot} {text.availableCopies}
                       </div>
 
@@ -1933,24 +1933,23 @@ export default function Page() {
                           </div>
                         </div>
 
-                        {/* تحسين أزرار الشراء والاستعارة لتكون احترافية ومتجاوبة */}
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full py-2.5 px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-black transition shadow-md flex items-center justify-center gap-1.5"
+                            className="w-full min-w-0 py-2.5 px-1 sm:px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-black transition shadow-md flex items-center justify-center gap-1 sm:gap-1.5"
                           >
-                            <BookOpen className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate">{text.borrowBtn}</span>
+                            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="whitespace-nowrap leading-none">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`w-full py-2.5 px-2 rounded-xl border text-xs font-black transition shadow-sm flex items-center justify-center gap-1.5 truncate ${
+                            className={`w-full min-w-0 py-2.5 px-1 sm:px-2 rounded-xl border text-[10px] sm:text-xs font-black transition shadow-sm flex items-center justify-center gap-1 sm:gap-1.5 ${
                               purchased 
                                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" 
                                 : isDark 
@@ -1958,8 +1957,8 @@ export default function Page() {
                                 : "border-amber-300 bg-white text-amber-800 hover:bg-amber-50"
                             }`}
                           >
-                            <ShoppingBag className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
+                            <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="whitespace-nowrap leading-none">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
                           </motion.button>
                         </div>
                       </div>
