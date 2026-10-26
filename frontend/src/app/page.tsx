@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   BookOpen, LogOut, Plus, ShieldAlert, CheckCircle2, 
   Clock, Mail, Search, LayoutDashboard, X, Menu, ChevronDown,
-  Lightbulb, UserCheck, Send, ArrowRight, Sun, Moon, Globe, Library, Users, TrendingUp, BarChart3, Trash2, Edit3, CreditCard, DollarSign, Wallet, Sparkles, Heart, ShieldCheck, UserCog, ShoppingBag, BookmarkCheck
+  Lightbulb, UserCheck, Send, ArrowRight, Sun, Moon, Globe, Library, Users, TrendingUp, BarChart3, Trash2, Edit3, CreditCard, DollarSign, Wallet, Sparkles, Heart, ShieldCheck, UserCog, ShoppingBag, BookmarkCheck, AlertTriangle, HelpCircle
 } from "lucide-react";
 
 const getAvail = (b: any) => b.available_copies ?? b.availableCopies ?? b.available ?? 0;
@@ -372,6 +372,7 @@ export default function Page() {
   const [mode, setMode] = useState<"login" | "register" | "forgot" | "otp" | "reset">("login");
   const [form, setForm] = useState({ name: "", email: "", password: "", otp: "", newPass: "" });
   const [msg, setMsg] = useState<{ text: string; type: "success" | "error" | "info" } | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void; type?: "danger" | "warning" | "info" } | null>(null);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
