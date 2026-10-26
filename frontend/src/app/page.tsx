@@ -20,9 +20,10 @@ const covers: Record<string, string> = {};
 
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
-    return book.coverUrl.startsWith("http")
-      ? book.coverUrl
-      : `http://localhost:3000${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
+    if (book.coverUrl.startsWith("http://") || book.coverUrl.startsWith("https://")) {
+      return book.coverUrl;
+    }
+    return `http://localhost:3000${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
   }
   const k = (book?.title || "").toLowerCase();
   for (let key in covers) if (k.includes(key)) return covers[key];
