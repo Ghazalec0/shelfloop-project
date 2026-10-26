@@ -33,7 +33,7 @@ const getCover = (book: any) => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://shelfloop-backend.onrender.com";
     return `${backendUrl.replace(/\/$/, "")}${url.startsWith('/') ? '' : '/'}${url}`;
   }
-  return "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=1000&auto=format&fit=crop";
+
 };
 
 const aiQuotes = [
