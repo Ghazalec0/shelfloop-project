@@ -68,44 +68,6 @@ const getCategoryLabel = (cat: string, lang: "en" | "ar") => {
   return categoryTranslations[cat]?.[lang] || cat;
 };
 
-const bookTitleTranslations: Record<string, string> = {
-  "Band of Brothers": "عصبة الإخوة",
-  "The Diary of a Young Girl": "مذكرات فتاة صغيرة",
-  "Unbroken": "غير منكسر",
-  "Lone Survivor": "الناجي الوحيد",
-  "Can't Hurt Me": "لا يمكنك إيذائي",
-  "The Power of Now": "قوة الآن",
-  "Clean Code": "كود نظيف",
-  "Atomic Habits": "العادات الذرية",
-  "The Alchemist": "الخيميائي",
-  "Rich Dad Poor Dad": "الأب الغني والأب الفقير",
-  "1984": "1984",
-  "To Kill a Mockingbird": "أن تقتل طائرا محاكيا",
-  "The Great Gatsby": "غاتسبي العظيم",
-  "Pride and Prejudice": "كبرياء وهوى",
-  "The Hobbit": "الهوبيت",
-  "Harry Potter": "هاري بوتر",
-  "The Lord of the Rings": "سيد الخواتم",
-  "The Book Thief": "سارقة الكتب",
-  "A Thousand Splendid Suns": "ألف شمس ساطعة",
-  "The Kite Runner": "عداء الطائرة الورقية",
-  "أرض زيكولا": "أرض زيكولا",
-  "قواعد جارتين": "قواعد جارتين",
-  "فلتغفري": "فلتغفري",
-  "أنتيخريستوس": "أنتيخريستوس",
-  "ابتسم فأنت ميت": "ابتسم فأنت ميت",
-  "في قلبي أنثى عبرية": "في قلبي أنثى عبرية",
-  "أنت": "أنتِ - أدهم الشرقاوي"
-};
-
-const getBookDisplayTitle = (title: string, lang: "en" | "ar") => {
-  if (!title) return title;
-  if (lang === "ar") {
-    return bookTitleTranslations[title] || bookTitleTranslations[title.trim()] || title;
-  }
-  return title;
-};
-
 const t = {
   en: {
     brand: "ShelfLoop",
@@ -226,11 +188,6 @@ const t = {
     prev: "Previous",
     page: "Page",
     of: "of",
-    booksCount: "books",
-    booksInPages: "books in",
-    pagesCount: "pages",
-    perPage: "per page",
-    pageXOfY: "Page",
     booksCount: "books",
     booksInPages: "books in",
     pagesCount: "pages",
@@ -358,11 +315,6 @@ const t = {
     prev: "السابق",
     page: "صفحة",
     of: "من",
-    booksCount: "كتاب",
-    booksInPages: "كتاب في",
-    pagesCount: "صفحة",
-    perPage: "في الصفحة",
-    pageXOfY: "صفحة",
     booksCount: "كتاب",
     booksInPages: "كتاب في",
     pagesCount: "صفحة",
@@ -859,7 +811,7 @@ export default function Page() {
 
   const handleAuth = async (e: any) => {
     e.preventDefault();
-    setMsg({ text: lang === "ar" ? "جاري المعالجة..." : "Processing...", type: "info" });
+    setMsg({ text: "Processing...", type: "info" });
     try {
       if (mode === "login") {
         const res = await api.post("/auth/login", { email: form.email, password: form.password });
@@ -870,14 +822,14 @@ export default function Page() {
         localStorage.setItem("access_token", token);
         localStorage.setItem("user", JSON.stringify(safe));
         setUser(safe);
-        setMsg({ text: lang === "ar" ? "مرحبا بعودتك!" : "Welcome back!", type: "success" });
+        setMsg({ text: "Welcome back!", type: "success" });
         setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
         setTimeout(() => fetchAll(), 300);
       }
       if (mode === "register") {
         const emailToVerify = form.email;
         await api.post("/auth/register", { name: form.name, email: form.email, password: form.password });
-        setMsg({ text: lang === "ar" ? "تم إرسال رمز التحقق إلى بريدك. يرجى التأكيد أدناه." : "OTP sent to your email. Please verify below.", type: "success" });
+        setMsg({ text: "OTP sent to your email. Please verify below.", type: "success" });
         setForm({ name: "", email: emailToVerify, password: "", otp: "", newPass: "" });
         setMode("otp");
         return;
@@ -889,7 +841,7 @@ export default function Page() {
           return;
         }
         await api.post("/auth/verify-register", { email: form.email.trim(), otp: form.otp.trim() });
-        setMsg({ text: lang === "ar" ? "تم إنشاء الحساب بنجاح! يرجى تسجيل الدخول." : "Account created successfully! Please sign in.", type: "success" });
+        setMsg({ text: "Account created successfully! Please sign in.", type: "success" });
         setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
         setMode("login");
         return;
@@ -897,14 +849,14 @@ export default function Page() {
       if (mode === "forgot") {
         const emailToVerify = form.email;
         await api.post("/auth/forgot-password", { email: form.email });
-        setMsg({ text: lang === "ar" ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني" : "OTP code sent to your email", type: "success" });
+        setMsg({ text: "OTP code sent to your email", type: "success" });
         setForm({ name: "", email: emailToVerify, password: "", otp: "", newPass: "" });
         setMode("otp");
         return;
       }
       if (mode === "reset") {
         await api.post("/auth/reset-password", { email: form.email, otp: form.otp, newPassword: form.newPass });
-        setMsg({ text: lang === "ar" ? "تم إعادة تعيين كلمة المرور بنجاح!" : "Password reset successful!", type: "success" });
+        setMsg({ text: "Password reset successful!", type: "success" });
         setForm({ name: "", email: "", password: "", otp: "", newPass: "" });
         setMode("login");
       }
@@ -918,7 +870,7 @@ export default function Page() {
     setIsProcessingBorrow(true);
     try {
       await api.post(`/borrows/${getBookId(hint)}`);
-      setMsg({ text: lang === "ar" ? `تمت استعارة "${getBookDisplayTitle(hint.title, lang)}" بنجاح!` : `Successfully borrowed "${hint.title}"!`, type: "success" });
+      setMsg({ text: `Successfully borrowed "${hint.title}"!`, type: "success" });
       setHint(null);
       fetchAll();
     } catch (err: any) {
@@ -954,7 +906,7 @@ export default function Page() {
         return;
       }
 
-      setMsg({ text: lang === "ar" ? `تم تقديم طلب شراء "${getBookDisplayTitle(buyHint.title, lang)}" (${buyQuantity} نسخ) بنجاح! بانتظار موافقة الإدارة.` : `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
+      setMsg({ text: `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
@@ -969,7 +921,7 @@ export default function Page() {
     const bookId = borrowItem.bookId || borrowItem.book?.id;
     try {
       await api.post(`/borrows/${bookId}/return`);
-      setMsg({ text: lang === "ar" ? "تم إرجاع الكتاب بنجاح!" : "Book returned successfully!", type: "success" });
+      setMsg({ text: "Book returned successfully!", type: "success" });
       fetchAll();
     } catch (err: any) {
       setMsg({ text: errMsg(err), type: "error" });
@@ -989,7 +941,7 @@ export default function Page() {
         return;
       }
 
-      setMsg({ text: lang === "ar" ? "تم تقديم طلب الدفع بنجاح!" : "Payment request submitted successfully!", type: "success" });
+      setMsg({ text: "Payment request submitted successfully!", type: "success" });
       setSelectedFine(null);
       fetchAll();
     } catch (err: any) {
@@ -1006,7 +958,7 @@ export default function Page() {
       } else {
         await api.post(`/fines/${itemId}/confirm-cash`);
       }
-      setMsg({ text: lang === "ar" ? "تمت الموافقة على الدفع بنجاح!" : "Payment approved successfully!", type: "success" });
+      setMsg({ text: "Payment approved successfully!", type: "success" });
       fetchAll();
     } catch (err: any) {
       setMsg({ text: errMsg(err), type: "error" });
@@ -1072,11 +1024,11 @@ export default function Page() {
 
   const addBook = async () => {
     if (!newBook.title?.trim() || !newBook.author?.trim()) {
-      setMsg({ text: lang === "ar" ? "يرجى ملء عنوان الكتاب واسم المؤلف" : "Please fill Book Title and Author", type: "error" });
+      setMsg({ text: "Please fill Book Title and Author", type: "error" });
       return;
     }
     try {
-      setMsg({ text: lang === "ar" ? "جاري الضغط والرفع..." : "Compressing and uploading...", type: "info" });
+      setMsg({ text: "Compressing and uploading...", type: "info" });
       let fileToUpload: File | null = null;
       if (coverFile) {
         fileToUpload = await compressImage(coverFile);
@@ -1094,7 +1046,7 @@ export default function Page() {
       await api.post("/books", formData, {
         timeout: 60000,
       });
-      setMsg({ text: lang === "ar" ? "تمت إضافة الكتاب بنجاح مع الغلاف!" : "Book added successfully with cover!", type: "success" });
+      setMsg({ text: "Book added successfully with cover!", type: "success" });
       setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
       setCoverFile(null);
       fetchAll();
@@ -1131,7 +1083,7 @@ export default function Page() {
         email: contactForm.email,
         message: contactForm.message,
       });
-      setMsg({ text: lang === "ar" ? "تم إرسال الرسالة!" : "Message sent!", type: "success" });
+      setMsg({ text: "Message sent!", type: "success" });
       setContactForm({ name: "", email: "", message: "" });
     } catch (err: any) {
       setMsg({ text: errMsg(err), type: "error" });
@@ -1452,9 +1404,9 @@ export default function Page() {
                 </div>
               )}
 
-              <button className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 text-stone-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2" dir={lang === "ar" ? "rtl" : "ltr"}>
+              <button className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 text-stone-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
                 <span>{text.continue}</span>
-                <ArrowRight className={`w-4 h-4 transition-transform duration-200 ${lang === "ar" ? "rotate-180" : ""}`}/>
+                <ArrowRight className="w-4 h-4"/>
               </button>
             </form>
 
@@ -1744,7 +1696,7 @@ export default function Page() {
                     )}
                   </div>
                 </div>
-                <h3 className={`text-[17px] font-bold leading-snug tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`} dir={lang === "ar" ? "rtl" : "ltr"} style={{unicodeBidi: "plaintext" as any}}>
+                <h3 className={`text-[17px] font-bold leading-snug tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`}>
                   {msg.text}
                 </h3>
                 <p className={`mt-2 text-[13px] leading-relaxed ${isDark ? "text-stone-400" : "text-stone-500"}`}>
@@ -1926,28 +1878,28 @@ export default function Page() {
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                       
-                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 z-20">
+                      <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
                         <button 
                           onClick={() => toggleFavorite(getBookId(book))}
-                          className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl backdrop-blur-md border transition shadow-lg active:scale-95 ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/90 text-stone-300 border-stone-700/50 hover:text-amber-400"}`}
+                          className={`p-2.5 rounded-xl backdrop-blur-md border transition shadow-lg ${favActive ? "bg-amber-500 text-stone-950 border-amber-400" : "bg-stone-950/80 text-stone-300 border-stone-800 hover:text-amber-400"}`}
                           title="Favorite"
                         >
-                          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
+                          <Heart className={`w-4 h-4 ${favActive ? "fill-stone-950 text-stone-950" : ""}`} />
                         </button>
 
                         {user?.role === "ADMIN" && (
                           <>
-                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-700/50 backdrop-blur-md transition shadow-md active:scale-95" title="Edit Book">
-                              <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
+                            <button onClick={() => { setEditingBook({ ...book }); setEditCoverFile(null); }} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-amber-500 text-amber-400 hover:text-stone-950 border border-stone-800 backdrop-blur-md transition shadow-md" title="Edit Book">
+                              <Edit3 className="w-4 h-4"/>
                             </button>
-                            <button onClick={() => deleteBook(getBookId(book))} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full sm:rounded-xl bg-stone-950/90 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md active:scale-95" title="Delete Book">
-                              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
+                            <button onClick={() => deleteBook(getBookId(book))} className="p-2.5 rounded-xl bg-stone-950/80 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800/50 backdrop-blur-md transition shadow-md" title="Delete Book">
+                              <Trash2 className="w-4 h-4"/>
                             </button>
                           </>
                         )}
                       </div>
 
-                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-1 rounded-full bg-stone-950/85 backdrop-blur-md border border-amber-500/25 text-[9px] sm:text-[11px] font-bold font-mono text-amber-400 shadow-md z-10">
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-stone-950/80 backdrop-blur-md border border-amber-500/20 text-[11px] font-mono text-amber-400">
                         {av}/{tot} {text.availableCopies}
                       </div>
 
@@ -1976,7 +1928,7 @@ export default function Page() {
                     <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(book.category || "Programming", lang)}</span>
-                        <h3 className={`font-bold text-sm sm:text-base mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(book.title, lang)}</h3>
+                        <h3 className={`font-bold text-sm sm:text-base mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{book.title}</h3>
                         <p className="text-[11px] sm:text-xs text-stone-400 mt-0.5">{book.author}</p>
                       </div>
 
@@ -1990,16 +1942,16 @@ export default function Page() {
                         </div>
 
                         {/* تحسين أزرار الشراء والاستعارة لتكون احترافية ومتجاوبة */}
-                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full min-w-0 py-2.5 px-1 sm:px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-black transition shadow-md flex items-center justify-center gap-1 sm:gap-1.5"
+                            className="w-full py-2.5 px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-black transition shadow-md flex items-center justify-center gap-1.5"
                           >
-                            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="whitespace-nowrap leading-none">{text.borrowBtn}</span>
+                            <BookOpen className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
@@ -2015,7 +1967,7 @@ export default function Page() {
                             }`}
                           >
                             <ShoppingBag className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="whitespace-nowrap leading-none">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
+                            <span className="truncate">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -2073,16 +2025,12 @@ export default function Page() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs" dir={lang === "ar" ? "rtl" : "ltr"}>
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
                   <span className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[11px] sm:text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
                     {text.page} {currentPage} {text.of} {totalPages}
                   </span>
                   <span className="hidden sm:block text-stone-400">•</span>
-                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs">
-                    {lang === "ar" 
-                      ? `${filtered.length} ${text.booksInPages} ${totalPages} ${text.pagesCount}`
-                      : `${filtered.length} ${text.booksCount} ${text.of} ${totalPages} ${text.pagesCount}`}
-                  </span>
+                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "/page"}</span>
                 </div>
               </div>
             )}
@@ -3019,8 +2967,8 @@ export default function Page() {
 
       <AnimatePresence>
         {editingBook && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.editBookTitle}</h3>
                 <button onClick={() => setEditingBook(null)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
@@ -3338,8 +3286,8 @@ export default function Page() {
 
       <AnimatePresence>
         {hint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(hint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBorrowTitle}: "{hint.title}"</h3>
               
@@ -3361,8 +3309,8 @@ export default function Page() {
 
       <AnimatePresence>
         {buyHint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{buyHint.title}"</h3>
               
