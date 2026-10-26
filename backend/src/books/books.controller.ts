@@ -24,12 +24,7 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-
-const ALLOWED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-];
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 
 @Controller('books')
 export class BooksController {
@@ -61,50 +56,54 @@ export class BooksController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
-      limits: {
-        fileSize: MAX_IMAGE_SIZE,
-        files: 1,
-      },
+      limits: { fileSize: MAX_IMAGE_SIZE, files: 1 },
       fileFilter: (req, file, callback) => {
         if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
-          callback(
-            new BadRequestException(
-              'Only JPEG, PNG, and WebP images are allowed',
-            ),
-            false,
-          );
+          callback(new BadRequestException('Only JPEG, PNG, and WebP images are allowed'), false);
           return;
         }
-
         callback(null, true);
       },
     }),
   )
-  async uploadFile(
+  async uploadFile(@UploadedFile() file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException('Please upload a valid image file');
+    const result = await this.cloudinaryService.uploadBookImage(file.buffer);
+    return { message: 'Book image uploaded successfully', data: result };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Put(':id/cover')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: MAX_IMAGE_SIZE, files: 1 },
+      fileFilter: (req, file, callback) => {
+        if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+          callback(new BadRequestException('Only JPEG, PNG, and WebP images are allowed'), false);
+          return;
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async updateCover(
+    @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File | undefined,
   ) {
-    if (!file) {
-      throw new BadRequestException(
-        'Please upload a valid image file',
-      );
-    }
-
-    const result =
-      await this.cloudinaryService.uploadBookImage(file.buffer);
-
+    if (!file) throw new BadRequestException('Please upload a valid image file');
+    const updated = await this.booksService.updateCoverWithFile(id, file.buffer);
     return {
-      message: 'Book image uploaded successfully',
-      data: result,
+      message: 'Cover updated successfully - old image deleted',
+      data: updated,
     };
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateBookDto,
-  ) {
+  update(@Param('id') id: string, @Body() dto: UpdateBookDto) {
     return this.booksService.update(id, dto);
   }
 
