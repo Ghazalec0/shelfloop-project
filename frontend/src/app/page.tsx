@@ -2387,25 +2387,43 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className={`mb-8 p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
+              <div className={`mb-8 p-4 sm:p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
                 <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
                   <Plus className="w-4 h-4 text-amber-500"/> {text.addBookTitle}
                 </h4>
-                <div className="grid md:grid-cols-6 gap-3">
-                  <input value={newBook.title} onChange={e => setNewBook({ ...newBook, title: e.target.value })} placeholder={text.bookTitle} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} />
-                  <input value={newBook.author} onChange={e => setNewBook({ ...newBook, author: e.target.value })} placeholder={text.bookAuthor} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} />
-                  <input value={newBook.category} onChange={e => setNewBook({ ...newBook, category: e.target.value })} placeholder={text.bookCategory} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} />
-                  <input value={newBook.totalCopies} onChange={e => setNewBook({ ...newBook, totalCopies: parseInt(e.target.value) || 1 })} type="number" placeholder={text.bookCopies} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} />
-                  <input value={newBook.price} onChange={e => setNewBook({ ...newBook, price: parseFloat(e.target.value) || 0 })} type="number" placeholder={text.bookPrice} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} />
-                  
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={e => setCoverFile(e.target.files?.[0] || null)} 
-                    className={`h-11 rounded-xl px-2 py-1.5 text-[11px] border file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-amber-500 file:text-stone-950 file:font-bold ${isDark ? "bg-stone-900 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`} 
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{text.bookTitle}</label>
+                    <input value={newBook.title} onChange={e => setNewBook({ ...newBook, title: e.target.value })} placeholder={text.bookTitle} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{text.bookAuthor}</label>
+                    <input value={newBook.author} onChange={e => setNewBook({ ...newBook, author: e.target.value })} placeholder={text.bookAuthor} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{text.bookCategory}</label>
+                    <input value={newBook.category} onChange={e => setNewBook({ ...newBook, category: e.target.value })} placeholder={text.bookCategory} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{text.bookCopies}</label>
+                    <input value={newBook.totalCopies} onChange={e => setNewBook({ ...newBook, totalCopies: parseInt(e.target.value) || 1 })} type="number" min={1} placeholder={text.bookCopies} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{text.bookPrice}</label>
+                    <input value={newBook.price} onChange={e => setNewBook({ ...newBook, price: parseFloat(e.target.value) || 0 })} type="number" min={0} step={0.01} placeholder={text.bookPrice} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Cover Image</label>
+                    <div className={`relative h-11 rounded-xl border flex items-center px-2 gap-2 overflow-hidden transition-all focus-within:ring-2 focus-within:ring-amber-500/30 focus-within:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800" : "bg-white border-amber-200"}`}>
+                      <label className="shrink-0 cursor-pointer px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-[11px] font-bold transition">
+                        <span>Choose File</span>
+                        <input type="file" accept="image/*" onChange={e => setCoverFile(e.target.files?.[0] || null)} className="hidden" />
+                      </label>
+                      <span className={`text-[11px] truncate flex-1 ${coverFile ? (isDark ? "text-white" : "text-stone-900") : "text-stone-500"}`}>{coverFile ? coverFile.name : "No file chosen"}</span>
+                    </div>
+                  </div>
                 </div>
-                <button onClick={addBook} className="mt-4 w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                <button onClick={addBook} className="mt-6 w-full h-12 sm:h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-[0.98]">
                   <Plus className="w-4 h-4"/> {text.saveBook}
                 </button>
               </div>
