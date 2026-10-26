@@ -161,6 +161,8 @@ const t = {
     methodLabel: "Method",
     statusLabel: "Status",
     redirectingPay: "Redirecting to Secure Payment...",
+    submitCashPurchase: "Submit Cash Purchase",
+    submitCashPurchaseDesc: "Confirm cash payment",
     cancelRequestBtn: "Cancel Request",
     unitPriceLabel: "Unit Price",
     availableCopiesLabel: "Available Copies",
@@ -282,6 +284,8 @@ const t = {
     methodLabel: "الطريقة",
     statusLabel: "الحالة",
     redirectingPay: "جاري تحويلك لبوابة الدفع الآمنة...",
+    submitCashPurchase: "تأكيد الدفع نقداً",
+    submitCashPurchaseDesc: "إرسال طلب الشراء نقداً",
     cancelRequestBtn: "إلغاء الطلب",
     unitPriceLabel: "سعر الوحدة",
     availableCopiesLabel: "النسخ المتاحة",
@@ -319,7 +323,17 @@ export default function Page() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [zoom, setZoom] = useState<number>(100);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const BOOKS_PER_PAGE = 8;
+  const [BOOKS_PER_PAGE, setBooksPerPage] = useState(8);
+  useEffect(() => {
+    const updatePerPage = () => {
+      if (typeof window !== "undefined") {
+        setBooksPerPage(window.innerWidth < 640 ? 6 : 8);
+      }
+    };
+    updatePerPage();
+    window.addEventListener("resize", updatePerPage);
+    return () => window.removeEventListener("resize", updatePerPage);
+  }, []);
   const [user, setUser] = useState<any>(null);
   const [books, setBooks] = useState<any[]>([]);
   const [borrows, setBorrows] = useState<any[]>([]);
@@ -642,38 +656,58 @@ export default function Page() {
 
     if (!pendingP) return;
 
-    if (!confirm("Are you sure you want to cancel this pending purchase request?")) return;
-
-    try {
-      await api.delete(`/purchases/${pendingP.id}/cancel`);
-      setMsg({ text: "Purchase request cancelled successfully!", type: "success" });
-      fetchAll();
-    } catch (err: any) {
-      setMsg({ text: errMsg(err), type: "error" });
-    }
+    setConfirmModal({
+      title: lang === "ar" ? "إلغاء طلب الشراء" : "Cancel Purchase Request",
+      message: lang === "ar" ? "هل أنت متأكد أنك تريد إلغاء طلب الشراء المعلق هذا؟" : "Are you sure you want to cancel this pending purchase request?",
+      type: "warning",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          await api.delete(`/purchases/${pendingP.id}/cancel`);
+          setMsg({ text: lang === "ar" ? "تم إلغاء طلب الشراء بنجاح!" : "Purchase request cancelled successfully!", type: "success" });
+          fetchAll();
+        } catch (err: any) {
+          setMsg({ text: errMsg(err), type: "error" });
+        }
+      }
+    });
   };
 
   const deleteBook = async (bookId: string) => {
-    if (!confirm("Are you sure you want to delete this book permanently?")) return;
-    try {
-      await api.delete(`/books/${bookId}`);
-      setMsg({ text: "Book deleted successfully!", type: "success" });
-      fetchAll();
-    } catch (err: any) {
-      setMsg({ text: errMsg(err), type: "error" });
-    }
+    setConfirmModal({
+      title: lang === "ar" ? "حذف الكتاب نهائياً" : "Delete Book Permanently",
+      message: lang === "ar" ? "هل أنت متأكد أنك تريد حذف هذا الكتاب نهائياً؟ لا يمكن التراجع عن هذا الإجراء." : "Are you sure you want to delete this book permanently? This action cannot be undone.",
+      type: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          await api.delete(`/books/${bookId}`);
+          setMsg({ text: lang === "ar" ? "تم حذف الكتاب بنجاح!" : "Book deleted successfully!", type: "success" });
+          fetchAll();
+        } catch (err: any) {
+          setMsg({ text: errMsg(err), type: "error" });
+        }
+      }
+    });
   };
 
   const deleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to deactivate/delete this user?")) return;
-    try {
-      await api.delete(`/users/${userId}`);
-      setMsg({ text: "User deactivated successfully!", type: "success" });
-      setActiveUserMenu(null);
-      fetchAll();
-    } catch (err: any) {
-      setMsg({ text: errMsg(err), type: "error" });
-    }
+    setConfirmModal({
+      title: lang === "ar" ? "تعطيل المستخدم" : "Deactivate User",
+      message: lang === "ar" ? "هل أنت متأكد أنك تريد تعطيل / حذف هذا المستخدم؟" : "Are you sure you want to deactivate/delete this user?",
+      type: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          await api.delete(`/users/${userId}`);
+          setMsg({ text: lang === "ar" ? "تم تعطيل المستخدم بنجاح!" : "User deactivated successfully!", type: "success" });
+          setActiveUserMenu(null);
+          fetchAll();
+        } catch (err: any) {
+          setMsg({ text: errMsg(err), type: "error" });
+        }
+      }
+    });
   };
 
   const updateUserRole = async (userId: string, currentRole: string) => {
@@ -1108,6 +1142,10 @@ export default function Page() {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [totalPages]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [BOOKS_PER_PAGE]);
+
 
   const filteredFines = fines.filter((f: any) => {
     if (dismissedFines.includes(f.id)) return false;
@@ -1370,7 +1408,7 @@ export default function Page() {
 
       <header className="sticky top-0 z-40 w-full transition-all duration-500 relative">
         <div className={`border-b backdrop-blur-2xl px-6 sm:px-12 h-20 sm:h-24 flex items-center justify-between shadow-2xl transition-all duration-500 ${isDark ? "bg-stone-950/85 border-amber-500/20 shadow-amber-500/5" : "bg-white/90 border-amber-200/80 shadow-stone-200/50"}`}>
-          <div className="flex items-center gap-4 group cursor-pointer shrink-0" onClick={() => setActiveTab("catalog")}>
+          <div className="flex items-center gap-2.5 sm:gap-4 group cursor-pointer shrink-0" onClick={() => setActiveTab("catalog")}>
             <div className="relative">
               <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 opacity-60 blur-md group-hover:opacity-100 transition duration-500" />
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center text-stone-950 font-black shadow-lg">
@@ -1623,14 +1661,14 @@ export default function Page() {
             >
               <div className="px-7 pt-8 pb-7 flex flex-col items-center text-center">
                 <div className="relative w-[88px] h-[88px] mb-5">
-                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-100 dark:bg-rose-950/50" : "bg-[#e6f7ed] dark:bg-emerald-950/40"}`} />
-                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-50" : "bg-[#f0faf3]"} scale-[1.18] -z-10`} />
+                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-100 dark:bg-rose-950/50" : "bg-orange-100 dark:bg-amber-950/40"}`} />
+                  <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-50" : "bg-amber-50"} scale-[1.18] -z-10`} />
                   <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400" />
                   <div className="absolute -top-2 left-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
                   <div className="absolute top-1 -left-1 w-2 h-2 rounded-full bg-emerald-300" />
                   <div className="absolute -bottom-1 right-2 w-1.5 h-1.5 rounded-full bg-orange-300" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 rounded-full bg-violet-300" />
-                  <div className={`relative w-[88px] h-[88px] rounded-full flex items-center justify-center shadow-inner ${msg.type === "error" ? "bg-[#ef4444]" : "bg-[#22c55e]"}`}>
+                  <div className={`relative w-[88px] h-[88px] rounded-full flex items-center justify-center shadow-inner ${msg.type === "error" ? "bg-[#ef4444]" : "bg-gradient-to-br from-amber-500 to-orange-500 shadow-[0_8px_24px_rgba(255,138,76,0.4)]"}`}>
                     {msg.type === "error" ? (
                       <X className="w-10 h-10 text-white" strokeWidth={3} />
                     ) : (
@@ -1657,7 +1695,64 @@ export default function Page() {
                   </button>
                 </div>
               </div>
-              <div className={`h-1.5 w-full ${msg.type === "error" ? "bg-rose-500" : "bg-[#22c55e]"}`} />
+              <div className={`h-1.5 w-full ${msg.type === "error" ? "bg-rose-500" : "bg-gradient-to-r from-amber-500 to-orange-500"}`} />
+            </motion.div>
+          </motion.div>
+        )}
+            </AnimatePresence>
+
+      <AnimatePresence>
+        {confirmModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+            onClick={() => setConfirmModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 400 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`relative w-full max-w-[380px] rounded-[24px] shadow-[0_24px_64px_rgba(0,0,0,0.35)] border overflow-hidden ${isDark ? "bg-[#161412] border-stone-800" : "bg-white border-stone-200"}`}
+            >
+              <div className="px-7 pt-8 pb-6 flex flex-col items-center text-center">
+                <div className="relative w-[72px] h-[72px] mb-5">
+                  <div className={`absolute inset-0 rounded-full ${confirmModal.type === "danger" ? "bg-rose-100 dark:bg-rose-950/40" : confirmModal.type === "warning" ? "bg-amber-100 dark:bg-amber-950/40" : "bg-blue-100 dark:bg-blue-950/40"}`} />
+                  <div className={`relative w-[72px] h-[72px] rounded-full flex items-center justify-center ${confirmModal.type === "danger" ? "bg-gradient-to-br from-rose-500 to-red-600 shadow-[0_8px_24px_rgba(239,68,68,0.35)]" : confirmModal.type === "warning" ? "bg-gradient-to-br from-amber-500 to-orange-500 shadow-[0_8px_24px_rgba(245,158,11,0.35)]" : "bg-gradient-to-br from-blue-500 to-indigo-600"}`}>
+                    {confirmModal.type === "danger" ? (
+                      <Trash2 className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    ) : confirmModal.type === "warning" ? (
+                      <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    ) : (
+                      <HelpCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    )}
+                  </div>
+                </div>
+                <h3 className={`text-[18px] font-black leading-tight tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`}>
+                  {confirmModal.title}
+                </h3>
+                <p className={`mt-3 text-[13px] leading-relaxed ${isDark ? "text-stone-400" : "text-stone-600"}`}>
+                  {confirmModal.message}
+                </p>
+                <div className="mt-7 flex items-center gap-3 w-full">
+                  <button
+                    onClick={() => setConfirmModal(null)}
+                    className={`flex-1 h-[46px] rounded-xl text-[14px] font-bold border transition-all duration-200 ${isDark ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800 hover:text-white" : "bg-stone-100 border-stone-200 text-stone-700 hover:bg-stone-200"}`}
+                  >
+                    {lang === "ar" ? "إلغاء" : "Cancel"}
+                  </button>
+                  <button
+                    onClick={confirmModal.onConfirm}
+                    className={`flex-1 h-[46px] rounded-xl text-[14px] font-black text-white transition-all duration-200 shadow-lg hover:shadow-xl active:scale-[0.98] ${confirmModal.type === "danger" ? "bg-gradient-to-br from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 shadow-rose-500/25" : confirmModal.type === "warning" ? "bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-amber-500/25" : "bg-gradient-to-br from-blue-500 to-indigo-600"}`}
+                  >
+                    {lang === "ar" ? "تأكيد" : "Confirm"}
+                  </button>
+                </div>
+              </div>
+              <div className={`h-1.5 w-full ${confirmModal.type === "danger" ? "bg-gradient-to-r from-rose-500 to-red-600" : confirmModal.type === "warning" ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-blue-500 to-indigo-600"}`} />
             </motion.div>
           </motion.div>
         )}
@@ -1830,26 +1925,32 @@ export default function Page() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                           <motion.button 
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-bold transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
+                            className="group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-500 disabled:opacity-50 text-stone-950 text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 shadow-[0_4px_12px_rgba(245,158,11,0.25)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none"
                           >
-                            <BookmarkCheck className="w-3.5 h-3.5"/>
-                            <span>{text.borrowBtn}</span>
+                            <div className="w-5 h-5 sm:w-4 sm:h-4 rounded-full bg-stone-950/15 flex items-center justify-center shrink-0">
+                              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
+                            </div>
+                            <span className="hidden xs:inline sm:inline">{text.borrowBtn}</span>
+                            <span className="xs:hidden text-[10px]">{lang === "ar" ? "استعارة" : "Borrow"}</span>
                           </motion.button>
 
                           <motion.button 
-                            whileTap={{ scale: 0.95 }}
+                            whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm ${purchased ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "border-amber-500/40 hover:bg-amber-500/10 text-amber-400"}`}
+                            className={`group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none shadow-sm hover:shadow-md ${purchased ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "border-amber-500/40 bg-stone-900/50 hover:bg-amber-500/10 text-amber-400 hover:border-amber-400 dark:bg-stone-900 dark:hover:bg-amber-500/10"}`}
                           >
-                            <ShoppingBag className="w-3.5 h-3.5"/>
-                            <span>{purchased ? (lang === "ar" ? "شراء مرة أخرى" : "Buy Again") : text.buyBtn}</span>
+                            <div className={`w-5 h-5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 ${purchased ? "bg-emerald-500/20" : "bg-amber-500/20"}`}>
+                              <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
+                            </div>
+                            <span className="hidden xs:inline sm:inline text-center leading-tight">{purchased ? (lang === "ar" ? "شراء مرة أخرى" : "Buy Again") : text.buyBtn}</span>
+                            <span className="xs:hidden text-[9px] leading-tight text-center">{lang === "ar" ? "شراء" : "Buy"}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -2584,14 +2685,32 @@ export default function Page() {
                             </button>
                           )}
 
-                          <div className={`space-y-1 ${f.status === 'PAID' ? 'pr-6' : ''}`}>
-                            <div className={`text-xs font-bold ${isDark ? "text-white" : "text-stone-900"}`}>
-                              Type: <span className="text-amber-400 font-extrabold">{f.txType}</span> | {text.userLabel}: <span className="text-amber-400">{f.user?.name || f.user?.email}</span> | {text.bookLabel}: <span className="text-amber-300">{f.borrowing?.book?.title || f.book?.title || "Book"}</span>
+                          <div className={`flex-1 min-w-0 space-y-3 ${f.status === 'PAID' ? 'pr-7' : ''}`}>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider ${f.txType === 'PURCHASE' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
+                                {f.txType}
+                              </span>
+                              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold ${f.status === 'PAID' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}>
+                                {f.status}
+                              </span>
                             </div>
-                            <div className="text-[11px] text-stone-400 flex flex-wrap gap-3">
-                              <span>{text.amountLabel} <strong className="text-amber-400">{f.amount} EGP</strong></span>
-                              <span>{text.methodLabel}: <strong className="text-orange-400">{f.method || "N/A"}</strong></span>
-                              <span>{text.statusLabel}: <strong className={`font-bold ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-500'}`}>{f.status}</strong></span>
+                            <div className="space-y-1.5">
+                              <div className={`text-[11px] ${isDark ? "text-stone-400" : "text-stone-500"}`}>{text.userLabel}: <span className={`font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</span></div>
+                              <h4 className={`text-[13px] sm:text-sm font-bold leading-snug line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
+                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{lang === "ar" ? "المبلغ" : "Amount"}</div>
+                                <div className="text-xs sm:text-[13px] font-black text-amber-500 mt-0.5">{f.amount} EGP</div>
+                              </div>
+                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
+                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{text.methodLabel}</div>
+                                <div className="text-xs sm:text-[13px] font-bold text-orange-400 mt-0.5 truncate">{f.method || "N/A"}</div>
+                              </div>
+                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
+                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{text.statusLabel}</div>
+                                <div className={`text-xs sm:text-[13px] font-black mt-0.5 ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{f.status}</div>
+                              </div>
                             </div>
                           </div>
                           {f.status === 'PENDING' && (
@@ -3206,7 +3325,7 @@ export default function Page() {
                     {isProcessingBuy 
                       ? text.redirectingPay 
                       : buyPaymentMethod === "CASH" 
-                      ? "Submit Cash Purchase" 
+                      ? text.submitCashPurchase 
                       : text.confirmBuyBtn}
                   </button>
                 </div>
