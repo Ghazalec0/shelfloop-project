@@ -38,19 +38,19 @@ const getCover = (book: any) => {
 
 const aiQuotes = [
   {
-    title1: "Welcome To Your Digital",
-    title2: "Reading Sanctuary.",
-    desc: "Explore a vast collection of knowledge, developer guides, and research materials thoughtfully organized for modern learners."
+    title1: { en: "Welcome To Your Digital", ar: "مرحبا بك في مساحتك" },
+    title2: { en: "Reading Sanctuary.", ar: "الرقمية للقراءة." },
+    desc: { en: "Explore a vast collection of knowledge, developer guides, and research materials thoughtfully organized for modern learners.", ar: "استكشف مجموعة واسعة من المعرفة وأدلة المطورين والمواد البحثية المنظمة بعناية للمتعلمين المعاصرين." }
   },
   {
-    title1: "Discover Thousands Of",
-    title2: "Books & Resources.",
-    desc: "Step into an endlessly inspiring library crafted to expand your mind, sharpen your skill set, and guide your journey."
+    title1: { en: "Discover Thousands Of", ar: "اكتشف آلاف" },
+    title2: { en: "Books & Resources.", ar: "الكتب والموارد." },
+    desc: { en: "Step into an endlessly inspiring library crafted to expand your mind, sharpen your skill set, and guide your journey.", ar: "ادخل إلى مكتبة ملهمة بلا حدود مصممة لتوسيع آفاقك وصقل مهاراتك." }
   },
   {
-    title1: "Read, Learn & Build",
-    title2: "Without Boundaries.",
-    desc: "Seamless borrowing, intelligent AI assistant recommendations, and structured cataloging built for every avid reader."
+    title1: { en: "Read, Learn & Build", ar: "اقرأ، تعلم، واصنع" },
+    title2: { en: "Without Boundaries.", ar: "بلا حدود." },
+    desc: { en: "Seamless borrowing, intelligent AI assistant recommendations, and structured cataloging built for every avid reader.", ar: "استعارة سلسة، توصيات ذكية من المساعد، وفهرسة منظمة لكل قارئ شغوف." }
   }
 ];
 
@@ -86,8 +86,8 @@ const t = {
     favoritesTab: "Favorite Books",
     finesTab: "Fines & Payments",
     contactTab: "Contact Us",
-    aiTab: "Advisor AI",
-    adminTab: "Admin Dashboard",
+    aiTab: "Smart Advisor",
+    adminTab: "Control Panel",
     borrowedTitle: "My Borrowed Library",
     borrowedDesc: "Manage your active borrowings, due dates, and returns seamlessly",
     purchasesTitle: "My Permanent Library Collection",
@@ -112,7 +112,7 @@ const t = {
     daysLateLabel: "Days Late:",
     amountLabel: "Amount:",
     paymentMethodLabel: "Select Payment Method",
-    cashMethod: "Cash at Library",
+    cashMethod: "Pay at Library",
     cardMethod: "Credit / Debit Card",
     walletMethod: "Mobile Wallet",
     payConfirm: "Proceed to Checkout",
@@ -150,7 +150,7 @@ const t = {
     manageBooks: "Manage Library Books",
     deleteBook: "Delete",
     editBook: "Edit",
-    aiTitle: "Advisor AI",
+    aiTitle: "Smart Advisor",
     aiDesc: "Chat with our intelligent assistant to get instant book recommendations and insights.",
     aiPlaceholder: "Ask me about any book or programming topic...",
     aiSend: "Send",
@@ -181,10 +181,17 @@ const t = {
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     security: "Security",
-    allRights: "All rights reserved."
+    allRights: "All rights reserved.",
+    next: "Next",
+    prev: "Previous",
+    page: "Page",
+    of: "of",
+    zoomIn: "Zoom In",
+    zoomOut: "Zoom Out",
+    resetZoom: "Reset"
   },
   ar: {
-    brand: "شيلف لُوب",
+    brand: "شيلف لوب",
     login: "تسجيل الدخول",
     register: "إنشاء حساب جديد",
     forgot: "نسيت كلمة المرور؟",
@@ -200,8 +207,8 @@ const t = {
     favoritesTab: "العناصر المفضلة",
     finesTab: "الغرامات والمدفوعات",
     contactTab: "تواصل معنا",
-    aiTab: "Advisor AI",
-    adminTab: "Admin Dashboard",
+    aiTab: "المستشار الذكي",
+    adminTab: "لوحة التحكم",
     borrowedTitle: "مكتبتي المستعارة",
     borrowedDesc: "إدارة الكتب التي تستعيرها ومتابعة مواعيد الإرجاع بسهولة",
     purchasesTitle: "مكتبتك المملوكة نهائياً",
@@ -259,14 +266,14 @@ const t = {
     updateBook: "تحديث الكتاب",
     noBorrows: "لم تقم باستعارة أي كتب حتى الآن.",
     exploreBtn: "تصفح الكتالوج الآن",
-    borrowRate: "مؤشر معدل الاستعارية",
+    borrowRate: "مؤشر معدل الاستعارة",
     categoryDist: "التوزيع الفعلي للأقسام والمجالات",
     manageBooks: "إدارة وحذف كتب المكتبة",
     deleteBook: "حذف نهائي",
     editBook: "تعديل",
-    aiTitle: "Advisor AI",
+    aiTitle: "المستشار الذكي",
     aiDesc: "تحدث مع المساعد الذكي للحصول على اقتراحات فورية للكتب والمراجع.",
-    aiPlaceholder: "اسأل عن أي كتاب أو موضوع برمجى...",
+    aiPlaceholder: "اسأل عن أي كتاب أو موضوع برمجي...",
     aiSend: "إرسال",
     cashApprovalsTitle: "مراجعة الغرامات والمدفوعات المعلقة",
     approveBtn: "قبول الدفع",
@@ -295,7 +302,14 @@ const t = {
     privacyPolicy: "سياسة الخصوصية",
     termsOfService: "شروط الخدمة",
     security: "الأمان",
-    allRights: "جميع الحقوق محفوظة."
+    allRights: "جميع الحقوق محفوظة.",
+    next: "التالي",
+    prev: "السابق",
+    page: "صفحة",
+    of: "من",
+    zoomIn: "تكبير",
+    zoomOut: "تصغير",
+    resetZoom: "إعادة الضبط"
   }
 };
 
@@ -303,6 +317,9 @@ export default function Page() {
   const [isMounted, setIsMounted] = useState(false);
   const [lang, setLang] = useState<"en" | "ar">("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [zoom, setZoom] = useState<number>(100);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const BOOKS_PER_PAGE = 8;
   const [user, setUser] = useState<any>(null);
   const [books, setBooks] = useState<any[]>([]);
   const [borrows, setBorrows] = useState<any[]>([]);
@@ -371,6 +388,7 @@ export default function Page() {
   const [coverFile, setCoverFile] = useState<File | null>(null);
 
   const text = t[lang];
+  const isDark = theme === "dark";
 
   useEffect(() => {
     if (msg) {
@@ -388,7 +406,32 @@ export default function Page() {
   };
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("shelfloop_theme", newTheme);
+  };
+
+  
+
+  useEffect(() => {
+    localStorage.setItem("shelfloop_lang", lang);
+  }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem("shelfloop_theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem("shelfloop_zoom", String(zoom));
+    const root = document.documentElement;
+    (root.style as any).zoom = `${zoom}%`;
+  }, [zoom]);
+
+  const changeZoom = (delta: number) => {
+    setZoom((prev) => {
+      const next = Math.min(125, Math.max(75, prev + delta));
+      return next;
+    });
   };
 
   const hardLogout = () => {
@@ -414,7 +457,14 @@ export default function Page() {
 
   useEffect(() => {
     setIsMounted(true);
-    document.documentElement.dir = "ltr";
+    const savedLang = localStorage.getItem("shelfloop_lang") as "en" | "ar" | null;
+    const savedTheme = localStorage.getItem("shelfloop_theme") as "dark" | "light" | null;
+    const savedZoom = localStorage.getItem("shelfloop_zoom");
+    if (savedLang) setLang(savedLang);
+    if (savedTheme) setTheme(savedTheme);
+    if (savedZoom) setZoom(parseInt(savedZoom));
+    document.documentElement.dir = savedLang === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = savedLang || "en";
 
     const quoteInterval = setInterval(() => {
       setAiQuoteIndex((prev) => (prev + 1) % aiQuotes.length);
@@ -548,11 +598,28 @@ export default function Page() {
   };
 
   const toggleFavorite = async (bookId: string) => {
+    const wasFav = favorites.some((b: any) => getBookId(b) === bookId);
+    const targetBook = books.find((b: any) => getBookId(b) === bookId) || favorites.find((b: any) => getBookId(b) === bookId);
+    if (wasFav) {
+      setFavorites((prev: any[]) => prev.filter((b: any) => getBookId(b) !== bookId));
+    } else if (targetBook) {
+      setFavorites((prev: any[]) => [...prev, targetBook]);
+    }
     try {
       await api.post(`/favorites/${bookId}`);
-      fetchAll();
     } catch (err: any) {
+      if (wasFav && targetBook) {
+        setFavorites((prev: any[]) => [...prev, targetBook]);
+      } else {
+        setFavorites((prev: any[]) => prev.filter((b: any) => getBookId(b) !== bookId));
+      }
       setMsg({ text: errMsg(err), type: "error" });
+    } finally {
+      try {
+        const fav = await api.get("/favorites/my");
+        const list = unwrap(fav);
+        setFavorites(Array.isArray(list) ? list : list?.items || []);
+      } catch {}
     }
   };
 
@@ -1024,10 +1091,22 @@ export default function Page() {
   const grandTotalPurchases = purchases.reduce((sum, p) => sum + (p.price || 0), 0);
 
   const filtered = books.filter((b: any) => {
+
     const matchSearch = ((b.title || "") + (b.author || "")).toLowerCase().includes(search.toLowerCase());
     const matchCat = selectedCategory === "All" || (b.category || "Programming") === selectedCategory;
     return matchSearch && matchCat;
   });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / BOOKS_PER_PAGE));
+  const paginatedBooks = filtered.slice((currentPage - 1) * BOOKS_PER_PAGE, currentPage * BOOKS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages]);
+
 
   const filteredFines = fines.filter((f: any) => {
     if (dismissedFines.includes(f.id)) return false;
@@ -1048,7 +1127,7 @@ export default function Page() {
     return true;
   });
 
-  const isDark = theme === "dark";
+  
 
   if (!isMounted) {
     return null;
@@ -1120,7 +1199,7 @@ export default function Page() {
           </button>
         </div>
 
-        <div className="w-full max-w-5xl grid lg:grid-cols-12 rounded-3xl border border-amber-500/20 bg-stone-950/60 backdrop-blur-2xl shadow-[0_0_50px_rgba(245,158,11,0.08)] overflow-hidden relative z-10">
+        <div className={`w-full max-w-5xl grid lg:grid-cols-12 rounded-3xl border backdrop-blur-2xl shadow-[0_0_50px_rgba(245,158,11,0.08)] overflow-hidden relative z-10 ${isDark ? "border-amber-500/20 bg-stone-950/60" : "border-amber-200 bg-white/80"}`}>
           <div className="lg:col-span-7 p-8 lg:p-14 flex flex-col justify-between bg-gradient-to-br from-amber-950/40 via-stone-950/80 to-stone-900/60 border-b lg:border-b-0 lg:border-r border-amber-500/10 relative z-10">
             <div>
               <div className="flex items-center gap-3">
@@ -1146,13 +1225,13 @@ export default function Page() {
                     className="space-y-4"
                   >
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-                      {currentQuote.title1} <br />
+                      {currentQuote.title1[lang]} <br />
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500">
-                        {currentQuote.title2}
+                        {currentQuote.title2[lang]}
                       </span>
                     </h1>
                     <p className="text-xs sm:text-sm leading-relaxed text-stone-300 max-w-md font-normal">
-                      {currentQuote.desc}
+                      {currentQuote.desc[lang]}
                     </p>
                   </motion.div>
                 </AnimatePresence>
@@ -1205,7 +1284,7 @@ export default function Page() {
                     onChange={e => setForm({ ...form, name: e.target.value })} 
                     placeholder="Full Name" 
                     required 
-                    className="w-full h-11 rounded-xl bg-stone-900/90 border border-stone-800 px-4 text-sm text-white focus:outline-none focus:border-amber-500 transition shadow-inner" 
+                    className={`w-full h-11 rounded-xl border px-4 text-sm focus:outline-none focus:border-amber-500 transition shadow-inner ${isDark ? "bg-stone-900/90 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} 
                   />
                 </div>
               )}
@@ -1219,7 +1298,7 @@ export default function Page() {
                     type="email" 
                     placeholder="name@example.com" 
                     required 
-                    className="w-full h-11 rounded-xl bg-stone-900/90 border border-stone-800 px-4 text-sm text-white focus:outline-none focus:border-amber-500 transition shadow-inner" 
+                    className={`w-full h-11 rounded-xl border px-4 text-sm focus:outline-none focus:border-amber-500 transition shadow-inner ${isDark ? "bg-stone-900/90 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} 
                   />
                 </div>
               )}
@@ -1233,7 +1312,7 @@ export default function Page() {
                     type="password" 
                     placeholder="••••••••" 
                     required 
-                    className="w-full h-11 rounded-xl bg-stone-900/90 border border-stone-800 px-4 text-sm text-white focus:outline-none focus:border-amber-500 transition shadow-inner" 
+                    className={`w-full h-11 rounded-xl border px-4 text-sm focus:outline-none focus:border-amber-500 transition shadow-inner ${isDark ? "bg-stone-900/90 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} 
                   />
                 </div>
               )}
@@ -1635,7 +1714,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
               {filtered.map((book: any) => {
                 const av = getAvail(book);
                 const tot = getTotal(book);
@@ -1645,8 +1724,8 @@ export default function Page() {
                 const pendingPurchase = isPurchasePending(getBookId(book));
 
                 return (
-                  <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-3xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
-                    <div className="aspect-[3/4] relative overflow-hidden bg-stone-950">
+                  <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-2xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
+                    <div className="aspect-[4/5] relative overflow-hidden bg-stone-950">
                       <img key={`${getBookId(book)}-${book.coverUrl}`}
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
@@ -1719,24 +1798,22 @@ export default function Page() {
                             whileTap={{ scale: 0.95 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
-                            disabled={isOutOfStock || purchased || pendingPurchase} 
+                            disabled={isOutOfStock} 
                             className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-bold transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
                           >
                             <BookmarkCheck className="w-3.5 h-3.5"/>
                             <span>{text.borrowBtn}</span>
                           </motion.button>
 
-                          {!purchased && !pendingPurchase && (
-                            <motion.button 
-                              whileTap={{ scale: 0.95 }}
-                              whileHover={{ scale: 1.02 }}
-                              onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                              className="w-full py-2.5 px-3 rounded-xl border border-amber-500/40 hover:bg-amber-500/10 text-amber-400 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
-                            >
-                              <ShoppingBag className="w-3.5 h-3.5"/>
-                              <span>{text.buyBtn}</span>
-                            </motion.button>
-                          )}
+                          <motion.button 
+                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: 1.02 }}
+                            onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
+                            className={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm ${purchased ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "border-amber-500/40 hover:bg-amber-500/10 text-amber-400"}`}
+                          >
+                            <ShoppingBag className="w-3.5 h-3.5"/>
+                            <span>{purchased ? (lang === "ar" ? "شراء مرة أخرى" : "Buy Again") : text.buyBtn}</span>
+                          </motion.button>
                         </div>
                       </div>
                     </div>
@@ -1744,6 +1821,42 @@ export default function Page() {
                 );
               })}
             </div>
+
+            {totalPages > 1 && (
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+                <div className="text-xs text-stone-400 font-medium">
+                  {text.page} {currentPage} {text.of} {totalPages} - {filtered.length} {lang === "ar" ? "كتاب" : "books"}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${currentPage === 1 ? "opacity-40 cursor-not-allowed border-stone-800 text-stone-500" : "border-amber-500/30 bg-stone-900 text-amber-400 hover:bg-stone-800"}`}
+                  >
+                    {text.prev}
+                  </button>
+                  <div className="flex items-center gap-1.5">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2)).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold border transition ${currentPage === pageNum ? "bg-amber-500 border-amber-500 text-stone-950 shadow-lg shadow-amber-500/20" : "border-stone-800 bg-stone-900 text-stone-400 hover:border-amber-500/30 hover:text-amber-400"}`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${currentPage === totalPages ? "opacity-40 cursor-not-allowed border-stone-800 text-stone-500" : "border-amber-500/30 bg-stone-900 text-amber-400 hover:bg-stone-800"}`}
+                  >
+                    {text.next}
+                  </button>
+                </div>
+              </div>
+            )}
+
           </>
         )}
 
@@ -1773,14 +1886,14 @@ export default function Page() {
                 </button>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
                 {favorites.map((book: any) => {
                   const av = getAvail(book);
                   const tot = getTotal(book);
 
                   return (
-                    <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-3xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
-                      <div className="aspect-[3/4] relative overflow-hidden bg-stone-950">
+                    <motion.div key={getBookId(book)} whileHover={{ y: -6 }} transition={{ duration: 0.3 }} className={`group relative rounded-2xl border overflow-hidden flex flex-col justify-between hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 ${isDark ? "bg-stone-900/40 border-stone-800/80 backdrop-blur-sm" : "bg-white border-amber-200 shadow-sm"}`}>
+                      <div className="aspect-[4/5] relative overflow-hidden bg-stone-950">
                         <img key={`${getBookId(book)}-${book.coverUrl}`}
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
