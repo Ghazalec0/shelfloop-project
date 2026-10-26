@@ -13,6 +13,7 @@ import { AiService } from './ai/ai.service';
 import { AiController } from './ai/ai.controller';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PurchasesModule } from './purchases/purchases.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { PurchasesModule } from './purchases/purchases.module';
     BorrowingModule,
     FinesModule,
     FavoritesModule,
-    PurchasesModule
+    PurchasesModule,
+    CloudinaryModule
   ],
   controllers: [AiController],
   providers: [AiService],
