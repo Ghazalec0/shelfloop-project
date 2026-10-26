@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException, Logger, OnModuleDestroy } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -8,16 +8,142 @@ import { Role } from '@prisma/client';
 import { MailService } from '../mail/mail.service';
 import Redis from 'ioredis';
 
+type RegistrationData = {
+  name: string;
+  email: string;
+  password: string;
+  role: Role;
+  otp: string;
+  createdAt: number;
+};
+
 @Injectable()
-export class AuthService {
-  private redis: Redis;
+export class AuthService implements OnModuleDestroy {
+  private redis: Redis | null = null;
+  private readonly logger = new Logger(AuthService.name);
+  private memoryStore = new Map<string, { data: string; expiresAt: number }>();
+  private redisEnabled = false;
 
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private mailService: MailService,
   ) {
-    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.initRedis();
+    setInterval(() => this.cleanMemoryStore(), 60 * 1000);
+  }
+
+  private initRedis() {
+    const redisUrl = process.env.REDIS_URL;
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isLocalhost = !redisUrl || redisUrl.includes('localhost') || redisUrl.includes('127.0.0.1');
+
+    if (isProduction && isLocalhost) {
+      this.logger.warn('REDIS_URL is localhost in production - using in-memory fallback. Please set Upstash Redis URL in Vercel env.');
+      this.redisEnabled = false;
+      return;
+    }
+
+    if (!redisUrl) {
+      this.logger.warn('REDIS_URL not set - using in-memory fallback');
+      this.redisEnabled = false;
+      return;
+    }
+
+    try {
+      this.redis = new Redis(redisUrl, {
+        maxRetriesPerRequest: 3,
+        enableReadyCheck: false,
+        enableOfflineQueue: false,
+        retryStrategy: (times) => {
+          if (times > 3) {
+            this.logger.error('Redis retry failed, switching to memory fallback');
+            return null;
+          }
+          return Math.min(times * 200, 1000);
+        },
+        lazyConnect: true,
+        connectTimeout: 3000,
+        commandTimeout: 3000,
+      });
+
+      this.redis.on('connect', () => {
+        this.logger.log('Redis connected successfully');
+        this.redisEnabled = true;
+      });
+
+      this.redis.on('error', (err) => {
+        this.logger.error(`Redis error: ${err.message} - using memory fallback`);
+        this.redisEnabled = false;
+      });
+
+      this.redis.on('close', () => {
+        this.redisEnabled = false;
+      });
+
+      this.redis.connect().catch((err) => {
+        this.logger.error(`Redis connect failed: ${err.message} - using memory fallback`);
+        this.redisEnabled = false;
+      });
+    } catch (err: any) {
+      this.logger.error(`Redis init failed: ${err.message} - using memory fallback`);
+      this.redisEnabled = false;
+      this.redis = null;
+    }
+  }
+
+  private cleanMemoryStore() {
+    const now = Date.now();
+    for (const [key, value] of this.memoryStore.entries()) {
+      if (value.expiresAt < now) this.memoryStore.delete(key);
+    }
+  }
+
+  private async safeSetEx(key: string, ttlSeconds: number, value: string): Promise<void> {
+    if (this.redisEnabled && this.redis) {
+      try {
+        await this.redis.setex(key, ttlSeconds, value);
+        return;
+      } catch (e: any) {
+        this.logger.warn(`Redis setex failed, using memory: ${e.message}`);
+      }
+    }
+    this.memoryStore.set(key, { data: value, expiresAt: Date.now() + ttlSeconds * 1000 });
+  }
+
+  private async safeGet(key: string): Promise<string | null> {
+    if (this.redisEnabled && this.redis) {
+      try {
+        const val = await this.redis.get(key);
+        if (val !== null) return val;
+      } catch (e: any) {
+        this.logger.warn(`Redis get failed, trying memory: ${e.message}`);
+      }
+    }
+    const mem = this.memoryStore.get(key);
+    if (!mem) return null;
+    if (mem.expiresAt < Date.now()) {
+      this.memoryStore.delete(key);
+      return null;
+    }
+    return mem.data;
+  }
+
+  private async safeDel(key: string): Promise<void> {
+    if (this.redisEnabled && this.redis) {
+      try {
+        await this.redis.del(key);
+      } catch {}
+    }
+    this.memoryStore.delete(key);
+  }
+
+  async onModuleDestroy() {
+    if (this.redis) {
+      try {
+        await this.redis.quit();
+      } catch {}
+    }
   }
 
   async register(dto: CreateUserDto) {
@@ -27,21 +153,23 @@ export class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const registrationData = {
+    const registrationData: RegistrationData = {
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
       role: dto.role || Role.USER,
       otp,
+      createdAt: Date.now(),
     };
 
-    await this.redis.setex(
-      `register:${dto.email}`,
-      300,
-      JSON.stringify(registrationData),
-    );
+    await this.safeSetEx(`register:${dto.email}`, 300, JSON.stringify(registrationData));
 
-    await this.mailService.sendOtp(dto.email, otp);
+    try {
+      await this.mailService.sendOtp(dto.email, otp);
+    } catch (mailErr: any) {
+      this.logger.error(`Failed to send OTP email: ${mailErr.message}`);
+      throw new BadRequestException('Failed to send OTP email, please try again');
+    }
 
     return {
       message: 'OTP sent to your email for registration verification',
@@ -50,12 +178,12 @@ export class AuthService {
   }
 
   async verifyRegister(email: string, otp: string) {
-    const dataStr = await this.redis.get(`register:${email}`);
+    const dataStr = await this.safeGet(`register:${email}`);
     if (!dataStr) {
-      throw new BadRequestException('OTP expired or registration session not found');
+      throw new BadRequestException('OTP expired or registration session not found. Please register again.');
     }
 
-    const registrationData = JSON.parse(dataStr);
+    const registrationData = JSON.parse(dataStr) as RegistrationData;
 
     if (registrationData.otp !== otp) {
       throw new BadRequestException('Invalid OTP');
@@ -63,7 +191,7 @@ export class AuthService {
 
     const existing = await this.usersService.findByEmail(email);
     if (existing) {
-      await this.redis.del(`register:${email}`);
+      await this.safeDel(`register:${email}`);
       throw new ConflictException('Email already exists');
     }
 
@@ -74,7 +202,7 @@ export class AuthService {
       role: registrationData.role,
     });
 
-    await this.redis.del(`register:${email}`);
+    await this.safeDel(`register:${email}`);
 
     return {
       message: 'Account created successfully. Please sign in.',
@@ -88,11 +216,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -115,10 +239,7 @@ export class AuthService {
 
     await this.mailService.sendOtp(email, otp);
 
-    return {
-      message: 'OTP sent to your email',
-      email,
-    };
+    return { message: 'OTP sent to your email', email };
   }
 
   async verifyOtp(email: string, otp: string) {
@@ -131,9 +252,7 @@ export class AuthService {
 
     if (user.otpCode !== otp) throw new BadRequestException('Invalid OTP');
 
-    await this.usersService.updateByEmail(email, {
-      otpVerified: true,
-    });
+    await this.usersService.updateByEmail(email, { otpVerified: true });
 
     return { message: 'OTP verified successfully, you can now reset password' };
   }
