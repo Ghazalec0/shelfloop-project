@@ -1725,7 +1725,7 @@ export default function Page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto overscroll-contain"
+            className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto"
             onClick={() => setConfirmModal(null)}
           >
             <motion.div
@@ -2973,8 +2973,8 @@ export default function Page() {
 
       <AnimatePresence>
         {editingBook && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.editBookTitle}</h3>
                 <button onClick={() => setEditingBook(null)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
@@ -3292,8 +3292,8 @@ export default function Page() {
 
       <AnimatePresence>
         {hint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(hint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBorrowTitle}: "{hint.title}"</h3>
               
@@ -3315,8 +3315,8 @@ export default function Page() {
 
       <AnimatePresence>
         {buyHint && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{buyHint.title}"</h3>
               
