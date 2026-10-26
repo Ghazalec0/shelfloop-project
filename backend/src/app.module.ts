@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BooksModule } from './books/books.module';
@@ -31,9 +33,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     FinesModule,
     FavoritesModule,
     PurchasesModule,
-    CloudinaryModule
+    CloudinaryModule,
   ],
-  controllers: [AiController],
-  providers: [AiService],
+  controllers: [AppController, AiController],
+  providers: [AppService, AiService],
 })
 export class AppModule {}
