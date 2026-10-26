@@ -444,8 +444,6 @@ export default function Page() {
     localStorage.setItem("shelfloop_theme", newTheme);
   };
 
-  
-
   useEffect(() => {
     localStorage.setItem("shelfloop_lang", lang);
   }, [lang]);
@@ -1144,7 +1142,6 @@ export default function Page() {
   const grandTotalPurchases = purchases.reduce((sum, p) => sum + (p.price || 0), 0);
 
   const filtered = books.filter((b: any) => {
-
     const matchSearch = ((b.title || "") + (b.author || "")).toLowerCase().includes(search.toLowerCase());
     const matchCat = selectedCategory === "All" || (b.category || "Programming") === selectedCategory;
     return matchSearch && matchCat;
@@ -1165,7 +1162,6 @@ export default function Page() {
     setCurrentPage(1);
   }, [BOOKS_PER_PAGE]);
 
-
   const filteredFines = fines.filter((f: any) => {
     if (dismissedFines.includes(f.id)) return false;
     if (fineFilter === "PENDING") return f.status === "PENDING";
@@ -1184,8 +1180,6 @@ export default function Page() {
     if (adminStatusFilter !== "ALL" && f.status !== adminStatusFilter) return false;
     return true;
   });
-
-  
 
   if (!isMounted) {
     return null;
@@ -1661,7 +1655,7 @@ export default function Page() {
         </AnimatePresence>
       </header>
 
-            <AnimatePresence>
+      <AnimatePresence>
         {msg && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -1682,11 +1676,6 @@ export default function Page() {
                 <div className="relative w-[88px] h-[88px] mb-5">
                   <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-100 dark:bg-rose-950/50" : "bg-orange-100 dark:bg-amber-950/40"}`} />
                   <div className={`absolute inset-0 rounded-full ${msg.type === "error" ? "bg-rose-50" : "bg-amber-50"} scale-[1.18] -z-10`} />
-                  <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400" />
-                  <div className="absolute -top-2 left-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
-                  <div className="absolute top-1 -left-1 w-2 h-2 rounded-full bg-emerald-300" />
-                  <div className="absolute -bottom-1 right-2 w-1.5 h-1.5 rounded-full bg-orange-300" />
-                  <div className="absolute bottom-0 left-0 w-2 h-2 rounded-full bg-violet-300" />
                   <div className={`relative w-[88px] h-[88px] rounded-full flex items-center justify-center shadow-inner ${msg.type === "error" ? "bg-[#ef4444]" : "bg-gradient-to-br from-amber-500 to-orange-500 shadow-[0_8px_24px_rgba(255,138,76,0.4)]"}`}>
                     {msg.type === "error" ? (
                       <X className="w-10 h-10 text-white" strokeWidth={3} />
@@ -1718,7 +1707,7 @@ export default function Page() {
             </motion.div>
           </motion.div>
         )}
-            </AnimatePresence>
+      </AnimatePresence>
 
       <AnimatePresence>
         {confirmModal && (
@@ -1928,14 +1917,14 @@ export default function Page() {
                       )}
                     </div>
 
-                    <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(book.category || "Programming", lang)}</span>
-                        <h3 className={`font-bold text-base mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{book.title}</h3>
-                        <p className="text-xs text-stone-400 mt-1">{book.author}</p>
+                        <h3 className={`font-bold text-sm sm:text-base mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{book.title}</h3>
+                        <p className="text-[11px] sm:text-xs text-stone-400 mt-0.5">{book.author}</p>
                       </div>
 
-                      <div className="mt-6 flex flex-col gap-3 border-t border-stone-800/60 pt-4">
+                      <div className="mt-4 sm:mt-6 flex flex-col gap-3 border-t border-stone-800/60 pt-3 sm:pt-4">
                         <div className="flex items-center justify-between">
                           <div className="flex gap-1">
                             {[1, 2, 3, 4, 5].map((i) => (
@@ -1944,32 +1933,33 @@ export default function Page() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+                        {/* تحسين أزرار الشراء والاستعارة لتكون احترافية ومتجاوبة */}
+                        <div className="grid grid-cols-2 gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-500 disabled:opacity-50 text-stone-950 text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 shadow-[0_4px_12px_rgba(245,158,11,0.25)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none"
+                            className="w-full py-2.5 px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-xs font-black transition shadow-md flex items-center justify-center gap-1.5"
                           >
-                            <div className="w-5 h-5 sm:w-4 sm:h-4 rounded-full bg-stone-950/15 flex items-center justify-center shrink-0">
-                              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
-                            </div>
-                            <span className="hidden xs:inline sm:inline">{text.borrowBtn}</span>
-                            <span className="xs:hidden text-[10px]">{lang === "ar" ? "استعارة" : "Borrow"}</span>
+                            <BookOpen className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none shadow-sm hover:shadow-md ${purchased ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "border-amber-500/40 bg-stone-900/50 hover:bg-amber-500/10 text-amber-400 hover:border-amber-400 dark:bg-stone-900 dark:hover:bg-amber-500/10"}`}
+                            className={`w-full py-2.5 px-2 rounded-xl border text-xs font-black transition shadow-sm flex items-center justify-center gap-1.5 truncate ${
+                              purchased 
+                                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" 
+                                : isDark 
+                                ? "border-amber-500/30 bg-stone-900 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400" 
+                                : "border-amber-300 bg-white text-amber-800 hover:bg-amber-50"
+                            }`}
                           >
-                            <div className={`w-5 h-5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 ${purchased ? "bg-emerald-500/20" : "bg-amber-500/20"}`}>
-                              <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
-                            </div>
-                            <span className="hidden xs:inline sm:inline text-center leading-tight">{purchased ? (lang === "ar" ? "شراء مرة أخرى" : "Buy Again") : text.buyBtn}</span>
-                            <span className="xs:hidden text-[9px] leading-tight text-center">{lang === "ar" ? "شراء" : "Buy"}</span>
+                            <ShoppingBag className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -1979,9 +1969,8 @@ export default function Page() {
               })}
             </div>
 
-                                    {totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="mt-8 sm:mt-12 flex flex-col items-center gap-3 sm:gap-5 pb-6 sm:pb-0">
-                {/* Mobile: compact scrollable pagination */}
                 <div className="w-full flex justify-center">
                   <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 rounded-2xl p-2 sm:p-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 max-w-full overflow-x-auto scrollbar-hide">
                     <button
@@ -2034,14 +2023,6 @@ export default function Page() {
                   </span>
                   <span className="hidden sm:block text-stone-400">•</span>
                   <span className="text-stone-500 font-medium text-[11px] sm:text-xs">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "/page"}</span>
-                  <div className="flex sm:hidden items-center gap-2 mt-1">
-                    <button onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400" : "border-stone-200 bg-white text-stone-600 shadow-sm"} `}>{text.prev}</button>
-                    <button onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400" : "border-stone-200 bg-white text-stone-600 shadow-sm"} `}>{text.next}</button>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-2 ml-3">
-                    <button onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.prev}</button>
-                    <button onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.next}</button>
-                  </div>
                 </div>
               </div>
             )}
@@ -2179,7 +2160,7 @@ export default function Page() {
                             </div>
                             {isLate && (
                               <div className="text-[11px] font-bold text-rose-400 bg-rose-950/80 border border-rose-800/60 px-3 py-1 rounded-xl w-fit">
-                                ⚠ Overdue by {diffDays} days! Fine: {currentFine} EGP
+                                Overdue by {diffDays} days! Fine: {currentFine} EGP
                               </div>
                             )}
                           </div>
@@ -2705,7 +2686,6 @@ export default function Page() {
                           )}
 
                           <div className={`flex-1 min-w-0 ${f.status === 'PAID' ? 'pr-8' : ''}`}>
-                            {/* Top row: Type badges + User */}
                             <div className="flex items-start justify-between gap-3 mb-3">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
@@ -2717,7 +2697,6 @@ export default function Page() {
                               </div>
                             </div>
                             
-                            {/* User and Book - stacked vertically on mobile */}
                             <div className="space-y-2.5">
                               <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full bg-stone-800 flex items-center justify-center shrink-0">
@@ -2735,7 +2714,6 @@ export default function Page() {
                               </div>
                             </div>
 
-                            {/* Amount / Method / Status - vertical stack on mobile, grid on desktop */}
                             <div className="mt-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-2.5">
                               <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
                                 <div className="flex items-center gap-2">
