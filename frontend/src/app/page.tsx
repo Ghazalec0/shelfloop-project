@@ -1777,7 +1777,7 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 pb-24 sm:pb-10">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-10 pb-[100px] sm:pb-10">
         {activeTab === "catalog" && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
@@ -1865,7 +1865,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
               {paginatedBooks.map((book: any) => {
                 const av = getAvail(book);
                 const tot = getTotal(book);
@@ -1950,26 +1950,20 @@ export default function Page() {
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-500 disabled:opacity-50 text-stone-950 text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 shadow-[0_4px_12px_rgba(245,158,11,0.25)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none"
+                            className="group/btn relative w-full py-3 px-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-500 disabled:opacity-50 text-stone-950 text-[12px] font-black tracking-wide transition-all duration-200 shadow-[0_4px_12px_rgba(245,158,11,0.25)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)] flex items-center justify-center gap-1.5"
                           >
-                            <div className="w-5 h-5 sm:w-4 sm:h-4 rounded-full bg-stone-950/15 flex items-center justify-center shrink-0">
-                              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
-                            </div>
-                            <span className="hidden xs:inline sm:inline">{text.borrowBtn}</span>
-                            <span className="xs:hidden text-[10px]">{lang === "ar" ? "استعارة" : "Borrow"}</span>
+                            <BookOpen className="w-4 h-4 shrink-0" strokeWidth={2.5} />
+                            <span>{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`group/btn relative w-full py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-black tracking-wide transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 leading-none shadow-sm hover:shadow-md ${purchased ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "border-amber-500/40 bg-stone-900/50 hover:bg-amber-500/10 text-amber-400 hover:border-amber-400 dark:bg-stone-900 dark:hover:bg-amber-500/10"}`}
+                            className={`group/btn relative w-full py-3 px-3 rounded-2xl border text-[12px] font-black tracking-wide transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md ${purchased ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15" : "border-amber-500/30 bg-stone-900/50 hover:bg-amber-500/10 text-amber-400 hover:border-amber-400"}`}
                           >
-                            <div className={`w-5 h-5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 ${purchased ? "bg-emerald-500/20" : "bg-amber-500/20"}`}>
-                              <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2.5} />
-                            </div>
-                            <span className="hidden xs:inline sm:inline text-center leading-tight">{purchased ? (lang === "ar" ? "شراء مرة أخرى" : "Buy Again") : text.buyBtn}</span>
-                            <span className="xs:hidden text-[9px] leading-tight text-center">{lang === "ar" ? "شراء" : "Buy"}</span>
+                            <ShoppingBag className="w-4 h-4 shrink-0" strokeWidth={2.5} />
+                            <span className="truncate">{purchased ? (lang === "ar" ? "مرة أخرى" : "Again") : text.buyBtn}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -2074,7 +2068,7 @@ export default function Page() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
                 {favorites.map((book: any) => {
                   const av = getAvail(book);
                   const tot = getTotal(book);
@@ -2575,19 +2569,19 @@ export default function Page() {
                     <CreditCard className="w-4 h-4 text-amber-500"/> {text.cashApprovalsTitle}
                   </h4>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <div className="relative w-40">
+                  <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
+                    <div className="relative w-full sm:w-40">
                       <button
                         type="button"
                         onClick={() => setAdminMethodDropdownOpen(!adminMethodDropdownOpen)}
-                        className={`w-full h-10 rounded-xl px-4 text-xs font-bold transition flex items-center justify-between border ${
+                        className={`w-full h-[44px] sm:h-10 rounded-xl sm:rounded-xl px-3.5 sm:px-4 text-[11px] sm:text-xs font-bold transition flex items-center justify-between border ${
                           isDark 
-                            ? "bg-stone-900/90 border-stone-800 text-amber-400 hover:border-amber-500/40" 
+                            ? "bg-stone-900 border-stone-800 text-amber-400 hover:border-amber-500/30" 
                             : "bg-white border-amber-200 text-stone-900 shadow-sm hover:border-amber-400"
                         }`}
                       >
                         <span className="truncate">Method: {adminMethodFilter}</span>
-                        <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${adminMethodDropdownOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 shrink-0 ml-1 ${adminMethodDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
 
                       <AnimatePresence>
@@ -2627,18 +2621,18 @@ export default function Page() {
                       </AnimatePresence>
                     </div>
 
-                    <div className="relative w-40">
+                    <div className="relative w-full sm:w-40">
                       <button
                         type="button"
                         onClick={() => setAdminStatusDropdownOpen(!adminStatusDropdownOpen)}
-                        className={`w-full h-10 rounded-xl px-4 text-xs font-bold transition flex items-center justify-between border ${
+                        className={`w-full h-[44px] sm:h-10 rounded-xl px-3.5 sm:px-4 text-[11px] sm:text-xs font-bold transition flex items-center justify-between border ${
                           isDark 
-                            ? "bg-stone-900/90 border-stone-800 text-amber-400 hover:border-amber-500/40" 
+                            ? "bg-stone-900 border-stone-800 text-amber-400 hover:border-amber-500/30" 
                             : "bg-white border-amber-200 text-stone-900 shadow-sm hover:border-amber-400"
                         }`}
                       >
                         <span className="truncate">Status: {adminStatusFilter}</span>
-                        <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${adminStatusDropdownOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 shrink-0 ml-1 ${adminStatusDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
 
                       <AnimatePresence>
@@ -2704,51 +2698,76 @@ export default function Page() {
                             </button>
                           )}
 
-                          <div className={`flex-1 min-w-0 ${f.status === 'PAID' ? 'pr-8' : ''}`}>
-                            {/* Top row: Type badges + User */}
-                            <div className="flex items-start justify-between gap-3 mb-3">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
-                                  {f.txType}
+                                                    <div className={`flex-1 min-w-0 ${f.status === 'PAID' ? 'pr-8' : ''}`}>
+                            {/* Compact header: badges */}
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : 'bg-blue-500/15 text-blue-400 border-blue-500/20'}`}>
+                                {f.txType}
+                              </span>
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/15 text-amber-400 border-amber-500/20'}`}>
+                                {f.status}
+                              </span>
+                              {f.txType === 'PURCHASE' && (
+                                <span className={`ml-auto text-[10px] font-bold ${isDark ? "text-stone-500" : "text-stone-500"}`}>
+                                  #{String(f.id).slice(-6).toUpperCase()}
                                 </span>
-                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold border ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25'}`}>
-                                  {f.status}
-                                </span>
+                              )}
+                            </div>
+                            
+                            {/* User - compact single line with avatar */}
+                            <div className="flex items-center gap-2.5 mb-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shrink-0 shadow-sm">
+                                <span className="text-[11px] font-black text-stone-950">{(f.user?.name || f.user?.email || "U")[0].toUpperCase()}</span>
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className={`text-[12px] sm:text-[13px] font-bold leading-tight truncate ${isDark ? "text-white" : "text-stone-900"}`} title={f.user?.name || f.user?.email}>
+                                  {f.user?.name || f.user?.email}
+                                </div>
+                                <div className={`text-[10px] ${isDark ? "text-stone-500" : "text-stone-500"} leading-none mt-0.5`}>{text.userLabel}</div>
                               </div>
                             </div>
                             
-                            {/* User and Book - stacked vertically on mobile */}
-                            <div className="space-y-2.5">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-stone-800 flex items-center justify-center shrink-0">
-                                  <span className="text-[10px] font-bold text-amber-400">{(f.user?.name || f.user?.email || "U")[0].toUpperCase()}</span>
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <div className={`text-[11px] ${isDark ? "text-stone-500" : "text-stone-500"} leading-none`}>{text.userLabel}</div>
-                                  <div className={`text-[13px] font-bold truncate ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</div>
-                                </div>
-                              </div>
-                              
-                              <div className={`p-3 rounded-xl border ${isDark ? "bg-stone-800/40 border-stone-700/30" : "bg-amber-50/50 border-amber-100"}`}>
-                                <div className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? "text-stone-500" : "text-stone-500"} mb-1`}>{text.bookLabel}</div>
-                                <h4 className={`text-[14px] sm:text-[15px] font-bold leading-snug line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
+                            {/* Book - compact */}
+                            <div className={`px-3 py-2.5 rounded-xl border mb-3 ${isDark ? "bg-stone-900/50 border-stone-800/50" : "bg-stone-50 border-stone-200"}`}>
+                              <div className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? "text-stone-500" : "text-stone-500"} mb-1`}>{text.bookLabel}</div>
+                              <div className={`text-[13px] font-bold leading-snug ${isDark ? "text-stone-200" : "text-stone-900"} line-clamp-2`} dir={/[؀-ۿ]/.test(f.borrowing?.book?.title || f.book?.title || "") ? "rtl" : "ltr"}>
+                                {f.borrowing?.book?.title || f.book?.title || "Book"}
                               </div>
                             </div>
 
-                            {/* Amount / Method / Status - vertical stack on mobile, grid on desktop */}
-                            <div className="mt-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-2.5">
-                              <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
-                                    <DollarSign className="w-3.5 h-3.5 text-amber-500" />
+                            {/* Stats - iOS style list */}
+                            <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-stone-900/30 border-stone-800/50" : "bg-white border-stone-200"}`}>
+                              <div className={`flex items-center justify-between px-3 py-2.5 border-b ${isDark ? "border-stone-800/50" : "border-stone-100"}`}>
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-6 h-6 rounded-full bg-amber-500/15 flex items-center justify-center">
+                                    <DollarSign className="w-3 h-3 text-amber-500" />
                                   </div>
-                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{lang === "ar" ? "المبلغ" : "Amount"}</span>
+                                  <span className={`text-[11px] font-semibold ${isDark ? "text-stone-400" : "text-stone-600"}`}>{lang === "ar" ? "المبلغ" : "Amount"}</span>
                                 </div>
-                                <div className="text-right sm:text-left">
-                                  <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{lang === "ar" ? "المبلغ" : "Amount"}</div>
-                                  <div className="text-[14px] sm:text-[15px] font-black text-amber-500">{f.amount} EGP</div>
-                                </div>
+                                <span className="text-[13px] font-black text-amber-500">{f.amount} EGP</span>
                               </div>
+                              
+                              <div className={`flex items-center justify-between px-3 py-2.5 border-b ${isDark ? "border-stone-800/50" : "border-stone-100"}`}>
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center">
+                                    <CreditCard className="w-3 h-3 text-blue-400" />
+                                  </div>
+                                  <span className={`text-[11px] font-semibold ${isDark ? "text-stone-400" : "text-stone-600"}`}>{text.methodLabel}</span>
+                                </div>
+                                <span className={`text-[12px] font-bold ${isDark ? "text-stone-200" : "text-stone-800"} px-2 py-0.5 rounded-full ${isDark ? "bg-stone-800" : "bg-stone-100"}`}>{f.method || "N/A"}</span>
+                              </div>
+                              
+                              <div className="flex items-center justify-between px-3 py-2.5">
+                                <div className="flex items-center gap-2.5">
+                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${f.status === 'PAID' ? 'bg-emerald-500/15' : 'bg-amber-500/15'}`}>
+                                    <CheckCircle2 className={`w-3 h-3 ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`} />
+                                  </div>
+                                  <span className={`text-[11px] font-semibold ${isDark ? "text-stone-400" : "text-stone-600"}`}>{text.statusLabel}</span>
+                                </div>
+                                <span className={`text-[11px] font-black px-2.5 py-1 rounded-full ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/15 text-amber-400 border border-amber-500/20'}`}>{f.status}</span>
+                              </div>
+                            </div>
+                          </div>
                               
                               <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
                                 <div className="flex items-center gap-2">
@@ -2885,7 +2904,7 @@ export default function Page() {
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
                   <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
                 </h4>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {books.map((b: any) => (
                     <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col xs:flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
                       <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
@@ -3406,7 +3425,7 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      <footer className="mt-24 border-t border-stone-800/80 bg-stone-950 text-stone-400 text-xs">
+      <footer className="mt-12 sm:mt-24 border-t border-stone-800/80 bg-stone-950 text-stone-400 text-xs">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 space-y-4">
