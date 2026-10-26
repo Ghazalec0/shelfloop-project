@@ -1859,39 +1859,65 @@ export default function Page() {
               })}
             </div>
 
-                        {totalPages > 1 && (
-              <div className="mt-12 flex flex-col items-center gap-5">
-                <div className="flex items-center gap-2.5">
-                  <button
-                    onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                    disabled={currentPage === 1}
-                    className={`w-11 h-11 rounded-xl border flex items-center justify-center text-lg font-bold transition-all ${currentPage === 1 ? "opacity-30 cursor-not-allowed border-stone-800 bg-stone-900/50 text-stone-600" : "border-stone-300 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-white dark:hover:border-amber-500/50"}`}
-                  >
-                    ‹
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                                    {totalPages > 1 && (
+              <div className="mt-8 sm:mt-12 flex flex-col items-center gap-3 sm:gap-5 pb-6 sm:pb-0">
+                {/* Mobile: compact scrollable pagination */}
+                <div className="w-full flex justify-center">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 rounded-2xl p-2 sm:p-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 max-w-full overflow-x-auto scrollbar-hide">
                     <button
-                      key={pageNum}
-                      onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                      className={`w-11 h-11 rounded-xl text-[15px] font-bold border transition-all duration-200 ${currentPage === pageNum ? "bg-[#FF8A4C] border-[#FF8A4C] text-white shadow-[0_4px_14px_rgba(255,138,76,0.35)] scale-105" : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-white"}`}
+                      onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      disabled={currentPage === 1}
+                      className={`shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center text-base sm:text-lg font-bold transition-all ${currentPage === 1 ? "opacity-30 cursor-not-allowed border-stone-200 bg-stone-50 text-stone-400 dark:border-stone-800 dark:bg-stone-900/50" : "border-stone-200 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:hover:border-amber-500/50"}`}
                     >
-                      {pageNum}
+                      ‹
                     </button>
-                  ))}
-                  <button
-                    onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                    disabled={currentPage === totalPages}
-                    className={`w-11 h-11 rounded-xl border flex items-center justify-center text-lg font-bold transition-all ${currentPage === totalPages ? "opacity-30 cursor-not-allowed border-stone-800 bg-stone-900/50 text-stone-600" : "border-stone-300 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-white dark:hover:border-amber-500/50"}`}
-                  >
-                    ›
-                  </button>
+                    {(() => {
+                      const pages: (number | string)[] = [];
+                      if (totalPages <= 5) {
+                        for (let i = 1; i <= totalPages; i++) pages.push(i);
+                      } else {
+                        if (currentPage <= 3) {
+                          pages.push(1, 2, 3, "...", totalPages);
+                        } else if (currentPage >= totalPages - 2) {
+                          pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
+                        } else {
+                          pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+                        }
+                      }
+                      return pages.map((pageNum, idx) => {
+                        if (pageNum === "...") {
+                          return <span key={`ellipsis-${idx}`} className="w-7 sm:w-9 h-9 sm:h-11 flex items-center justify-center text-stone-400 text-sm">…</span>;
+                        }
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => { setCurrentPage(pageNum as number); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                            className={`shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl text-[13px] sm:text-[15px] font-bold border transition-all duration-200 ${currentPage === pageNum ? "bg-[#FF8A4C] border-[#FF8A4C] text-white shadow-[0_4px_14px_rgba(255,138,76,0.35)] scale-105" : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 shadow-sm dark:border-stone-700 dark:bg-stone-800 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-white"}`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      });
+                    })()}
+                    <button
+                      onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      disabled={currentPage === totalPages}
+                      className={`shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center text-base sm:text-lg font-bold transition-all ${currentPage === totalPages ? "opacity-30 cursor-not-allowed border-stone-200 bg-stone-50 text-stone-400 dark:border-stone-800 dark:bg-stone-900/50" : "border-stone-200 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:hover:border-amber-500/50"}`}
+                    >
+                      ›
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className={`px-3.5 py-1.5 rounded-full border text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
+                  <span className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[11px] sm:text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
                     {text.page} {currentPage} {text.of} {totalPages}
                   </span>
-                  <span className="text-stone-400">•</span>
-                  <span className="text-stone-500 font-medium">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "per page"}</span>
+                  <span className="hidden sm:block text-stone-400">•</span>
+                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "/page"}</span>
+                  <div className="flex sm:hidden items-center gap-2 mt-1">
+                    <button onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400" : "border-stone-200 bg-white text-stone-600 shadow-sm"} `}>{text.prev}</button>
+                    <button onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400" : "border-stone-200 bg-white text-stone-600 shadow-sm"} `}>{text.next}</button>
+                  </div>
                   <div className="hidden sm:flex items-center gap-2 ml-3">
                     <button onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.prev}</button>
                     <button onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.next}</button>
