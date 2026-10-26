@@ -4,6 +4,7 @@ import {
   Min,
   IsNotEmpty,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateBookDto {
@@ -30,4 +31,9 @@ export class CreateBookDto {
   @IsInt()
   @Min(1)
   totalCopies: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  price?: number;
 }
