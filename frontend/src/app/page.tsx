@@ -2,24 +2,24 @@
 import { AiMessage } from "@/components/AiMessage";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  BookOpen, LogOut, Plus, ShieldAlert, CheckCircle2, 
-  Clock, Mail, Search, LayoutDashboard, X, Menu, ChevronDown,
-  Lightbulb, UserCheck, Send, ArrowRight, Sun, Moon, Globe, Library, Users, TrendingUp, BarChart3, Trash2, Edit3, CreditCard, DollarSign, Wallet, Sparkles, Heart, ShieldCheck, UserCog, ShoppingBag, BookmarkCheck, AlertTriangle, HelpCircle
-} from "lucide-react";
-
-const getAvail = (b: any) => b.available_copies ?? b.availableCopies ?? b.available ?? 0;
-const getTotal = (b: any) => b.total_copies ?? b.totalCopies ?? b.total ?? 5;
-const getBookId = (b: any) => b.id || b._id;
-
-const unwrap = (res: any) => res?.data?.data ?? res?.data;
-const errMsg = (err: any) => {
-  if (!err?.response) return err?.message === "Network Error" ? "Network Error: Check backend URL / CORS / file size" : (err?.message || "Something went wrong");
-  const data = err?.response?.data;
-  if (Array.isArray(data?.message)) return data.message.join(", ");
-  return data?.message || data?.error || err?.message || "Something went wrong";
-};
+  import { motion, AnimatePresence } from "framer-motion";
+  import { 
+    BookOpen, LogOut, Plus, ShieldAlert, CheckCircle2, 
+    Clock, Mail, Search, LayoutDashboard, X, Menu, ChevronDown,
+    Lightbulb, UserCheck, Send, ArrowRight, Sun, Moon, Globe, Library, Users, TrendingUp, BarChart3, Trash2, Edit3, CreditCard, DollarSign, Wallet, Sparkles, Heart, ShieldCheck, UserCog, ShoppingBag, BookmarkCheck, AlertTriangle, HelpCircle
+  } from "lucide-react";
+  
+  const getAvail = (b: any) => b.available_copies ?? b.availableCopies ?? b.available ?? 0;
+  const getTotal = (b: any) => b.total_copies ?? b.totalCopies ?? b.total ?? 5;
+  const getBookId = (b: any) => b.id || b._id;
+  
+  const unwrap = (res: any) => res?.data?.data ?? res?.data;
+  const errMsg = (err: any) => {
+    if (!err?.response) return err?.message === "Network Error" ? "Network Error: Check backend URL / CORS / file size" : (err?.message || "Something went wrong");
+    const data = err?.response?.data;
+    if (Array.isArray(data?.message)) return data.message.join(", ");
+    return data?.message || data?.error || err?.message || "Something went wrong";
+  };
 
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
