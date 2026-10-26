@@ -1101,6 +1101,7 @@ export default function Page() {
 
   useEffect(() => {
     setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [search, selectedCategory]);
 
   useEffect(() => {
@@ -1715,7 +1716,7 @@ export default function Page() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {filtered.map((book: any) => {
+              {paginatedBooks.map((book: any) => {
                 const av = getAvail(book);
                 const tot = getTotal(book);
                 const isOutOfStock = av === 0;
@@ -1822,41 +1823,46 @@ export default function Page() {
               })}
             </div>
 
-            {totalPages > 1 && (
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-                <div className="text-xs text-stone-400 font-medium">
-                  {text.page} {currentPage} {text.of} {totalPages} - {filtered.length} {lang === "ar" ? "كتاب" : "books"}
-                </div>
-                <div className="flex items-center gap-2">
+                        {totalPages > 1 && (
+              <div className="mt-12 flex flex-col items-center gap-5">
+                <div className="flex items-center gap-2.5">
                   <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                     disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${currentPage === 1 ? "opacity-40 cursor-not-allowed border-stone-800 text-stone-500" : "border-amber-500/30 bg-stone-900 text-amber-400 hover:bg-stone-800"}`}
+                    className={`w-11 h-11 rounded-xl border flex items-center justify-center text-lg font-bold transition-all ${currentPage === 1 ? "opacity-30 cursor-not-allowed border-stone-800 bg-stone-900/50 text-stone-600" : "border-stone-300 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-white dark:hover:border-amber-500/50"}`}
                   >
-                    {text.prev}
+                    ‹
                   </button>
-                  <div className="flex items-center gap-1.5">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2)).map((pageNum) => (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`w-9 h-9 rounded-xl text-xs font-bold border transition ${currentPage === pageNum ? "bg-amber-500 border-amber-500 text-stone-950 shadow-lg shadow-amber-500/20" : "border-stone-800 bg-stone-900 text-stone-400 hover:border-amber-500/30 hover:text-amber-400"}`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-                  </div>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      className={`w-11 h-11 rounded-xl text-[15px] font-bold border transition-all duration-200 ${currentPage === pageNum ? "bg-[#FF8A4C] border-[#FF8A4C] text-white shadow-[0_4px_14px_rgba(255,138,76,0.35)] scale-105" : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-white"}`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
                   <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                     disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${currentPage === totalPages ? "opacity-40 cursor-not-allowed border-stone-800 text-stone-500" : "border-amber-500/30 bg-stone-900 text-amber-400 hover:bg-stone-800"}`}
+                    className={`w-11 h-11 rounded-xl border flex items-center justify-center text-lg font-bold transition-all ${currentPage === totalPages ? "opacity-30 cursor-not-allowed border-stone-800 bg-stone-900/50 text-stone-600" : "border-stone-300 bg-white text-stone-700 hover:border-amber-400 hover:text-amber-600 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-white dark:hover:border-amber-500/50"}`}
                   >
-                    {text.next}
+                    ›
                   </button>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className={`px-3.5 py-1.5 rounded-full border text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
+                    {text.page} {currentPage} {text.of} {totalPages}
+                  </span>
+                  <span className="text-stone-400">•</span>
+                  <span className="text-stone-500 font-medium">{filtered.length} {lang === "ar" ? "كتاب" : "books"} • {BOOKS_PER_PAGE} {lang === "ar" ? "في الصفحة" : "per page"}</span>
+                  <div className="hidden sm:flex items-center gap-2 ml-3">
+                    <button onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.prev}</button>
+                    <button onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`px-3.5 py-1.5 rounded-lg border text-xs font-bold transition ${isDark ? "border-stone-800 bg-stone-900 text-stone-400 hover:text-amber-400" : "border-stone-200 bg-white text-stone-600 hover:text-amber-600 shadow-sm"} `}>{text.next}</button>
+                  </div>
                 </div>
               </div>
             )}
-
           </>
         )}
 
