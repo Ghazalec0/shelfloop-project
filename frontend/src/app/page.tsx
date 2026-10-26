@@ -319,9 +319,27 @@ const t = {
 
 export default function Page() {
   const [isMounted, setIsMounted] = useState(false);
-  const [lang, setLang] = useState<"en" | "ar">("en");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [zoom, setZoom] = useState<number>(100);
+  const [lang, setLang] = useState<"en" | "ar">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("shelfloop_lang") as "en" | "ar" | null;
+      return saved || "en";
+    }
+    return "en";
+  });
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("shelfloop_theme") as "dark" | "light" | null;
+      return saved || "dark";
+    }
+    return "dark";
+  });
+  const [zoom, setZoom] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("shelfloop_zoom");
+      return saved ? parseInt(saved) : 100;
+    }
+    return 100;
+  });
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [BOOKS_PER_PAGE, setBooksPerPage] = useState(8);
   useEffect(() => {
@@ -1408,7 +1426,7 @@ export default function Page() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-amber-500/10 blur-[160px] pointer-events-none -z-10" />
 
       <header className="sticky top-0 z-40 w-full transition-all duration-500 relative">
-        <div className={`border-b backdrop-blur-2xl px-6 sm:px-12 h-20 sm:h-24 flex items-center justify-between shadow-2xl transition-all duration-500 ${isDark ? "bg-stone-950/85 border-amber-500/20 shadow-amber-500/5" : "bg-white/90 border-amber-200/80 shadow-stone-200/50"}`}>
+        <div className={`border-b backdrop-blur-2xl px-4 sm:px-8 lg:px-12 h-[64px] sm:h-20 lg:h-24 flex items-center justify-between shadow-2xl transition-all duration-500 ${isDark ? "bg-stone-950/85 border-amber-500/20 shadow-amber-500/5" : "bg-white/90 border-amber-200/80 shadow-stone-200/50"}`}>
           <div className="flex items-center gap-2.5 sm:gap-4 group cursor-pointer shrink-0" onClick={() => setActiveTab("catalog")}>
             <div className="relative">
               <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 opacity-60 blur-md group-hover:opacity-100 transition duration-500" />
@@ -1759,7 +1777,7 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-7xl mx-auto px-6 py-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 pb-24 sm:pb-10">
         {activeTab === "catalog" && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
@@ -1847,7 +1865,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
               {paginatedBooks.map((book: any) => {
                 const av = getAvail(book);
                 const tot = getTotal(book);
@@ -2056,7 +2074,7 @@ export default function Page() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
                 {favorites.map((book: any) => {
                   const av = getAvail(book);
                   const tot = getTotal(book);
@@ -2662,7 +2680,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80">
+                <div className="space-y-3 sm:space-y-3 max-h-[60vh] sm:max-h-64 overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 scrollbar-thin">
                   <AnimatePresence>
                     {filteredAdminFines.length === 0 ? (
                       <p className="text-xs text-stone-400 text-center py-4">No matching transactions found.</p>
@@ -2686,37 +2704,83 @@ export default function Page() {
                             </button>
                           )}
 
-                          <div className={`flex-1 min-w-0 space-y-3 ${f.status === 'PAID' ? 'pr-7' : ''}`}>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider ${f.txType === 'PURCHASE' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
-                                {f.txType}
-                              </span>
-                              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold ${f.status === 'PAID' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}>
-                                {f.status}
-                              </span>
-                            </div>
-                            <div className="space-y-1.5">
-                              <div className={`text-[11px] ${isDark ? "text-stone-400" : "text-stone-500"}`}>{text.userLabel}: <span className={`font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</span></div>
-                              <h4 className={`text-[13px] sm:text-sm font-bold leading-snug line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
-                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{lang === "ar" ? "المبلغ" : "Amount"}</div>
-                                <div className="text-xs sm:text-[13px] font-black text-amber-500 mt-0.5">{f.amount} EGP</div>
+                          <div className={`flex-1 min-w-0 ${f.status === 'PAID' ? 'pr-8' : ''}`}>
+                            {/* Top row: Type badges + User */}
+                            <div className="flex items-start justify-between gap-3 mb-3">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
+                                  {f.txType}
+                                </span>
+                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold border ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25'}`}>
+                                  {f.status}
+                                </span>
                               </div>
-                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
-                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{text.methodLabel}</div>
-                                <div className="text-xs sm:text-[13px] font-bold text-orange-400 mt-0.5 truncate">{f.method || "N/A"}</div>
+                            </div>
+                            
+                            {/* User and Book - stacked vertically on mobile */}
+                            <div className="space-y-2.5">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-stone-800 flex items-center justify-center shrink-0">
+                                  <span className="text-[10px] font-bold text-amber-400">{(f.user?.name || f.user?.email || "U")[0].toUpperCase()}</span>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className={`text-[11px] ${isDark ? "text-stone-500" : "text-stone-500"} leading-none`}>{text.userLabel}</div>
+                                  <div className={`text-[13px] font-bold truncate ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</div>
+                                </div>
                               </div>
-                              <div className={`px-2.5 py-2 rounded-xl border ${isDark ? "bg-stone-800/60 border-stone-700/50" : "bg-stone-50 border-stone-200"}`}>
-                                <div className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">{text.statusLabel}</div>
-                                <div className={`text-xs sm:text-[13px] font-black mt-0.5 ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{f.status}</div>
+                              
+                              <div className={`p-3 rounded-xl border ${isDark ? "bg-stone-800/40 border-stone-700/30" : "bg-amber-50/50 border-amber-100"}`}>
+                                <div className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? "text-stone-500" : "text-stone-500"} mb-1`}>{text.bookLabel}</div>
+                                <h4 className={`text-[14px] sm:text-[15px] font-bold leading-snug line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
+                              </div>
+                            </div>
+
+                            {/* Amount / Method / Status - vertical stack on mobile, grid on desktop */}
+                            <div className="mt-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-2.5">
+                              <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                                    <DollarSign className="w-3.5 h-3.5 text-amber-500" />
+                                  </div>
+                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{lang === "ar" ? "المبلغ" : "Amount"}</span>
+                                </div>
+                                <div className="text-right sm:text-left">
+                                  <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{lang === "ar" ? "المبلغ" : "Amount"}</div>
+                                  <div className="text-[14px] sm:text-[15px] font-black text-amber-500">{f.amount} EGP</div>
+                                </div>
+                              </div>
+                              
+                              <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                                    <CreditCard className="w-3.5 h-3.5 text-blue-400" />
+                                  </div>
+                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{text.methodLabel}</span>
+                                </div>
+                                <div className="text-right sm:text-left min-w-0">
+                                  <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.methodLabel}</div>
+                                  <div className="text-[13px] sm:text-[13px] font-bold text-stone-300 truncate max-w-[120px] sm:max-w-none">{f.method || "N/A"}</div>
+                                </div>
+                              </div>
+                              
+                              <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${f.status === 'PAID' ? 'bg-emerald-500/15' : 'bg-amber-500/15'}`}>
+                                    <CheckCircle2 className={`w-3.5 h-3.5 ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`} />
+                                  </div>
+                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{text.statusLabel}</span>
+                                </div>
+                                <div className="text-right sm:text-left">
+                                  <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.statusLabel}</div>
+                                  <div className={`text-[13px] font-black ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{f.status}</div>
+                                </div>
                               </div>
                             </div>
                           </div>
                           {f.status === 'PENDING' && (
-                            <button onClick={() => approveCashPayment(f.id, f.txType)} className="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-stone-950 text-xs font-bold transition border border-emerald-500/30 shrink-0 shadow-md">
-                              {text.approveBtn}
+                            <button onClick={() => approveCashPayment(f.id, f.txType)} className="mt-4 w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-[13px] sm:text-xs font-black tracking-wide transition-all duration-200 border border-emerald-500/30 shadow-[0_4px_12px_rgba(16,185,129,0.25)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.35)] active:scale-[0.98] flex items-center justify-center gap-2">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>{text.approveBtn}</span>
                             </button>
                           )}
                         </motion.div>
@@ -2726,10 +2790,13 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className={`p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
-                  <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
-                    <BarChart3 className="w-4 h-4 text-amber-500"/> {text.borrowRate}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
+                  <h4 className={`text-[13px] sm:text-sm font-bold mb-3 sm:mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                      <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
+                    </div>
+                    <span>{text.borrowRate}</span>
                   </h4>
                   <div className="space-y-4">
                     <div>
@@ -2749,9 +2816,12 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className={`p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
-                  <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
-                    <Lightbulb className="w-4 h-4 text-amber-500"/> {text.categoryDist}
+                <div className={`p-4 sm:p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
+                  <h4 className={`text-[13px] sm:text-sm font-bold mb-3 sm:mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                      <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
+                    </div>
+                    <span>{text.categoryDist}</span>
                   </h4>
                   <div className="space-y-4 max-h-48 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                     {categoryStats.map((stat, i) => (
