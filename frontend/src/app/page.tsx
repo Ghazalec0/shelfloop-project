@@ -651,7 +651,7 @@ export default function Page() {
         if (typeof unwrapUpload === 'string') {
           uploadedCoverUrl = unwrapUpload;
         } else {
-          uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
+          uploadedCoverUrl = unwrapUpload?.secure_url || unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
         }
       }
 
@@ -840,7 +840,7 @@ export default function Page() {
         if (typeof unwrapUpload === 'string') {
           uploadedCoverUrl = unwrapUpload;
         } else {
-          uploadedCoverUrl = unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
+          uploadedCoverUrl = unwrapUpload?.secure_url || unwrapUpload?.url || uploadRes.data?.url || (typeof uploadRes.data === 'string' ? uploadRes.data : "");
         }
       }
 
