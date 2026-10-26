@@ -14,7 +14,12 @@ const getTotal = (b: any) => b.total_copies ?? b.totalCopies ?? b.total ?? 5;
 const getBookId = (b: any) => b.id || b._id;
 
 const unwrap = (res: any) => res?.data?.data ?? res?.data;
-const errMsg = (err: any) => err?.response?.data?.message || err?.message || "Something went wrong";
+const errMsg = (err: any) => {
+  if (!err?.response) return err?.message === "Network Error" ? "Network Error: Check backend URL / CORS / file size" : (err?.message || "Something went wrong");
+  const data = err?.response?.data;
+  if (Array.isArray(data?.message)) return data.message.join(", ");
+  return data?.message || data?.error || err?.message || "Something went wrong";
+};
 
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
@@ -645,9 +650,7 @@ export default function Page() {
       if (editCoverFile) {
         const formData = new FormData();
         formData.append("file", editCoverFile);
-        const coverRes = await api.put(`/books/${bookId}/cover`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const coverRes = await api.put(`/books/${bookId}/cover`, formData);
         const coverData = unwrap(coverRes);
         const newTotal = Number(editingBook.totalCopies ?? editingBook.total_copies ?? 5);
         const payload: any = {
@@ -837,32 +840,44 @@ export default function Page() {
   };
 
   const addBook = async () => {
+    if (!newBook.title?.trim() || !newBook.author?.trim()) {
+      setMsg({ text: "Please fill Book Title and Author", type: "error" });
+      return;
+    }
     try {
       let uploadedCoverUrl = "";
       if (coverFile) {
+        if (coverFile.size > 5 * 1024 * 1024) {
+          setMsg({ text: "Image too large (max 5MB)", type: "error" });
+          return;
+        }
         const formData = new FormData();
         formData.append("file", coverFile);
-        const uploadRes = await api.post("/books/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        const unwrapUpload = unwrap(uploadRes);
-        uploadedCoverUrl = unwrapUpload?.url || unwrapUpload?.secure_url || (uploadRes.data as any)?.data?.url || (uploadRes.data as any)?.url || "";
+        try {
+          const uploadRes = await api.post("/books/upload", formData);
+          const unwrapUpload = unwrap(uploadRes);
+          uploadedCoverUrl = unwrapUpload?.url || unwrapUpload?.secure_url || (uploadRes.data as any)?.data?.url || (uploadRes.data as any)?.url || (uploadRes.data as any)?.data?.secure_url || "";
+        } catch (uploadErr: any) {
+          console.warn("Cover upload failed, creating book without cover", uploadErr);
+          setMsg({ text: "Cover upload failed, creating book without cover...", type: "info" });
+        }
       }
-      const payload = {
-        title: newBook.title,
-        author: newBook.author,
-        totalCopies: Number(newBook.totalCopies),
-        category: newBook.category || "Programming",
-        price: Number(newBook.price || 0.0),
-        coverUrl: uploadedCoverUrl || undefined,
+      const payload: any = {
+        title: newBook.title.trim(),
+        author: newBook.author.trim(),
+        totalCopies: Number(newBook.totalCopies) || 5,
+        category: newBook.category?.trim() || "Programming",
+        price: Number(newBook.price) || 0,
         isbn: "987-" + Math.floor(100000000 + Math.random() * 900000000)
       };
+      if (uploadedCoverUrl) payload.coverUrl = uploadedCoverUrl;
       await api.post("/books", payload);
       setMsg({ text: "Book added successfully!", type: "success" });
       setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
       setCoverFile(null);
       fetchAll();
     } catch (err: any) {
+      console.error("Add book error:", err?.response?.data || err.message);
       setMsg({ text: errMsg(err), type: "error" });
     }
   };
