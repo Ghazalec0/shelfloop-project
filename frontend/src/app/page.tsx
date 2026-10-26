@@ -21,13 +21,14 @@ const covers: Record<string, string> = {};
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
     if (book.coverUrl.startsWith("http://") || book.coverUrl.startsWith("https://")) {
-      return book.coverUrl;
+      return book.coverUrl.replace("http://", "https://");
     }
-    return `http://localhost:3000${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://shelfloop-backend.onrender.com";
+    return `${backendUrl.replace(/\/$/, "")}${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
   }
   const k = (book?.title || "").toLowerCase();
   for (let key in covers) if (k.includes(key)) return covers[key];
-  return covers.default;
+  return "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=1000&auto=format&fit=crop";
 };
 
 const aiQuotes = [
