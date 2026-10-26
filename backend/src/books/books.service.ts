@@ -79,9 +79,13 @@ export class BooksService {
   }
 
   create(dto: CreateBookDto) {
-    return this.prisma.book.create({
-      data: { ...dto, availableCopies: dto.totalCopies },
-    });
+    const data: any = {
+      ...dto,
+      availableCopies: dto.totalCopies,
+      totalCopies: Number(dto.totalCopies),
+      price: dto.price !== undefined ? Number(dto.price) : undefined,
+    };
+    return this.prisma.book.create({ data });
   }
 
   async update(id: string, dto: UpdateBookDto) {
@@ -101,9 +105,16 @@ export class BooksService {
     const newTotal = dto.totalCopies !== undefined ? dto.totalCopies : book.totalCopies;
     const newAvailable = Math.max(0, newTotal - activeBorrows - activePurchasesQty);
 
+    const updateData: any = {
+      ...dto,
+      ...(dto.totalCopies !== undefined ? { totalCopies: Number(dto.totalCopies) } : {}),
+      ...(dto.price !== undefined ? { price: Number(dto.price) } : {}),
+      availableCopies: newAvailable,
+    };
+
     await this.prisma.book.update({
       where: { id },
-      data: { ...dto, availableCopies: newAvailable },
+      data: updateData,
     });
 
     return this.findOne(id);
