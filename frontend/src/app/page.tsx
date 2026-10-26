@@ -844,35 +844,24 @@ export default function Page() {
       setMsg({ text: "Please fill Book Title and Author", type: "error" });
       return;
     }
+    if (coverFile && coverFile.size > 5 * 1024 * 1024) {
+      setMsg({ text: "Image too large (max 5MB)", type: "error" });
+      return;
+    }
     try {
-      let uploadedCoverUrl = "";
+      const formData = new FormData();
+      formData.append("title", newBook.title.trim());
+      formData.append("author", newBook.author.trim());
+      formData.append("totalCopies", String(Number(newBook.totalCopies) || 5));
+      formData.append("category", newBook.category?.trim() || "Programming");
+      formData.append("price", String(Number(newBook.price) || 0));
+      formData.append("isbn", "987-" + Math.floor(100000000 + Math.random() * 900000000));
       if (coverFile) {
-        if (coverFile.size > 5 * 1024 * 1024) {
-          setMsg({ text: "Image too large (max 5MB)", type: "error" });
-          return;
-        }
-        const formData = new FormData();
         formData.append("file", coverFile);
-        try {
-          const uploadRes = await api.post("/books/upload", formData);
-          const unwrapUpload = unwrap(uploadRes);
-          uploadedCoverUrl = unwrapUpload?.url || unwrapUpload?.secure_url || (uploadRes.data as any)?.data?.url || (uploadRes.data as any)?.url || (uploadRes.data as any)?.data?.secure_url || "";
-        } catch (uploadErr: any) {
-          console.warn("Cover upload failed, creating book without cover", uploadErr);
-          setMsg({ text: "Cover upload failed, creating book without cover...", type: "info" });
-        }
       }
-      const payload: any = {
-        title: newBook.title.trim(),
-        author: newBook.author.trim(),
-        totalCopies: Number(newBook.totalCopies) || 5,
-        category: newBook.category?.trim() || "Programming",
-        price: Number(newBook.price) || 0,
-        isbn: "987-" + Math.floor(100000000 + Math.random() * 900000000)
-      };
-      if (uploadedCoverUrl) payload.coverUrl = uploadedCoverUrl;
-      await api.post("/books", payload);
-      setMsg({ text: "Book added successfully!", type: "success" });
+      // Single request - creates book WITH cover in one step
+      await api.post("/books", formData);
+      setMsg({ text: "Book added successfully with cover!", type: "success" });
       setNewBook({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
       setCoverFile(null);
       fetchAll();
