@@ -1282,7 +1282,7 @@ export default function Page() {
                         {currentQuote.title2[lang]}
                       </span>
                     </h1>
-                    <p className="text-xs sm:text-sm leading-relaxed text-stone-300 max-w-md font-normal">
+                    <p className="text-xs sm:text-sm leading-relaxed text-stone-300 w-full max-w-[95vw] sm:max-w-md font-normal">
                       {currentQuote.desc[lang]}
                     </p>
                   </motion.div>
@@ -1302,7 +1302,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-center bg-stone-950/80">
+          <div className="lg:col-span-5 p-4 sm:p-8 lg:p-12 flex flex-col justify-center w-full bg-stone-950/80">
             <div className="mb-8">
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
                 {mode === "login" && text.login}
@@ -1414,13 +1414,13 @@ export default function Page() {
   }
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-[#0c0a09] text-amber-50" : "bg-amber-50/30 text-stone-900"} font-sans relative transition-colors duration-500 selection:bg-amber-500 selection:text-stone-950`}>
+    <div className={`min-h-screen w-full overflow-x-hidden ${isDark ? "bg-[#0c0a09] text-amber-50" : "bg-amber-50/30 text-stone-900"} font-sans relative transition-colors duration-500 selection:bg-amber-500 selection:text-stone-950`}>
       <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{ __html: `* { font-family: 'Plus Jakarta Sans', sans-serif !important; }` }} />
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-amber-500/10 blur-[160px] pointer-events-none -z-10" />
 
-      <header className="sticky top-0 z-40 w-full transition-all duration-500 relative">
-        <div className={`border-b backdrop-blur-2xl px-4 sm:px-8 lg:px-12 h-[64px] sm:h-20 lg:h-24 flex items-center justify-between shadow-2xl transition-all duration-500 ${isDark ? "bg-stone-950/85 border-amber-500/20 shadow-amber-500/5" : "bg-white/90 border-amber-200/80 shadow-stone-200/50"}`}>
+      <header className="sticky top-0 z-40 w-full overflow-x-clip transition-all duration-500 relative">
+        <div className={`border-b backdrop-blur-2xl px-4 sm:px-8 lg:px-12 h-[56px] sm:h-16 lg:h-20 flex items-center justify-between shadow-2xl transition-all duration-500 ${isDark ? "bg-stone-950/85 border-amber-500/20 shadow-amber-500/5" : "bg-white/90 border-amber-200/80 shadow-stone-200/50"}`}>
           <div className="flex items-center gap-2.5 sm:gap-4 group cursor-pointer shrink-0" onClick={() => setActiveTab("catalog")}>
             <div className="relative">
               <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 opacity-60 blur-md group-hover:opacity-100 transition duration-500" />
@@ -1715,7 +1715,7 @@ export default function Page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto"
             onClick={() => setConfirmModal(null)}
           >
             <motion.div
@@ -1724,7 +1724,7 @@ export default function Page() {
               exit={{ scale: 0.9, y: 20, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 400 }}
               onClick={(e) => e.stopPropagation()}
-              className={`relative w-full max-w-[380px] rounded-[24px] shadow-[0_24px_64px_rgba(0,0,0,0.35)] border overflow-hidden ${isDark ? "bg-[#161412] border-stone-800" : "bg-white border-stone-200"}`}
+              className={`relative w-full w-full max-w-[95vw] sm:max-w-[380px] rounded-[20px] sm:rounded-[24px] shadow-[0_24px_64px_rgba(0,0,0,0.35)] border overflow-hidden ${isDark ? "bg-[#161412] border-stone-800" : "bg-white border-stone-200"}`}
             >
               <div className="px-7 pt-8 pb-6 flex flex-col items-center text-center">
                 <div className="relative w-[72px] h-[72px] mb-5">
@@ -1766,7 +1766,7 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 pb-24 sm:pb-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-[96px] sm:pb-10 w-full">
         {activeTab === "catalog" && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
@@ -1854,7 +1854,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-1 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
               {paginatedBooks.map((book: any) => {
                 const av = getAvail(book);
                 const tot = getTotal(book);
@@ -2055,7 +2055,7 @@ export default function Page() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+              <div className="grid grid-cols-1 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
                 {favorites.map((book: any) => {
                   const av = getAvail(book);
                   const tot = getTotal(book);
@@ -2134,7 +2134,7 @@ export default function Page() {
                 </button>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {borrows.map((b: any) => {
                   const now = new Date("2026-10-25T00:00:00Z");
                   const due = b.dueDate ? new Date(b.dueDate) : new Date(now.getTime() + 14 * 86400000);
@@ -2216,7 +2216,7 @@ export default function Page() {
                       </span>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                       {group.items.map((p: any) => (
                         <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-5 rounded-2xl border backdrop-blur-xl flex flex-col justify-between shadow-lg ${isDark ? "bg-stone-900/80 border-amber-500/20" : "bg-amber-50/50 border-amber-200"}`}>
                           <div className="flex gap-4">
@@ -2332,7 +2332,7 @@ export default function Page() {
                 <p className="text-sm text-stone-400 mb-4">{text.noFines}</p>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <AnimatePresence>
                   {filteredFines.map((fine: any) => {
                     const isPaid = fine.status === "PAID";
@@ -2394,7 +2394,7 @@ export default function Page() {
         )}
 
         {activeTab === "ai" && (
-          <div className="max-w-3xl mx-auto py-6">
+          <div className="w-full max-w-[95vw] sm:max-w-3xl mx-auto py-6">
             <div className={`p-8 rounded-3xl border shadow-2xl flex flex-col h-[600px] ${isDark ? "bg-stone-900/90 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-amber-500/20">
                 <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center">
@@ -2446,7 +2446,7 @@ export default function Page() {
         )}
 
         {activeTab === "contact" && (
-          <div className="max-w-2xl mx-auto py-8">
+          <div className="w-full max-w-[95vw] sm:max-w-2xl mx-auto py-8">
             <div className={`p-8 lg:p-10 rounded-3xl border backdrop-blur-2xl shadow-2xl ${isDark ? "bg-stone-900/60 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="text-center mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center mx-auto mb-4">
@@ -2496,7 +2496,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 <div 
                   onClick={() => setShowBooksModal(true)}
                   className={`p-5 rounded-2xl border cursor-pointer hover:border-amber-500 transition shadow-lg ${isDark ? "bg-stone-950/60 border-stone-800 hover:bg-stone-900/80" : "bg-amber-50/50 border-amber-200 hover:bg-amber-100/50"}`}
@@ -2551,13 +2551,13 @@ export default function Page() {
               </div>
 
               <div className={`mb-8 p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 w-full">
                   <h4 className={`text-sm font-bold flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
                     <CreditCard className="w-4 h-4 text-amber-500"/> {text.cashApprovalsTitle}
                   </h4>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <div className="relative w-40">
+                  <div className="flex flex-col flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 text-xs w-full sm:w-auto">
+                    <div className="relative w-full w-full sm:w-40 sm:w-44">
                       <button
                         type="button"
                         onClick={() => setAdminMethodDropdownOpen(!adminMethodDropdownOpen)}
@@ -2608,7 +2608,7 @@ export default function Page() {
                       </AnimatePresence>
                     </div>
 
-                    <div className="relative w-40">
+                    <div className="relative w-full w-full sm:w-40 sm:w-44">
                       <button
                         type="button"
                         onClick={() => setAdminStatusDropdownOpen(!adminStatusDropdownOpen)}
@@ -2661,7 +2661,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="space-y-3 sm:space-y-3 max-h-[60vh] sm:max-h-64 overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 scrollbar-thin">
+                <div className="space-y-3 sm:space-y-3 max-h-[65vh] sm:max-h-96 overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 scrollbar-thin">
                   <AnimatePresence>
                     {filteredAdminFines.length === 0 ? (
                       <p className="text-xs text-stone-400 text-center py-4">No matching transactions found.</p>
@@ -2673,7 +2673,7 @@ export default function Page() {
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative group ${isDark ? "bg-stone-900 border-stone-800" : "bg-white border-amber-200"}`}
+                          className={`p-3 sm:p-4 rounded-2xl border flex flex-col gap-3 sm:gap-4 relative group w-full overflow-hidden ${isDark ? "bg-stone-900 border-stone-800" : "bg-white border-amber-200"}`}
                         >
                           {f.status === 'PAID' && (
                             <button
@@ -2704,17 +2704,17 @@ export default function Page() {
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <div className={`text-[11px] ${isDark ? "text-stone-500" : "text-stone-500"} leading-none`}>{text.userLabel}</div>
-                                  <div className={`text-[13px] font-bold truncate ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</div>
+                                  <div className={`text-[13px] font-bold truncate break-words ${isDark ? "text-white" : "text-stone-900"}`}>{f.user?.name || f.user?.email}</div>
                                 </div>
                               </div>
                               
                               <div className={`p-3 rounded-xl border ${isDark ? "bg-stone-800/40 border-stone-700/30" : "bg-amber-50/50 border-amber-100"}`}>
                                 <div className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? "text-stone-500" : "text-stone-500"} mb-1`}>{text.bookLabel}</div>
-                                <h4 className={`text-[14px] sm:text-[15px] font-bold leading-snug line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
+                                <h4 className={`text-[14px] sm:text-[15px] font-bold leading-snug line-clamp-2 break-words ${isDark ? "text-white" : "text-stone-900"}`}>{f.borrowing?.book?.title || f.book?.title || "Book"}</h4>
                               </div>
                             </div>
 
-                            <div className="mt-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-2.5">
+                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
                               <div className={`flex sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-3 p-3 rounded-xl border ${isDark ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200 shadow-sm"}`}>
                                 <div className="flex items-center gap-2">
                                   <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
@@ -2863,9 +2863,9 @@ export default function Page() {
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
                   <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
                 </h4>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {books.map((b: any) => (
-                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col xs:flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
+                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
                       <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
                         <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-11 sm:h-14 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
                         <div className="flex-1 min-w-0">
@@ -2878,12 +2878,12 @@ export default function Page() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 w-full xs:w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
-                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 xs:flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
+                      <div className="flex items-center gap-2 w-full w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
+                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
                           <Edit3 className="w-3.5 h-3.5"/>
                           <span>{text.editBook}</span>
                         </button>
-                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 xs:flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
+                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
                           <Trash2 className="w-3.5 h-3.5"/>
                           <span>{text.deleteBook}</span>
                         </button>
@@ -2900,7 +2900,7 @@ export default function Page() {
       <AnimatePresence>
         {selectedFine && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>
                   {text.finesTitle}
@@ -2960,7 +2960,7 @@ export default function Page() {
       <AnimatePresence>
         {editingBook && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.editBookTitle}</h3>
                 <button onClick={() => setEditingBook(null)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
@@ -3017,7 +3017,7 @@ export default function Page() {
       <AnimatePresence>
         {showBooksModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-3xl w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-3xl w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-5 h-5 text-amber-500"/>
@@ -3056,7 +3056,7 @@ export default function Page() {
       <AnimatePresence>
         {showUsersModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-2xl w-full rounded-3xl p-6 shadow-2xl relative ${isDark ? "bg-stone-900 border-orange-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-2xl w-full rounded-3xl p-6 shadow-2xl relative ${isDark ? "bg-stone-900 border-orange-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-orange-500"/>
@@ -3179,7 +3179,7 @@ export default function Page() {
       <AnimatePresence>
         {emailUserTarget && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center">
@@ -3235,7 +3235,7 @@ export default function Page() {
       <AnimatePresence>
         {showBorrowsModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-3xl w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-3xl w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <Library className="w-5 h-5 text-amber-500"/>
@@ -3279,7 +3279,7 @@ export default function Page() {
       <AnimatePresence>
         {hint && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(hint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBorrowTitle}: "{hint.title}"</h3>
               
@@ -3302,7 +3302,7 @@ export default function Page() {
       <AnimatePresence>
         {buyHint && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{buyHint.title}"</h3>
               
@@ -3385,8 +3385,8 @@ export default function Page() {
       </AnimatePresence>
 
       <footer className="mt-24 border-t border-stone-800/80 bg-stone-950 text-stone-400 text-xs">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-1 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 mb-12">
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-stone-950 font-bold">
@@ -3428,7 +3428,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-stone-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
+          <div className="pt-6 sm:pt-8 border-t border-stone-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-stone-500 text-[11px]">
             <p>© {new Date().getFullYear()} ShelfLoop Inc. {text.allRights}</p>
             <div className="flex items-center gap-6">
               <span className="hover:text-stone-300 cursor-pointer transition">{text.privacyPolicy}</span>
