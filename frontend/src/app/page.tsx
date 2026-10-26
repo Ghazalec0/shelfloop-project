@@ -2410,26 +2410,32 @@ export default function Page() {
                 </button>
               </div>
 
-              <div className={`p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
+              <div className={`p-4 sm:p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
                 <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
+                  <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
                 </h4>
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {books.map((b: any) => (
-                    <div key={getBookId(b)} className={`flex items-center justify-between p-3 rounded-xl border ${isDark ? "bg-stone-900 border-stone-800" : "bg-white border-amber-200"}`}>
-                      <div className="flex items-center gap-3">
-                        <img src={getCover(b)} className="w-10 h-10 rounded-lg object-cover" />
-                        <div>
-                          <div className={`text-xs font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{b.title}</div>
-                          <div className="text-[10px] text-stone-400">{b.author} • {getCategoryLabel(b.category || "Programming", lang)} • <span className="text-amber-400 font-bold">{b.price ?? 0} EGP</span></div>
+                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col xs:flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
+                      <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
+                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-11 sm:h-14 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-[13px] sm:text-xs font-bold truncate leading-tight ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{b.title}</div>
+                          <div className="text-[11px] sm:text-[10px] text-stone-400 truncate mt-0.5" title={b.author}>{b.author}</div>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">{b.price ?? 0} EGP</span>
+                            <span className="text-[9px] text-stone-500">{getAvail(b)}/{getTotal(b)} avail</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
+                      <div className="flex items-center gap-2 w-full xs:w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
+                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 xs:flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
                           <Edit3 className="w-3.5 h-3.5"/>
                           <span>{text.editBook}</span>
                         </button>
-                        <button onClick={() => deleteBook(getBookId(b))} className="px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
+                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 xs:flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
                           <Trash2 className="w-3.5 h-3.5"/>
                           <span>{text.deleteBook}</span>
                         </button>
