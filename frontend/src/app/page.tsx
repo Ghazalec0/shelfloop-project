@@ -16,8 +16,6 @@ const getBookId = (b: any) => b.id || b._id;
 const unwrap = (res: any) => res?.data?.data ?? res?.data;
 const errMsg = (err: any) => err?.response?.data?.message || err?.message || "Something went wrong";
 
-const covers: Record<string, string> = {};
-
 const getCover = (book: any) => {
   if (book?.coverUrl && book.coverUrl.trim() !== "") {
     if (book.coverUrl.startsWith("http://") || book.coverUrl.startsWith("https://")) {
@@ -26,8 +24,6 @@ const getCover = (book: any) => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://shelfloop-backend.onrender.com";
     return `${backendUrl.replace(/\/$/, "")}${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
   }
-  const k = (book?.title || "").toLowerCase();
-  for (let key in covers) if (k.includes(key)) return covers[key];
   return "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=1000&auto=format&fit=crop";
 };
 
@@ -2953,7 +2949,7 @@ export default function Page() {
               <ul className="space-y-2.5">
                 <li><button onClick={() => setActiveTab("fines")} className="hover:text-amber-400 transition">{text.finesTab}</button></li>
                 <li><button onClick={() => setActiveTab("ai")} className="hover:text-amber-400 transition">{text.aiTab}</button></li>
-                <li><button onClick={() => setActiveTab("contact")} className="hover:text-amber-400 transition">{text.contactTab}</button></li>
+                <li><button onClick={() =>setActiveTab("contact")} className="hover:text-amber-400 transition">{text.contactTab}</button></li>
               </ul>
             </div>
 
