@@ -2863,27 +2863,27 @@ export default function Page() {
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
                   <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
                 </h4>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[70vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {books.map((b: any) => (
-                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col flex-row sm:flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
-                      <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
-                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-11 sm:h-14 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
-                        <div className="flex-1 min-w-0">
-                          <div className={`text-[13px] sm:text-xs font-bold truncate leading-tight ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{b.title}</div>
-                          <div className="text-[11px] sm:text-[10px] text-stone-400 truncate mt-0.5" title={b.author}>{b.author}</div>
-                          <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">{b.price ?? 0} EGP</span>
-                            <span className="text-[9px] text-stone-500">{getAvail(b)}/{getTotal(b)} avail</span>
+                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group w-full flex flex-col gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all hover:shadow-md overflow-hidden ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
+                      <div className="flex gap-3 w-full min-w-0">
+                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-14 h-20 sm:w-12 sm:h-16 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                          <div className={`text-[13px] sm:text-sm font-bold leading-tight line-clamp-2 break-words ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{b.title}</div>
+                          <div className="text-[11px] sm:text-xs text-stone-400 truncate mt-1" title={b.author}>{b.author}</div>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
+                            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">{b.price ?? 0} EGP</span>
+                            <span className="text-[10px] text-stone-500 font-medium">{getAvail(b)}/{getTotal(b)} avail</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 w-full w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
-                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
+                      <div className="flex items-center gap-2 w-full pt-2 border-t border-stone-800/50 sm:border-t-0 sm:pt-0">
+                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 h-10 sm:h-9 justify-center rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[12px] sm:text-xs font-bold transition border border-amber-500/20 flex items-center gap-1.5 active:scale-[0.98]">
                           <Edit3 className="w-3.5 h-3.5"/>
                           <span>{text.editBook}</span>
                         </button>
-                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
+                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 h-10 sm:h-9 justify-center rounded-xl bg-rose-950/50 hover:bg-rose-900 text-rose-300 hover:text-white text-[12px] sm:text-xs font-bold transition border border-rose-800/40 flex items-center gap-1.5 active:scale-[0.98]">
                           <Trash2 className="w-3.5 h-3.5"/>
                           <span>{text.deleteBook}</span>
                         </button>
