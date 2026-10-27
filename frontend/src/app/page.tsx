@@ -68,27 +68,55 @@ const getCategoryLabel = (cat: string, lang: "en" | "ar") => {
   return categoryTranslations[cat]?.[lang] || cat;
 };
 
+
 const bookTitleTranslations: Record<string, string> = {
-  // English classics
+  // Programming & Tech - from screenshots
+  "Cracking the Coding Interview": "كسر مقابلة البرمجة",
+  "Cracking the the Coding Interview": "كسر مقابلة البرمجة",
+  "Cracking the Coding Interview 189 Programming Questions": "كسر مقابلة البرمجة - 189 سؤال",
+  "TypeScript Deep Dive": "الغوص العميق في تايب سكريبت",
+  "Learning SQL": "تعلم SQL",
+  "Docker Deep Dive": "الغوص العميق في دوكر",
+  "Fluent Python": "بايثون بطلاقة",
+  "The Lean Startup": "الشركة الناشئة المرنة",
+  "Node.js Design Patterns": "أنماط تصميم نود جي إس",
+  "The Pragmatic Programmer": "المبرمج البراغماتي",
+  "Design Patterns": "أنماط التصميم",
+  "Python Crash Course": "دورة مكثفة في بايثون",
+  "Clean Code": "كود نظيف",
+  "The Clean Coder": "المبرمج النظيف",
+  "Refactoring": "إعادة هيكلة الكود",
+  "You Don't Know JS": "أنت لا تعرف جافاسكريبت",
+  "Eloquent JavaScript": "جافاسكريبت البليغ",
+  "JavaScript: The Good Parts": "جافاسكريبت - الأجزاء الجيدة",
+  "Introduction to Algorithms": "مقدمة في الخوارزميات",
+  "Artificial Intelligence: A Modern Approach": "الذكاء الاصطناعي - مقاربة حديثة",
+  "Deep Learning": "التعلم العميق",
+  "Machine Learning": "تعلم الآلة",
+  "The Mythical Man-Month": "الشهر الرجلي الأسطوري",
+  "Code Complete": "اكتمال الكود",
+  "Head First Design Patterns": "أنماط التصميم للمبتدئين",
+  "Don't Make Me Think": "لا تجعلني أفكر",
+  "The Art of Computer Programming": "فن برمجة الحاسوب",
+  // General English books
   "Band of Brothers": "عصبة الإخوة",
   "The Diary of a Young Girl": "مذكرات فتاة صغيرة",
   "Unbroken": "غير منكسر",
   "Lone Survivor": "الناجي الوحيد",
   "Can't Hurt Me": "لا يمكنك إيذائي",
   "The Power of Now": "قوة الآن",
-  "Clean Code": "كود نظيف",
   "Atomic Habits": "العادات الذرية",
   "The Alchemist": "الخيميائي",
   "Rich Dad Poor Dad": "الأب الغني والأب الفقير",
   "American Sniper": "القناص الأمريكي",
   "The Catcher in the Rye": "الحارس في حقل الشوفان",
-  "It": "إت - المهرج",
+  "It": "إت",
   "The Hobbit": "الهوبيت",
   "Harry Potter and the Sorcerer's Stone": "هاري بوتر وحجر الفيلسوف",
   "Harry Potter": "هاري بوتر",
   "The Great Gatsby": "غاتسبي العظيم",
   "To Kill a Mockingbird": "أن تقتل طائرا محاكيا",
-  "1984": "1984",
+  "1984": "ألف وتسعمائة وأربعة وثمانون",
   "Pride and Prejudice": "كبرياء وهوى",
   "The Lord of the Rings": "سيد الخواتم",
   "The Book Thief": "سارقة الكتب",
@@ -127,77 +155,115 @@ const bookTitleTranslations: Record<string, string> = {
   "Where the Crawdads Sing": "حيث يغني جراد البحر",
   "Educated": "المتعلمة",
   "Becoming": "أصبحت",
-  "Sapiens": "العاقل",
+  "Sapiens": "العاقل - تاريخ البشرية",
   "Thinking, Fast and Slow": "التفكير السريع والبطيء",
   "The Subtle Art of Not Giving a F*ck": "فن اللامبالاة",
   "You Are a Badass": "أنت شخص رائع",
   "The 7 Habits of Highly Effective People": "العادات السبع للناس الأكثر فعالية",
   "How to Win Friends and Influence People": "كيف تكسب الأصدقاء وتؤثر في الناس",
-  "The Lean Startup": "الشركة الناشئة المرنة",
   "Zero to One": "من صفر إلى واحد",
   "The Hard Thing About Hard Things": "أصعب الأشياء حول أصعب الأشياء",
-  // Arabic books
-  "أرض زيكولا": "أرض زيكولا",
-  "قواعد جارتين": "قواعد جارتين",
-  "فلتغفري": "فلتغفري",
-  "أنتيخريستوس": "أنتيخريستوس",
-  "ابتسم فأنت ميت": "ابتسم فأنت ميت",
-  "في قلبي أنثى عبرية": "في قلبي أنثى عبرية",
-  "أنت": "أنتِ - أدهم الشرقاوي",
-  "ثلاثية غرناطة": "ثلاثية غرناطة",
-  "هيبتا": "هيبتا",
-  "الفيل الأزرق": "الفيل الأزرق",
-  "تراب الماس": "تراب الماس",
-  "أولاد حارتنا": "أولاد حارتنا",
-  "زقاق المدق": "زقاق المدق",
-  "موسم الهجرة إلى الشمال": "موسم الهجرة إلى الشمال",
-  "قواعد العشق الأربعون": "قواعد العشق الأربعون",
-  "مائة عام من العزلة": "مائة عام من العزلة",
-  "الحب في زمن الكوليرا": "الحب في زمن الكوليرا",
-  "الخيميائي": "الخيميائي",
-  "ساق البامبو": "ساق البامبو",
-  "الأسود يليق بك": "الأسود يليق بك",
-  "ذاكرة الجسد": "ذاكرة الجسد",
-  "شيفرة بلال": "شيفرة بلال",
-  "ليطمئن قلبي": "ليطمئن قلبي",
-  "أحببت وغدا": "أحببت وغدا",
-  "كن خائنا تكن أجمل": "كن خائنا تكن أجمل",
-  "حبيبي داعشي": "حبيبي داعشي",
-  "ما لا نبوح به": "ما لا نبوح به",
-  "أبابيل": "أبابيل",
-  "جثة في الفندق": "جثة في الفندق",
-  "قزم مينورا": "قزم مينورا",
-  "لج": "لج",
-  "خوف": "خوف",
-  "ايكادولي": "ايكادولي",
-  "القوقعة": "القوقعة",
-  "يسمعون حسيسها": "يسمعون حسيسها",
-  "الخروج عن النص": "الخروج عن النص",
-  "علاقات خطرة": "علاقات خطرة",
-  "ممتلئ بالفراغ": "ممتلئ بالفراغ",
-  "التائهون": "التائهون",
-  "حديث الصباح": "حديث الصباح",
-  "حديث المساء": "حديث المساء",
-  "Along Came a Spider": "عبر العنكبوت",
-  "Manuals of emergency legislation": "أدلة التشريعات الطارئة",
-  "Imperialism and World Politics": "الإمبريالية وسياسة العالم",
-  "One Who Pursues": "من يلاحق الحلم",
-  "Programming TypeScript": "برمجة تايبسكريبت",
-  "Don't Make Me Think": "لا تجعلني أفكر",
-  "Deep Work": "العمل العميق",
-  "Grit": "العزيمة",
-  "MindSet": "طريقة التفكير",
-  "The Power of Habit": "قوة العادة",
-  "The Habits of Highly Effective People": "عادات الناس الأكثر فعالية"
+  "Guns, Germs, and Steel": "البنادق والجراثيم والفولاذ",
+  "A People's History of the United States": "تاريخ الشعب الأمريكي",
+  "People's History of the United States": "تاريخ الشعب الأمريكي",
+  "Mindset": "العقلية - سيكولوجية النجاح الجديدة",
+  "Mindset: The New Psychology of Success": "العقلية - سيكولوجية النجاح الجديدة",
+  "Man's Search For Meaning": "بحث الإنسان عن معنى",
+  "Dare to Lead": "تجرأ على القيادة",
+  "Dare to Lead: Brave Work. Tough Conversations. Whole Hearts": "تجرأ على القيادة",
+  "You Are a Badass: How to Stop Doubting Your Greatness": "أنت شخص رائع - كيف تتوقف عن الشك",
+  "The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation": "الشركة الناشئة المرنة"
 };
 
-const getBookDisplayTitle = (title: string, lang: "en" | "ar") => {
-  if (!title) return title;
-  if (lang === "ar") {
-    return bookTitleTranslations[title] || bookTitleTranslations[title.trim()] || title;
-  }
-  return title;
+const arabicToEnglishTranslations: Record<string, string> = {
+  "أرض زيكولا": "Zekola Land",
+  "قواعد جارتين": "Garten Rules",
+  "أنت لي": "You Are Mine",
+  "أنتيخريستوس": "Antichristos",
+  "فلتغفري": "Please Forgive Me",
+  "ابتسم فأنت ميت": "Smile, You Are Dead",
+  "في قلبي أنثى عبرية": "In My Heart a Hebrew Woman",
+  "ثلاثية غرناطة": "Granada Trilogy",
+  "هيبتا": "Hepta",
+  "الفيل الأزرق": "The Blue Elephant",
+  "تراب الماس": "Diamond Dust",
+  "أولاد حارتنا": "Children of Our Alley",
+  "زقاق المدق": "Midaq Alley",
+  "موسم الهجرة إلى الشمال": "Season of Migration to the North",
+  "قواعد العشق الأربعون": "The Forty Rules of Love",
+  "مائة عام من العزلة": "One Hundred Years of Solitude",
+  "الحب في زمن الكوليرا": "Love in the Time of Cholera",
+  "الخيميائي": "The Alchemist",
+  "ساق البامبو": "The Bamboo Stalk",
+  "الأسود يليق بك": "Black Suits You",
+  "ذاكرة الجسد": "Memory of the Body",
+  "شيفرة بلال": "Bilal Code",
+  "ليطمئن قلبي": "To Reassure My Heart",
+  "أحببت وغدا": "I Loved and Tomorrow",
+  "كن خائنا تكن أجمل": "Be a Traitor, Be More Beautiful",
+  "حبيبي داعشي": "My Love is ISIS",
+  "ما لا نبوح به": "What We Don't Say",
+  "أبابيل": "Ababeel",
+  "جثة في الفندق": "Corpse in the Hotel",
+  "قزم مينورا": "Minora Dwarf",
+  "لج": "Lajj",
+  "خوف": "Fear",
+  "ايكادولي": "Icadoli",
+  "القوقعة": "The Shell",
+  "يسمعون حسيسها": "They Hear Its Whisper",
+  "الخروج عن النص": "Out of the Text",
+  "علاقات خطرة": "Dangerous Relationships",
+  "ممتلئ بالفراغ": "Full of Emptiness",
+  "التائهون": "The Wanderers",
+  "حديث الصباح": "Morning Talk",
+  "حديث المساء": "Evening Talk",
+  "مدينة الحب لا يسكنها العقلاء": "Love City Not Inhabited by the Wise",
+  "أنت": "You",
+  "أرض زيكولا عمرو عبد الحميد": "Zekola Land"
 };
+
+const isArabicText = (text: string): boolean => {
+  return /[\u0600-\u06FF]/.test(text);
+};
+
+const getBookDisplayTitle = (title: string, lang: "en" | "ar"): string => {
+  if (!title) return title;
+  const trimmed = title.trim();
+  if (lang === "ar") {
+    if (isArabicText(trimmed)) return trimmed;
+    // English -> Arabic
+    if (bookTitleTranslations[trimmed]) return bookTitleTranslations[trimmed];
+    if (bookTitleTranslations[title]) return bookTitleTranslations[title];
+    // Try case-insensitive
+    const found = Object.keys(bookTitleTranslations).find(k => k.toLowerCase() === trimmed.toLowerCase());
+    if (found) return bookTitleTranslations[found];
+    // Auto fallback: if not found, return original but will be translated next time you add it to dict
+    return trimmed;
+  } else {
+    // English mode - must be pure English, no Arabic
+    if (!isArabicText(trimmed)) return trimmed;
+    // Arabic -> English
+    if (arabicToEnglishTranslations[trimmed]) return arabicToEnglishTranslations[trimmed];
+    if (arabicToEnglishTranslations[title]) return arabicToEnglishTranslations[title];
+    const foundAr = Object.keys(arabicToEnglishTranslations).find(k => k.trim() === trimmed);
+    if (foundAr) return arabicToEnglishTranslations[foundAr];
+    // Try to find partial match
+    const partial = Object.keys(arabicToEnglishTranslations).find(k => trimmed.includes(k));
+    if (partial) return arabicToEnglishTranslations[partial];
+    // Fallback: if still Arabic and no translation, keep Arabic but this should not happen after dict expansion
+    return trimmed;
+  }
+};
+
+// Auto-translation system for new books - add to both dicts dynamically
+const autoRegisterBookTranslation = (englishTitle: string, arabicTitle: string) => {
+  if (englishTitle && arabicTitle) {
+    bookTitleTranslations[englishTitle] = arabicTitle;
+    arabicToEnglishTranslations[arabicTitle] = englishTitle;
+  }
+};
+
+
 
 const t = {
   en: {
@@ -3006,27 +3072,27 @@ export default function Page() {
                 </h4>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full pb-2">
                   {books.map((b: any) => (
-                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-row items-center justify-between gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border transition-all hover:shadow-md ${isDark ? "bg-stone-900 border-stone-800 hover:border-stone-700" : "bg-white border-amber-200 hover:border-amber-300"}`}>
-                      <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0 w-full">
-                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-11 sm:h-14 rounded-lg object-cover shrink-0 shadow-sm border border-stone-800/50" />
+                    <div key={`${getBookId(b)}-${b.coverUrl}`} className={`group flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl border transition-all hover:shadow-lg hover:scale-[1.01] ${isDark ? "bg-stone-900 border-stone-800 hover:border-amber-500/30" : "bg-white border-amber-200 hover:border-amber-300 shadow-sm"}`}>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-14 sm:h-18 rounded-xl object-cover shrink-0 shadow-md border border-stone-800/30" />
                         <div className="flex-1 min-w-0">
-                          <div className={`text-[13px] sm:text-xs font-bold truncate leading-tight ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{getBookDisplayTitle(b.title, lang)}</div>
-                          <div className="text-[11px] sm:text-[10px] text-stone-400 truncate mt-0.5" title={b.author}>{b.author}</div>
+                          <h4 className={`text-[13px] sm:text-sm font-bold leading-tight line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{getBookDisplayTitle(b.title, lang)}</h4>
+                          <p className="text-[10px] sm:text-[11px] text-stone-400 mt-0.5 truncate">{b.author}</p>
                           <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${isDark ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-600"}`}>{getCategoryLabel(b.category || "Programming", lang)}</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">{b.price ?? 0} EGP</span>
-                            <span className="text-[9px] text-stone-500">{getAvail(b)}/{getTotal(b)} avail</span>
+                            <span className="px-2 py-0.5 rounded-full bg-stone-800 text-stone-300 text-[9px] font-bold">{getCategoryLabel(b.category || "Programming", lang)}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/20 text-amber-500 text-[9px] font-black">{b.price ?? 150} EGP</span>
+                            <span className="px-2 py-0.5 rounded-full bg-stone-800/60 text-stone-400 text-[8px] font-mono">{getAvail(b)}/{getTotal(b)} {lang === "ar" ? "متاح" : "avail"}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 w-full w-auto sm:w-full md:w-auto justify-end sm:justify-start md:justify-end shrink-0">
-                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-stone-950 text-[11px] sm:text-xs font-semibold transition border border-amber-500/20 flex items-center gap-1.5">
-                          <Edit3 className="w-3.5 h-3.5"/>
-                          <span>{text.editBook}</span>
+                      <div className="flex sm:flex-col flex-row gap-1.5 shrink-0 w-full sm:w-auto mt-1 sm:mt-0">
+                        <button onClick={() => { setEditingBook({ ...b }); setEditCoverFile(null); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-500 text-[11px] font-bold transition active:scale-95">
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>{lang === "ar" ? "تعديل" : "Edit"}</span>
                         </button>
-                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 flex-none sm:flex-1 md:flex-none justify-center px-3.5 py-2 sm:py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-[11px] sm:text-xs font-semibold transition border border-rose-800/40 flex items-center gap-1.5">
-                          <Trash2 className="w-3.5 h-3.5"/>
-                          <span>{text.deleteBook}</span>
+                        <button onClick={() => deleteBook(getBookId(b))} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-[11px] font-bold transition active:scale-95">
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{lang === "ar" ? "حذف" : "Delete"}</span>
                         </button>
                       </div>
                     </div>
