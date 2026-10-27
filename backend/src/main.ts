@@ -26,7 +26,7 @@ async function bootstrap() {
   );
 
   const allowedOrigins = [
-    'https://shelfloop-frontend.vercel.app',
+    'https://shelfloop-front-end.vercel.app/',
     'https://shelfloop-project.vercel.app',
     process.env.FRONTEND_URL,
   ].filter((origin): origin is string => Boolean(origin));
