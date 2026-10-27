@@ -1500,7 +1500,7 @@ export default function Page() {
                   </div>
                 </div>
                 <span className="text-2xl font-black tracking-tight text-white font-sans">
-                  {text.brand}
+                  {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}
                 </span>
               </div>
 
@@ -1586,7 +1586,7 @@ export default function Page() {
                     value={form.email} 
                     onChange={e => setForm({ ...form, email: e.target.value })} 
                     type="email" 
-                    placeholder="name@example.com" 
+                    placeholder={lang === "ar" ? "البريد الإلكتروني" : "name@example.com"} 
                     required 
                     className={`w-full h-11 rounded-xl border px-4 text-sm focus:outline-none focus:border-amber-500 transition shadow-inner ${isDark ? "bg-stone-900/90 border-stone-800 text-white" : "bg-white border-amber-200 text-stone-900"}`} 
                   />
@@ -2702,17 +2702,17 @@ export default function Page() {
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
                   <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.name}</label>
-                  <input value={contactForm.name} onChange={e => setContactForm({ ...contactForm, name: e.target.value })} required placeholder="Name" className={`w-full h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
+                  <input value={contactForm.name} onChange={e => setContactForm({ ...contactForm, name: e.target.value })} required placeholder={lang === "ar" ? "الاسم الكامل" : "Full Name"} className={`w-full h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
                 </div>
 
                 <div>
                   <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.email}</label>
-                  <input value={contactForm.email} onChange={e => setContactForm({ ...contactForm, email: e.target.value })} required type="email" placeholder="name@example.com" className={`w-full h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
+                  <input value={contactForm.email} onChange={e => setContactForm({ ...contactForm, email: e.target.value })} required type="email" placeholder={lang === "ar" ? "البريد الإلكتروني" : "name@example.com"} className={`w-full h-11 rounded-xl px-4 text-xs focus:outline-none focus:border-amber-500 ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
                 </div>
 
                 <div>
                   <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.messageLabel}</label>
-                  <textarea value={contactForm.message} onChange={e => setContactForm({ ...contactForm, message: e.target.value })} required rows={4} placeholder="Type your message here..." className={`w-full rounded-xl p-4 text-xs focus:outline-none focus:border-amber-500 resize-none ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
+                  <textarea value={contactForm.message} onChange={e => setContactForm({ ...contactForm, message: e.target.value })} required rows={4} placeholder={lang === "ar" ? "اكتب رسالتك هنا..." : "Type your message here..."} className={`w-full rounded-xl p-4 text-xs focus:outline-none focus:border-amber-500 resize-none ${isDark ? "bg-stone-950 border-stone-800 text-white" : "bg-amber-50/50 border-amber-200 text-stone-900"}`} />
                 </div>
 
                 <button disabled={contactSent} className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-stone-950 font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
@@ -2744,7 +2744,7 @@ export default function Page() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-stone-400 flex items-center gap-1">
                       {text.totalBooks}
-                      <span className="text-[10px] text-amber-500 font-bold">(Click)</span>
+                      <span className="text-[10px] text-amber-500 font-bold">{lang === "ar" ? "(اضغط)" : "(Click)"}</span>
                     </span>
                     <BookOpen className="w-4 h-4 text-amber-500"/>
                   </div>
@@ -2758,7 +2758,7 @@ export default function Page() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-stone-400 flex items-center gap-1">
                       {text.borrowedBooks}
-                      <span className="text-[10px] text-amber-500 font-bold">(Click)</span>
+                      <span className="text-[10px] text-amber-500 font-bold">{lang === "ar" ? "(اضغط)" : "(Click)"}</span>
                     </span>
                     <Library className="w-4 h-4 text-amber-500"/>
                   </div>
@@ -2807,7 +2807,7 @@ export default function Page() {
                             : "bg-white border-amber-200 text-stone-900 shadow-sm hover:border-amber-400"
                         }`}
                       >
-                        <span className="truncate">Method: {adminMethodFilter}</span>
+                        <span className="truncate">{lang === "ar" ? `الطريقة: ${adminMethodFilter === "ALL" ? "الكل" : adminMethodFilter === "CASH" ? "نقدي" : adminMethodFilter === "CARD" ? "بطاقة" : adminMethodFilter === "WALLET" ? "محفظة" : adminMethodFilter}` : `Method: ${adminMethodFilter}`}</span>
                         <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${adminMethodDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
 
@@ -2838,7 +2838,7 @@ export default function Page() {
                                       : isDark ? "text-stone-300 hover:bg-amber-500/20 hover:text-amber-400" : "text-stone-700 hover:bg-amber-500/10 hover:text-amber-600"
                                   }`}
                                 >
-                                  <span>{m}</span>
+                                  <span>{lang === "ar" ? (m === "ALL" ? "الكل" : m === "CASH" ? "نقدي" : m === "CARD" ? "بطاقة" : m === "WALLET" ? "محفظة" : m) : m}</span>
                                   {adminMethodFilter === m && <CheckCircle2 className="w-3.5 h-3.5 text-stone-950"/>}
                                 </button>
                               ))}
@@ -2858,7 +2858,7 @@ export default function Page() {
                             : "bg-white border-amber-200 text-stone-900 shadow-sm hover:border-amber-400"
                         }`}
                       >
-                        <span className="truncate">Status: {adminStatusFilter}</span>
+                        <span className="truncate">{lang === "ar" ? `الحالة: ${adminStatusFilter === "ALL" ? "الكل" : adminStatusFilter === "PENDING" ? "معلق" : adminStatusFilter === "PAID" ? "مدفوع" : adminStatusFilter}` : `Status: ${adminStatusFilter}`}</span>
                         <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${adminStatusDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
 
@@ -2889,7 +2889,7 @@ export default function Page() {
                                       : isDark ? "text-stone-300 hover:bg-amber-500/20 hover:text-amber-400" : "text-stone-700 hover:bg-amber-500/10 hover:text-amber-600"
                                   }`}
                                 >
-                                  <span>{s}</span>
+                                  <span>{lang === "ar" ? (s === "ALL" ? "الكل" : s === "PENDING" ? "معلق" : s === "PAID" ? "مدفوع" : s) : s}</span>
                                   {adminStatusFilter === s && <CheckCircle2 className="w-3.5 h-3.5 text-stone-950"/>}
                                 </button>
                               ))}
@@ -2929,7 +2929,7 @@ export default function Page() {
                             <div className="flex items-start justify-between gap-3 mb-3">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
-                                  {f.txType}
+                                  {lang === "ar" ? (f.txType === "PURCHASE" ? "شراء" : f.txType === "FINE" ? "غرامة" : f.txType) : f.txType}
                                 </span>
                                 <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold border ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25'}`}>
                                   {f.status}
@@ -2977,7 +2977,7 @@ export default function Page() {
                                 </div>
                                 <div className="text-right sm:text-left min-w-0">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.methodLabel}</div>
-                                  <div className="text-[13px] sm:text-[13px] font-bold text-stone-300 truncate max-w-[120px] sm:max-w-none">{f.method || "N/A"}</div>
+                                  <div className="text-[13px] sm:text-[13px] font-bold text-stone-300 truncate max-w-[120px] sm:max-w-none">{f.method ? (lang === "ar" ? (f.method === "CASH" ? "نقدي" : f.method === "CARD" ? "بطاقة" : f.method === "WALLET" ? "محفظة" : f.method) : f.method) : "N/A"}</div>
                                 </div>
                               </div>
                               
@@ -2990,7 +2990,7 @@ export default function Page() {
                                 </div>
                                 <div className="text-right sm:text-left">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.statusLabel}</div>
-                                  <div className={`text-[13px] font-black ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{f.status}</div>
+                                  <div className={`text-[13px] font-black ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{lang === "ar" ? (f.status === "PAID" ? "مدفوع" : f.status === "PENDING" ? "معلق" : f.status) : f.status}</div>
                                 </div>
                               </div>
                             </div>
@@ -3632,7 +3632,7 @@ export default function Page() {
                 <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-stone-950 font-bold">
                   <Library className="w-4 h-4"/>
                 </div>
-                <span className="text-base font-bold text-white tracking-tight">ShelfLoop</span>
+                <span className="text-base font-bold text-white tracking-tight">{lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}</span>
               </div>
               <p className="text-stone-500 max-w-sm leading-relaxed">
                 {text.footerDesc}
@@ -3669,7 +3669,7 @@ export default function Page() {
           </div>
 
           <div className="pt-6 sm:pt-8 border-t border-stone-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-stone-500 text-[11px]">
-            <p>© {new Date().getFullYear()} ShelfLoop Inc. {text.allRights}</p>
+            <p>© {new Date().getFullYear()} {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"} Inc. {text.allRights}</p>
             <div className="flex items-center gap-6">
               <span className="hover:text-stone-300 cursor-pointer transition">{text.privacyPolicy}</span>
               <span className="hover:text-stone-300 cursor-pointer transition">{text.termsOfService}</span>
