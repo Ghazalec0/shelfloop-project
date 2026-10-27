@@ -300,7 +300,7 @@ const autoRegisterBookTranslation = (englishTitle: string, arabicTitle: string) 
 
 const t = {
   en: {
-    brand: "حلقة الكتب",
+    brand: "ShelfLoop",
     login: "Sign In",
     register: "Create Account",
     forgot: "Forgot Password?",
@@ -1502,7 +1502,7 @@ export default function Page() {
                   </div>
                 </div>
                 <span className="text-2xl font-black tracking-tight text-white font-sans">
-                  حلقة الكتب
+                  {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}
                 </span>
               </div>
 
@@ -2176,23 +2176,23 @@ export default function Page() {
                         </div>
 
                         {/* تصغير الخطوط والأزرار للشاشات الصغيرة مع ضمان ظهور النص والايقونات بوضوح */}
-                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        <div className="grid grid-cols-2 gap-2 sm:gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-black transition shadow-md flex items-center justify-center gap-1"
+                            className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[11px] sm:text-xs font-bold transition shadow-md flex items-center justify-center gap-1.5 min-w-0"
                           >
-                            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate leading-none whitespace-nowrap text-[9px] sm:text-[11px]">{text.borrowBtn}</span>
+                            <BookOpen className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="leading-tight text-center text-[11px] sm:text-xs whitespace-nowrap">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`w-full py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl border text-[10px] sm:text-xs font-black transition shadow-sm flex items-center justify-center gap-1 truncate ${
+                            className={`w-full py-2.5 px-2 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 min-w-0 ${
                               purchased 
                                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" 
                                 : isDark 
@@ -2200,8 +2200,8 @@ export default function Page() {
                                 : "border-amber-300 bg-white text-amber-800 hover:bg-amber-50"
                             }`}
                           >
-                            <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate leading-none whitespace-nowrap text-[9px] sm:text-[11px]">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : (lang === "ar" ? "شراء" : "Buy Book")}</span>
+                            <ShoppingBag className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="leading-tight text-center text-[11px] sm:text-xs whitespace-nowrap">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : (lang === "ar" ? "شراء" : "Buy Book")}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -3635,7 +3635,7 @@ export default function Page() {
                 <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-stone-950 font-bold">
                   <Library className="w-4 h-4"/>
                 </div>
-                <span className="text-base font-bold text-white tracking-tight">حلقة الكتب</span>
+                <span className="text-base font-bold text-white tracking-tight">{lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}</span>
               </div>
               <p className="text-stone-500 max-w-sm leading-relaxed">
                 {text.footerDesc}
@@ -3672,7 +3672,7 @@ export default function Page() {
           </div>
 
           <div className="pt-6 sm:pt-8 border-t border-stone-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-stone-500 text-[11px]">
-            <p>© {new Date().getFullYear()} حلقة الكتب Inc. {text.allRights}</p>
+            <p>© {new Date().getFullYear()} {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"} Inc. {text.allRights}</p>
             <div className="flex items-center gap-6">
               <span className="hover:text-stone-300 cursor-pointer transition">{text.privacyPolicy}</span>
               <span className="hover:text-stone-300 cursor-pointer transition">{text.termsOfService}</span>
