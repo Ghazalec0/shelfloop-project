@@ -70,9 +70,8 @@ const getCategoryLabel = (cat: string, lang: "en" | "ar") => {
 
 
 const bookTitleTranslations: Record<string, string> = {
-  // Programming & Tech - from screenshots
+  // Programming & Tech - complete
   "Cracking the Coding Interview": "كسر مقابلة البرمجة",
-  "Cracking the the Coding Interview": "كسر مقابلة البرمجة",
   "Cracking the Coding Interview 189 Programming Questions": "كسر مقابلة البرمجة - 189 سؤال",
   "TypeScript Deep Dive": "الغوص العميق في تايب سكريبت",
   "Learning SQL": "تعلم SQL",
@@ -98,6 +97,21 @@ const bookTitleTranslations: Record<string, string> = {
   "Head First Design Patterns": "أنماط التصميم للمبتدئين",
   "Don't Make Me Think": "لا تجعلني أفكر",
   "The Art of Computer Programming": "فن برمجة الحاسوب",
+  "Programming TypeScript": "برمجة تايب سكريبت",
+  "Pet Sematary": "مقبرة الحيوانات الأليفة",
+  "The Power of Habit": "قوة العادات",
+  "Grit": "العزيمة - قوة الشغف والمثابرة",
+  "Deep Work": "العمل العميق",
+  "The Silk Roads": "طرق الحرير",
+  "The Silk Roads\"": "طرق الحرير",
+  "1491": "1491 - الوحي الجديد لأمريكا قبل كولومبوس",
+  "The History of the Ancient World": "تاريخ العالم القديم",
+  "The History of the Ancient": "تاريخ العالم القديم",
+  "SPQR": "SPQR - تاريخ روما القديمة",
+  "The Haunting of Hill House": "أشباح منزل هيل",
+  "Bird Box": "صندوق الطيور",
+  "The Art of War": "فن الحرب",
+  "All Quiet on the Western Front": "كل شيء هادئ على الجبهة الغربية",
   // General English books
   "Band of Brothers": "عصبة الإخوة",
   "The Diary of a Young Girl": "مذكرات فتاة صغيرة",
@@ -165,13 +179,11 @@ const bookTitleTranslations: Record<string, string> = {
   "The Hard Thing About Hard Things": "أصعب الأشياء حول أصعب الأشياء",
   "Guns, Germs, and Steel": "البنادق والجراثيم والفولاذ",
   "A People's History of the United States": "تاريخ الشعب الأمريكي",
-  "People's History of the United States": "تاريخ الشعب الأمريكي",
   "Mindset": "العقلية - سيكولوجية النجاح الجديدة",
   "Mindset: The New Psychology of Success": "العقلية - سيكولوجية النجاح الجديدة",
   "Man's Search For Meaning": "بحث الإنسان عن معنى",
   "Dare to Lead": "تجرأ على القيادة",
-  "Dare to Lead: Brave Work. Tough Conversations. Whole Hearts": "تجرأ على القيادة",
-  "You Are a Badass: How to Stop Doubting Your Greatness": "أنت شخص رائع - كيف تتوقف عن الشك",
+  "You Are a Badass: How to Stop Doubting Your Greatness": "أنت شخص رائع",
   "The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation": "الشركة الناشئة المرنة"
 };
 
@@ -218,13 +230,34 @@ const arabicToEnglishTranslations: Record<string, string> = {
   "حديث الصباح": "Morning Talk",
   "حديث المساء": "Evening Talk",
   "مدينة الحب لا يسكنها العقلاء": "Love City Not Inhabited by the Wise",
-  "أنت": "You",
-  "أرض زيكولا عمرو عبد الحميد": "Zekola Land"
+  "كسر مقابلة البرمجة": "Cracking the Coding Interview",
+  "الغوص العميق في تايب سكريبت": "TypeScript Deep Dive",
+  "تعلم SQL": "Learning SQL",
+  "الغوص العميق في دوكر": "Docker Deep Dive",
+  "بايثون بطلاقة": "Fluent Python",
+  "الشركة الناشئة المرنة": "The Lean Startup",
+  "أنماط تصميم نود جي إس": "Node.js Design Patterns",
+  "المبرمج البراغماتي": "The Pragmatic Programmer",
+  "أنماط التصميم": "Design Patterns",
+  "دورة مكثفة في بايثون": "Python Crash Course",
+  "كود نظيف": "Clean Code",
+  "برمجة تايب سكريبت": "Programming TypeScript",
+  "مقبرة الحيوانات الأليفة": "Pet Sematary",
+  "قوة العادات": "The Power of Habit",
+  "العزيمة - قوة الشغف والمثابرة": "Grit",
+  "العمل العميق": "Deep Work",
+  "طرق الحرير": "The Silk Roads",
+  "أشباح منزل هيل": "The Haunting of Hill House",
+  "صندوق الطيور": "Bird Box",
+  "فن الحرب": "The Art of War",
+  "كل شيء هادئ على الجبهة الغربية": "All Quiet on the Western Front"
 };
 
 const isArabicText = (text: string): boolean => {
   return /[\u0600-\u06FF]/.test(text);
 };
+
+
 
 const getBookDisplayTitle = (title: string, lang: "en" | "ar"): string => {
   if (!title) return title;
@@ -2127,7 +2160,7 @@ export default function Page() {
                     <div className="p-2.5 sm:p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <span className="text-[9px] sm:text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(book.category || "Programming", lang)}</span>
-                        <h3 className={`font-bold text-xs sm:text-base mt-0.5 sm:mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(book.title, lang)}</h3>
+                        <h3 className={`font-bold text-xs sm:text-base mt-0.5 sm:mt-1 line-clamp-3 min-h-[2.6rem] sm:min-h-[3rem] break-words leading-tight group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(book.title, lang)}</h3>
                         <p className="text-[10px] sm:text-xs text-stone-400 mt-0.5">{book.author}</p>
                       </div>
 
@@ -2290,7 +2323,7 @@ export default function Page() {
                       <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between">
                         <div>
                           <span className="text-[9px] sm:text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(book.category || "Programming", lang)}</span>
-                          <h3 className={`font-bold text-xs sm:text-base mt-1 line-clamp-1 group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(book.title, lang)}</h3>
+                          <h3 className={`font-bold text-xs sm:text-base mt-1 line-clamp-3 min-h-[2.6rem] sm:min-h-[3rem] break-words leading-tight group-hover:text-amber-400 transition ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(book.title, lang)}</h3>
                           <p className="text-[10px] sm:text-xs text-stone-400 mt-1">{book.author}</p>
                         </div>
 
@@ -2357,7 +2390,7 @@ export default function Page() {
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
                             <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{getCategoryLabel(b.book?.category || "PROGRAMMING", lang)}</span>
-                            <h4 className={`font-bold text-base mt-1 line-clamp-1 ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(b.book?.title, lang)}</h4>
+                            <h4 className={`font-bold text-base mt-1 line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(b.book?.title, lang)}</h4>
                             <p className="text-xs text-stone-400 mt-1">{b.book?.author || "Robert Martin"}</p>
                           </div>
                           <div className="mt-4 flex flex-col gap-1.5">
@@ -2430,7 +2463,7 @@ export default function Page() {
                             <img src={getCover(p.book)} className="w-16 h-24 rounded-xl object-cover shadow-md" />
                             <div className="flex-1 flex flex-col justify-between">
                               <div>
-                                <h4 className={`font-bold text-sm line-clamp-1 ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(p.book?.title, lang)}</h4>
+                                <h4 className={`font-bold text-sm line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(p.book?.title, lang)}</h4>
                                 <p className="text-[11px] text-stone-400 mt-0.5">{p.book?.author}</p>
                                 <p className="text-[11px] font-mono text-amber-400 mt-1">Copies: {p.quantity || 1} | Price: {p.price} EGP</p>
                               </div>
@@ -2571,7 +2604,7 @@ export default function Page() {
                               {fine.status}
                             </span>
                           </div>
-                          <h4 className={`font-bold text-base mb-1 line-clamp-1 ${isDark ? "text-white" : "text-stone-900"}`}>
+                          <h4 className={`font-bold text-base mb-1 line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>
                             {getBookDisplayTitle(fine.borrowing?.book?.title, lang) || "Library Book"}
                           </h4>
                           <div className={`mt-4 p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
@@ -3076,7 +3109,7 @@ export default function Page() {
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <img key={`${getBookId(b)}-${b.coverUrl}`} src={getCover(b)} alt={b.title} className="w-12 h-16 sm:w-14 sm:h-18 rounded-xl object-cover shrink-0 shadow-md border border-stone-800/30" />
                         <div className="flex-1 min-w-0">
-                          <h4 className={`text-[13px] sm:text-sm font-bold leading-tight line-clamp-2 ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{getBookDisplayTitle(b.title, lang)}</h4>
+                          <h4 className={`text-[13px] sm:text-sm font-bold leading-tight line-clamp-3 min-h-[2.6rem] break-words ${isDark ? "text-white" : "text-stone-900"}`} title={b.title}>{getBookDisplayTitle(b.title, lang)}</h4>
                           <p className="text-[10px] sm:text-[11px] text-stone-400 mt-0.5 truncate">{b.author}</p>
                           <div className="flex flex-wrap items-center gap-1.5 mt-2">
                             <span className="px-2 py-0.5 rounded-full bg-stone-800 text-stone-300 text-[9px] font-bold">{getCategoryLabel(b.category || "Programming", lang)}</span>
@@ -3106,8 +3139,8 @@ export default function Page() {
 
       <AnimatePresence>
         {selectedFine && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>
                   {text.finesTitle}
@@ -3385,8 +3418,8 @@ export default function Page() {
 
       <AnimatePresence>
         {emailUserTarget && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-6 shadow-2xl relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center">
