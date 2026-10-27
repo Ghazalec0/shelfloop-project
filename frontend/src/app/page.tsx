@@ -300,7 +300,7 @@ const autoRegisterBookTranslation = (englishTitle: string, arabicTitle: string) 
 
 const t = {
   en: {
-    brand: "ShelfLoop",
+    brand: "حلقة الكتب",
     login: "Sign In",
     register: "Create Account",
     forgot: "Forgot Password?",
@@ -376,6 +376,7 @@ const t = {
     noBorrows: "You haven't borrowed any books yet.",
     exploreBtn: "Browse Catalog",
     borrowRate: "Borrowing Rate Trend",
+    borrowedRatio: "Borrowed Books ratio",
     categoryDist: "Real-time Categories Distribution",
     manageBooks: "Manage Library Books",
     deleteBook: "Delete",
@@ -427,7 +428,7 @@ const t = {
     resetZoom: "Reset"
   },
   ar: {
-    brand: "شيلف لوب",
+    brand: "حلقة الكتب",
     login: "تسجيل الدخول",
     register: "إنشاء حساب جديد",
     forgot: "نسيت كلمة المرور؟",
@@ -503,6 +504,7 @@ const t = {
     noBorrows: "لم تقم باستعارة أي كتب حتى الآن.",
     exploreBtn: "تصفح الكتالوج الآن",
     borrowRate: "مؤشر معدل الاستعارة",
+    borrowedRatio: "نسبة الكتب المستعارة",
     categoryDist: "التوزيع الفعلي للأقسام والمجالات",
     manageBooks: "إدارة وحذف كتب المكتبة",
     deleteBook: "حذف نهائي",
@@ -1500,7 +1502,7 @@ export default function Page() {
                   </div>
                 </div>
                 <span className="text-2xl font-black tracking-tight text-white font-sans">
-                  {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}
+                  حلقة الكتب
                 </span>
               </div>
 
@@ -2773,7 +2775,7 @@ export default function Page() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-stone-400 flex items-center gap-1">
                       {text.totalUsers}
-                      <span className="text-[10px] text-orange-500 font-bold">(Click)</span>
+                      <span className="text-[10px] text-orange-500 font-bold">{lang === "ar" ? "(اضغط)" : "(Click)"}</span>
                     </span>
                     <Users className="w-4 h-4 text-orange-500"/>
                   </div>
@@ -3020,7 +3022,7 @@ export default function Page() {
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-stone-400">Borrowed Books ratio</span>
+                        <span className="text-stone-400">{text.borrowedRatio}</span>
                         <span className="text-amber-500 font-bold">
                           {books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0}%
                         </span>
@@ -3633,7 +3635,7 @@ export default function Page() {
                 <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center text-stone-950 font-bold">
                   <Library className="w-4 h-4"/>
                 </div>
-                <span className="text-base font-bold text-white tracking-tight">{lang === "ar" ? "حلقة الكتب" : "ShelfLoop"}</span>
+                <span className="text-base font-bold text-white tracking-tight">حلقة الكتب</span>
               </div>
               <p className="text-stone-500 max-w-sm leading-relaxed">
                 {text.footerDesc}
@@ -3670,7 +3672,7 @@ export default function Page() {
           </div>
 
           <div className="pt-6 sm:pt-8 border-t border-stone-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-stone-500 text-[11px]">
-            <p>© {new Date().getFullYear()} {lang === "ar" ? "حلقة الكتب" : "ShelfLoop"} Inc. {text.allRights}</p>
+            <p>© {new Date().getFullYear()} حلقة الكتب Inc. {text.allRights}</p>
             <div className="flex items-center gap-6">
               <span className="hover:text-stone-300 cursor-pointer transition">{text.privacyPolicy}</span>
               <span className="hover:text-stone-300 cursor-pointer transition">{text.termsOfService}</span>
