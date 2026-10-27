@@ -3083,13 +3083,13 @@ export default function Page() {
                     <input value={newBook.price} onChange={e => setNewBook({ ...newBook, price: parseFloat(e.target.value) || 0 })} type="number" min={0} step={0.01} placeholder={text.bookPrice} className={`h-11 rounded-xl px-4 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 border transition-all ${isDark ? "bg-stone-900 border-stone-800 text-white placeholder:text-stone-500" : "bg-white border-amber-200 text-stone-900 placeholder:text-stone-400"}`} />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Cover Image</label>
+                    <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide">{lang === "ar" ? "صورة الغلاف" : "Cover Image"}</label>
                     <div className={`relative h-11 rounded-xl border flex items-center px-2 gap-2 overflow-hidden transition-all focus-within:ring-2 focus-within:ring-amber-500/30 focus-within:border-amber-500 ${isDark ? "bg-stone-900 border-stone-800" : "bg-white border-amber-200"}`}>
                       <label className="shrink-0 cursor-pointer px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-[11px] font-bold transition">
-                        <span>Choose File</span>
+                        <span>{lang === "ar" ? "اختر ملف" : "Choose File"}</span>
                         <input type="file" accept="image/*" onChange={e => setCoverFile(e.target.files?.[0] || null)} className="hidden" />
                       </label>
-                      <span className={`text-[11px] truncate flex-1 ${coverFile ? (isDark ? "text-white" : "text-stone-900") : "text-stone-500"}`}>{coverFile ? coverFile.name : "No file chosen"}</span>
+                      <span className={`text-[11px] truncate flex-1 ${coverFile ? (isDark ? "text-white" : "text-stone-900") : "text-stone-500"}`}>{coverFile ? coverFile.name : (lang === "ar" ? "لم يتم اختيار ملف" : "No file chosen")}</span>
                     </div>
                   </div>
                 </div>
