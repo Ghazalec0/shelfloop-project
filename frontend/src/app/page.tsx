@@ -1348,7 +1348,7 @@ export default function Page() {
     }
   };
 
-  const categories = ["All", ...Array.from(new Set(books.map((b: any) => b.category || "Programming")))];
+  const categories: string[] = ["All", ...Array.from(new Set<string>(books.map((b: any) => String(b.category || "Programming"))))];
   
   const categoryStats = (() => {
     if (books.length === 0) return [];
@@ -2183,7 +2183,7 @@ export default function Page() {
                             className="w-full py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-black transition shadow-md flex items-center justify-center gap-1"
                           >
                             <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate leading-none">{text.borrowBtn}</span>
+                            <span className="truncate leading-none whitespace-nowrap text-[9px] sm:text-[11px]">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
@@ -2199,7 +2199,7 @@ export default function Page() {
                             }`}
                           >
                             <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="truncate leading-none">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : text.buyBtn}</span>
+                            <span className="truncate leading-none whitespace-nowrap text-[9px] sm:text-[11px]">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : (lang === "ar" ? "شراء" : "Buy Book")}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -2282,7 +2282,7 @@ export default function Page() {
                 </div>
               </div>
               <span className="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-400 font-mono font-bold">
-                {favorites.length} Books
+                {lang === "ar" ? `${favorites.length} كتاب` : `${favorites.length} Books`}
               </span>
             </div>
 
@@ -2400,7 +2400,7 @@ export default function Page() {
                             </div>
                             {isLate && (
                               <div className="text-[11px] font-bold text-rose-400 bg-rose-950/80 border border-rose-800/60 px-3 py-1 rounded-xl w-fit">
-                                Overdue by {diffDays} days! Fine: {currentFine} EGP
+                                {lang === "ar" ? `متأخر ${diffDays} يوم! غرامة: ${currentFine} جنيه` : `Overdue by ${diffDays} days! Fine: ${currentFine} EGP`}
                               </div>
                             )}
                           </div>
@@ -2465,7 +2465,7 @@ export default function Page() {
                               <div>
                                 <h4 className={`font-bold text-sm line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(p.book?.title, lang)}</h4>
                                 <p className="text-[11px] text-stone-400 mt-0.5">{p.book?.author}</p>
-                                <p className="text-[11px] font-mono text-amber-400 mt-1">Copies: {p.quantity || 1} | Price: {p.price} EGP</p>
+                                <p className="text-[11px] font-mono text-amber-400 mt-1">{lang === "ar" ? `النسخ: ${p.quantity || 1} | السعر: ${p.price} جنيه` : `Copies: ${p.quantity || 1} | Price: ${p.price} EGP`}</p>
                               </div>
                               <div className={`mt-2 text-[10px] border px-2.5 py-1 rounded-lg w-fit font-bold ${p.status === 'PAID' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-orange-400 bg-orange-500/10 border-orange-500/20'}`}>
                                 {p.status === 'PAID' ? `✓ ${text.ownedPermanently}` : `⏳ ${text.pendingApproval}`}
@@ -2507,7 +2507,7 @@ export default function Page() {
                     }`}
                   >
                     <span className="truncate">
-                      {fineFilter === "ALL" ? "All Fines" : fineFilter === "PENDING" ? `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` : "Paid"}
+                      {lang === "ar" ? (fineFilter === "ALL" ? "جميع الغرامات" : fineFilter === "PENDING" ? `معلق (${fines.filter((f: any) => f.status === "PENDING").length})` : "مدفوع") : (fineFilter === "ALL" ? "All Fines" : fineFilter === "PENDING" ? `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` : "Paid")}
                     </span>
                     <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${fineDropdownOpen ? "rotate-180" : ""}`} />
                   </button>
@@ -2532,9 +2532,9 @@ export default function Page() {
                           }`}
                         >
                           {[
-                            { id: "ALL", label: "All Fines" },
-                            { id: "PENDING", label: `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` },
-                            { id: "PAID", label: "Paid" }
+                            { id: "ALL", label: lang === "ar" ? "جميع الغرامات" : "All Fines" },
+                            { id: "PENDING", label: lang === "ar" ? `معلق (${fines.filter((f: any) => f.status === "PENDING").length})` : `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` },
+                            { id: "PAID", label: lang === "ar" ? "مدفوع" : "Paid" }
                           ].map((item) => {
                             const isSelected = fineFilter === item.id;
                             return (
@@ -2601,8 +2601,9 @@ export default function Page() {
                               {getCategoryLabel(fine.borrowing?.book?.category || "PROGRAMMING", lang)}
                             </span>
                             <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${isPaid ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-rose-950/80 text-rose-300 border border-rose-800/50"}`}>
-                              {fine.status}
+                              {lang === "ar" ? (fine.status === "PAID" ? "مدفوع" : fine.status === "PENDING" ? "معلق" : fine.status) : fine.status}
                             </span>
+
                           </div>
                           <h4 className={`font-bold text-base mb-1 line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>
                             {getBookDisplayTitle(fine.borrowing?.book?.title, lang) || "Library Book"}
@@ -2610,7 +2611,7 @@ export default function Page() {
                           <div className={`mt-4 p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                             <div className="flex items-center justify-between">
                               <span>{text.daysLateLabel}</span>
-                              <span className="font-bold text-orange-400">{fine.daysLate} Days</span>
+                              <span className="font-bold text-orange-400">{fine.daysLate} {lang === "ar" ? "يوم" : "Days"}</span>
                             </div>
                             <div className="flex items-center justify-between">
                               <span>{text.amountLabel}</span>
@@ -2928,11 +2929,11 @@ export default function Page() {
                           <div className={`flex-1 min-w-0 ${f.status === 'PAID' ? 'pr-8' : ''}`}>
                             <div className="flex items-start justify-between gap-3 mb-3">
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider border ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
+                                <span className={`px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black tracking-wider border whitespace-nowrap ${f.txType === 'PURCHASE' ? 'bg-amber-500/15 text-amber-400 border-amber-500/25' : 'bg-blue-500/15 text-blue-400 border-blue-500/25'}`}>
                                   {lang === "ar" ? (f.txType === "PURCHASE" ? "شراء" : f.txType === "FINE" ? "غرامة" : f.txType) : f.txType}
                                 </span>
-                                <span className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold border ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25'}`}>
-                                  {f.status}
+                                <span className={`px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-bold border whitespace-nowrap ${f.status === 'PAID' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25'}`}>
+                                  {lang === "ar" ? (f.status === "PAID" ? "مدفوع" : f.status === "PENDING" ? "معلق" : f.status) : f.status}
                                 </span>
                               </div>
                             </div>
@@ -2960,7 +2961,7 @@ export default function Page() {
                                   <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
                                     <DollarSign className="w-3.5 h-3.5 text-amber-500" />
                                   </div>
-                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{lang === "ar" ? "المبلغ" : "Amount"}</span>
+                                  <span className="text-[8px] sm:text-[7px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden whitespace-nowrap whitespace-nowrap">{lang === "ar" ? "المبلغ" : "Amount"}</span>
                                 </div>
                                 <div className="text-right sm:text-left">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{lang === "ar" ? "المبلغ" : "Amount"}</div>
@@ -2973,11 +2974,11 @@ export default function Page() {
                                   <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
                                     <CreditCard className="w-3.5 h-3.5 text-blue-400" />
                                   </div>
-                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{text.methodLabel}</span>
+                                  <span className="text-[8px] sm:text-[7px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden whitespace-nowrap whitespace-nowrap">{text.methodLabel}</span>
                                 </div>
                                 <div className="text-right sm:text-left min-w-0">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.methodLabel}</div>
-                                  <div className="text-[13px] sm:text-[13px] font-bold text-stone-300 truncate max-w-[120px] sm:max-w-none">{f.method ? (lang === "ar" ? (f.method === "CASH" ? "نقدي" : f.method === "CARD" ? "بطاقة" : f.method === "WALLET" ? "محفظة" : f.method) : f.method) : "N/A"}</div>
+                                  <div className="text-[9px] sm:text-[13px] font-bold text-stone-300 truncate max-w-[60px] sm:max-w-[120px] sm:max-w-none">{f.method ? (lang === "ar" ? (f.method === "CASH" ? "نقدي" : f.method === "CARD" ? "بطاقة" : f.method === "WALLET" ? "محفظة" : f.method) : f.method) : "N/A"}</div>
                                 </div>
                               </div>
                               
@@ -2986,11 +2987,11 @@ export default function Page() {
                                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${f.status === 'PAID' ? 'bg-emerald-500/15' : 'bg-amber-500/15'}`}>
                                     <CheckCircle2 className={`w-3.5 h-3.5 ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`} />
                                   </div>
-                                  <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden">{text.statusLabel}</span>
+                                  <span className="text-[8px] sm:text-[7px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider sm:hidden whitespace-nowrap whitespace-nowrap">{text.statusLabel}</span>
                                 </div>
                                 <div className="text-right sm:text-left">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{text.statusLabel}</div>
-                                  <div className={`text-[13px] font-black ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{lang === "ar" ? (f.status === "PAID" ? "مدفوع" : f.status === "PENDING" ? "معلق" : f.status) : f.status}</div>
+                                  <div className={`text-[10px] sm:text-[13px] font-black ${f.status === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>{lang === "ar" ? (f.status === "PAID" ? "مدفوع" : f.status === "PENDING" ? "معلق" : f.status) : f.status}</div>
                                 </div>
                               </div>
                             </div>
@@ -3101,7 +3102,7 @@ export default function Page() {
               <div className={`p-4 sm:p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
                 <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
-                  <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{books.length} books</span>
+                  <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{lang === "ar" ? `${books.length} كتاب` : `${books.length} books`}</span>
                 </h4>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full pb-2">
                   {books.map((b: any) => (
