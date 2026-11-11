@@ -14,6 +14,18 @@ const getTotal = (b: any) => b.total_copies ?? b.totalCopies ?? b.total ?? 5;
 const getBookId = (b: any) => b.id || b._id;
 
 const unwrap = (res: any) => res?.data?.data ?? res?.data;
+const translateError = (msgText: string, lang: "en" | "ar") => {
+  if (lang !== "ar") return msgText;
+  const t = (msgText || "").toLowerCase();
+  if (t.includes("internal server error")) return "خطأ في الخادم";
+  if (t.includes("network error") || t.includes("failed to fetch")) return "خطأ في الاتصال بالإنترنت، حاول مرة أخرى";
+  if (t.includes("something went wrong")) return "حدث خطأ ما، حاول مرة أخرى";
+  if (t.includes("not found")) return "غير موجود";
+  if (t.includes("unauthorized") || t.includes("401")) return "انتهت الجلسة، سجل دخول مرة أخرى";
+  if (t.includes("email sent")) return "تم إرسال البريد بنجاح";
+  if (t.includes("successfully")) return "تمت العملية بنجاح";
+  return msgText;
+};
 const errMsg = (err: any) => {
   if (!err?.response) return err?.message === "Network Error" ? "Network Error: Check backend URL / CORS / file size" : (err?.message || "Something went wrong");
   const data = err?.response?.data;
@@ -341,6 +353,18 @@ const t = {
     payNow: "Pay Now",
     daysLateLabel: "Days Late:",
     amountLabel: "Amount:",
+    bookWord: "Book",
+    daysUnit: "Days",
+    currency: "EGP",
+    secureRedirect: "You will be securely redirected to complete your online transaction safely.",
+    submitCashRequest: "Submit Cash Request",
+    internalError: "Internal Server Error",
+    tryAgain: "Please try again",
+    okay: "Okay",
+    operationSuccess: "Operation completed successfully",
+    cardWord: "Card",
+    walletWord: "Wallet",
+    cashWord: "Cash",
     paymentMethodLabel: "Select Payment Method",
     cashMethod: "Pay at Library",
     cardMethod: "Credit / Debit Card",
@@ -469,6 +493,18 @@ const t = {
     payNow: "دفع الآن",
     daysLateLabel: "أيام التأخير:",
     amountLabel: "المبلغ المستحق:",
+    bookWord: "الكتاب",
+    daysUnit: "يوم",
+    currency: "ج.م",
+    secureRedirect: "سيتم تحويلك بشكل آمن لإتمام المعاملة عبر الإنترنت.",
+    submitCashRequest: "إرسال طلب الدفع نقدا",
+    internalError: "خطأ في الخادم",
+    tryAgain: "حاول مرة أخرى",
+    okay: "حسنا",
+    operationSuccess: "تمت العملية بنجاح",
+    cardWord: "بطاقة",
+    walletWord: "محفظة",
+    cashWord: "نقدي",
     paymentMethodLabel: "اختر طريقة الدفع",
     cashMethod: "الدفع نقداً بالمكتبة",
     cardMethod: "بطاقة ائتمانية",
@@ -662,6 +698,7 @@ export default function Page() {
 
   const text = t[lang];
   const isDark = theme === "dark";
+  const dir: "rtl" | "ltr" = lang === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
     if (msg) {
@@ -1134,7 +1171,7 @@ export default function Page() {
       const checkoutUrl = res.data?.url || res.data?.data?.url;
 
       if ((buyPaymentMethod === "CARD" || buyPaymentMethod === "WALLET") && checkoutUrl) {
-        window.location.href = checkoutUrl;
+        openCheckoutFullPage(checkoutUrl);
         return;
       }
 
@@ -1160,6 +1197,16 @@ export default function Page() {
     }
   };
 
+  // Paymob: افتح بوابة الدفع صفحة كاملة، مش iframe.
+  // الـ iframe بعرض ثابت هو اللي كان بيقص فورم Paymob على موبايل 375px.
+  // وبنبعت lang=ar عشان صفحة Paymob نفسها تفتح عربي لما اللغة عربي.
+  const openCheckoutFullPage = (checkoutUrl: string) => {
+    try {
+      const u = new URL(checkoutUrl, window.location.origin);
+      if (lang === "ar" && !u.searchParams.has("lang")) u.searchParams.set("lang", "ar");
+      window.location.href = u.toString();
+    } catch { openCheckoutFullPage(checkoutUrl); }
+  };
   const payFineAction = async () => {
     if (!selectedFine) return;
     setIsProcessingPayment(true);
@@ -1169,7 +1216,7 @@ export default function Page() {
       const checkoutUrl = res.data?.url || res.data?.data?.url;
 
       if ((paymentMethod === "CARD" || paymentMethod === "WALLET") && checkoutUrl) {
-        window.location.href = checkoutUrl;
+        openCheckoutFullPage(checkoutUrl);
         return;
       }
 
@@ -1910,7 +1957,7 @@ export default function Page() {
               exit={{ scale: 0.85, y: 30, opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className={`relative w-full max-w-[360px] rounded-[22px] shadow-[0_20px_60px_rgba(0,0,0,0.25)] border overflow-hidden ${isDark ? "bg-[#11100f] border-stone-800" : "bg-white border-stone-200"}`}
+              dir={dir} className={`relative w-full max-w-[360px] rounded-[22px] shadow-[0_20px_60px_rgba(0,0,0,0.25)] border overflow-hidden ${isDark ? "bg-[#11100f] border-stone-800" : "bg-white border-stone-200"}`}
             >
               <div className="px-7 pt-8 pb-7 flex flex-col items-center text-center">
                 <div className="relative w-[88px] h-[88px] mb-5">
@@ -1928,18 +1975,18 @@ export default function Page() {
                     )}
                   </div>
                 </div>
-                <h3 className={`text-[17px] font-bold leading-snug tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`} dir={lang === "ar" ? "rtl" : "ltr"} style={{unicodeBidi: "plaintext" as any}}>
-                  {msg.text}
+                <h3 className={`text-[17px] font-bold leading-snug tracking-tight ${isDark ? "text-white" : "text-[#1a1a1a]"}`} dir={dir}>
+                  {translateError(msg.text, lang)}
                 </h3>
                 <p className={`mt-2 text-[13px] leading-relaxed ${isDark ? "text-stone-400" : "text-stone-500"}`}>
-                  {msg.type === "error" ? (lang === "ar" ? "حاول مرة أخرى" : "Please try again") : (lang === "ar" ? "تمت العملية بنجاح" : "Operation completed successfully")}
+                  {msg.type === "error" ? text.tryAgain : text.operationSuccess}
                 </p>
                 <div className="mt-6 flex items-center gap-2.5 w-full">
                   <button
                     onClick={() => setMsg(null)}
                     className={`flex-1 h-11 rounded-xl text-sm font-bold transition ${msg.type === "error" ? "bg-stone-900 text-white hover:bg-black dark:bg-white dark:text-stone-900 dark:hover:bg-stone-100" : "bg-[#11100f] text-white hover:bg-black dark:bg-white dark:text-stone-900 dark:hover:bg-stone-100"}`}
                   >
-                    {lang === "ar" ? "حسنا" : "Okay"}
+                    {text.okay}
                   </button>
                 </div>
               </div>
@@ -3143,7 +3190,7 @@ export default function Page() {
       <AnimatePresence>
         {selectedFine && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div dir={dir} initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[calc(100vw-1.5rem)] sm:max-w-md rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>
                   {text.finesTitle}
@@ -3155,9 +3202,9 @@ export default function Page() {
 
               <div className="space-y-4">
                 <div className={`p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
-                  <div className="flex justify-between"><span>Book:</span><span className="font-bold">{getBookDisplayTitle(selectedFine.borrowing?.book?.title, lang)}</span></div>
-                  <div className="flex justify-between"><span>{text.daysLateLabel}</span><span className="font-bold text-orange-400">{selectedFine.daysLate} Days</span></div>
-                  <div className="flex justify-between"><span>{text.amountLabel}</span><span className="font-bold text-amber-400">{selectedFine.amount} EGP</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.bookWord}:</span><span className="font-bold text-end" dir="auto">{getBookDisplayTitle(selectedFine.borrowing?.book?.title, lang)}</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.daysLateLabel}</span><span className="font-bold text-orange-400" dir="ltr">{selectedFine.daysLate} {text.daysUnit}</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.amountLabel}</span><span className="font-bold text-amber-400" dir="ltr">{selectedFine.amount} {text.currency}</span></div>
                 </div>
 
                 <div>
@@ -3165,32 +3212,32 @@ export default function Page() {
                   <div className="grid grid-cols-3 gap-2">
                     <button type="button" onClick={() => setPaymentMethod("CARD")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${paymentMethod === "CARD" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
                       <CreditCard className="w-4 h-4"/>
-                      <span>Card</span>
+                      <span>{text.cardWord}</span>
                     </button>
                     <button type="button" onClick={() => setPaymentMethod("WALLET")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${paymentMethod === "WALLET" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
                       <Wallet className="w-4 h-4"/>
-                      <span>Wallet</span>
+                      <span>{text.walletWord}</span>
                     </button>
                     <button type="button" onClick={() => setPaymentMethod("CASH")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${paymentMethod === "CASH" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
                       <DollarSign className="w-4 h-4"/>
-                      <span>Cash</span>
+                      <span>{text.cashWord}</span>
                     </button>
                   </div>
                 </div>
 
                 {paymentMethod !== "CASH" && (
                   <div className="text-[11px] text-stone-400 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                    🔒 You will be securely redirected to complete your online transaction safely.
+                    🔒 {text.secureRedirect}
                   </div>
                 )}
 
-                <div className="mt-6 flex gap-3">
+                <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
                   <button onClick={() => setSelectedFine(null)} disabled={isProcessingPayment} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition">{text.cancel}</button>
                   <button onClick={payFineAction} disabled={isProcessingPayment} className="flex-1 h-11 rounded-xl bg-amber-500 text-stone-950 text-xs font-bold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
                     {isProcessingPayment 
                       ? text.redirectingPay 
                       : paymentMethod === "CASH" 
-                      ? "Submit Cash Request" 
+                      ? text.submitCashRequest 
                       : text.payConfirm}
                   </button>
                 </div>
@@ -3545,7 +3592,7 @@ export default function Page() {
       <AnimatePresence>
         {buyHint && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} dir={dir} className={`border w-full max-w-[calc(100vw-1.5rem)] sm:max-w-md rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{getBookDisplayTitle(buyHint.title, lang)}"</h3>
               
@@ -3553,7 +3600,7 @@ export default function Page() {
                 <div className={`p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                   <div className="flex justify-between items-center font-bold text-sm">
                     <span>{text.unitPriceLabel}:</span>
-                    <span className="text-amber-400 text-base">{buyHint.price ?? 150} EGP</span>
+                    <span className="text-amber-400 text-base">{buyHint.price ?? 150} {text.currency}</span>
                   </div>
                   <div className="flex justify-between items-center font-bold text-sm">
                     <span>{text.availableCopiesLabel}:</span>
@@ -3572,7 +3619,7 @@ export default function Page() {
                       const val = parseInt(e.target.value) || 1;
                       setBuyQuantity(val);
                       if (val > getAvail(buyHint)) {
-                        setBuyError(`Error: Requested quantity (${val}) exceeds available copies (${getAvail(buyHint)}).`);
+                        setBuyError(lang === "ar" ? `خطأ: الكمية المطلوبة (${val}) أكبر من النسخ المتاحة (${getAvail(buyHint)}).` : `Error: Requested quantity (${val}) exceeds available copies (${getAvail(buyHint)}).`);
                       } else {
                         setBuyError("");
                       }
@@ -3590,7 +3637,7 @@ export default function Page() {
 
                 <div className={`p-3 rounded-xl border flex justify-between items-center text-xs font-bold ${isDark ? "bg-stone-950 border-stone-800 text-amber-300" : "bg-amber-50 border-amber-200 text-amber-900"}`}>
                   <span>{text.totalCalculatedPriceLabel}:</span>
-                  <span className="text-base text-amber-400">{(buyHint.price ?? 150) * buyQuantity} EGP</span>
+                  <span className="text-base text-amber-400">{(buyHint.price ?? 150) * buyQuantity} {text.currency}</span>
                 </div>
 
                 <div>
@@ -3611,7 +3658,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex gap-3">
+                <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
                   <button onClick={() => { setBuyHint(null); setBuyError(""); }} disabled={isProcessingBuy} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition">{text.cancel}</button>
                   <button onClick={confirmPurchase} disabled={isProcessingBuy || Boolean(buyError)} className="flex-1 h-11 rounded-xl bg-amber-500 disabled:opacity-50 text-stone-950 text-xs font-bold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
                     {isProcessingBuy 
