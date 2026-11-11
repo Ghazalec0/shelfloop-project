@@ -2709,7 +2709,16 @@ export default function Page() {
                           {m.text}
                         </div>
                       ) : (
-                        <AiMessage text={m.text}/>
+                        <AiMessage
+                          text={
+                            i === 0 && m.role === "ai" &&
+                            m.text === "Hello! I'm your Advisor AI assistant. Ask me for book recommendations in English or Arabic."
+                              ? (lang === "ar"
+                                  ? "مرحبًا! أنا مساعدك الذكي للمكتبة. اسألني عن ترشيحات الكتب باللغة العربية أو الإنجليزية."
+                                  : m.text)
+                              : m.text
+                          }
+                        />
                       )}
                     </div>
                   </div>
