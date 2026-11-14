@@ -734,8 +734,14 @@ export default function Page() {
     if (lang !== "ar") return s;
     return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫");
   };
+  const isAuthError = (err: any): boolean => {
+    const m = String(err?.message || "");
+    const s = err?.response?.status;
+    if (s === 401 || s === 403) return true;
+    return /no refresh|invalid refresh|refresh token|unauthorized|invalid token|token expired|jwt/i.test(m + " " + String(err?.response?.data?.message || ""));
+  };
+
   const locText = (value: any): string => {
-  const isAuthError = (err: any): boolean => { const m = String(err?.message || ""); const s = err?.response?.status; if (s === 401 || s === 403) return true; return /no refresh|invalid refresh|refresh token|unauthorized|invalid token|token expired|jwt/i.test(m + " " + String(err?.response?.data?.message || "")); };
     const s = String(value ?? "");
     if (lang !== "ar") return s;
     return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫").replace(/EGP/g, "ج.م").replace(/USD/g, "دولار");
