@@ -37,6 +37,7 @@ model User {
   fines           Fine[]
   purchases       Purchase[]
   otpCode         String?
+  refreshTokenHash String?
   otpExpiresAt    DateTime?
   otpVerified     Boolean     @default(false)
 }

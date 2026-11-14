@@ -9,7 +9,7 @@ import {
   UseGuards 
 } from '@nestjs/common';
 import { PurchasesService } from './purchases.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PaymentMethod } from '@prisma/client';
 
 @Controller('purchases')

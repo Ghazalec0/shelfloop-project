@@ -1,7 +1,17 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException, Logger, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { Role } from '@prisma/client';
@@ -28,18 +38,19 @@ export class AuthService implements OnModuleDestroy {
     private usersService: UsersService,
     private jwtService: JwtService,
     private mailService: MailService,
+    private configService: ConfigService,
   ) {
     this.initRedis();
     setInterval(() => this.cleanMemoryStore(), 60 * 1000);
   }
 
   private initRedis() {
-    const redisUrl = process.env.REDIS_URL;
-    const isProduction = process.env.NODE_ENV === 'production';
+    const redisUrl = this.configService.get<string>('REDIS_URL');
+    const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
     const isLocalhost = !redisUrl || redisUrl.includes('localhost') || redisUrl.includes('127.0.0.1');
 
     if (isProduction && isLocalhost) {
-      this.logger.warn('REDIS_URL is localhost in production - using in-memory fallback. Please set Upstash Redis URL in Vercel env.');
+      this.logger.warn('REDIS_URL is localhost in production - using in-memory fallback.');
       this.redisEnabled = false;
       return;
     }
@@ -146,11 +157,47 @@ export class AuthService implements OnModuleDestroy {
     }
   }
 
+  private generateOtp(): string {
+    return crypto.randomInt(100000, 999999).toString();
+  }
+
+  private safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return crypto.timingSafeEqual(bufA, bufB);
+  }
+
+  private async getTokens(userId: string, email: string, role: Role) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        { sub: userId, email, role },
+        {
+          secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+          expiresIn: '15m',
+        },
+      ),
+      this.jwtService.signAsync(
+        { sub: userId, email, role },
+        {
+          secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+          expiresIn: '7d',
+        },
+      ),
+    ]);
+    return { accessToken, refreshToken };
+  }
+
+  private async updateRefreshTokenHash(userId: string, refreshToken: string) {
+    const hash = await bcrypt.hash(refreshToken, 10);
+    await this.usersService.updateById(userId, { refreshTokenHash: hash });
+  }
+
   async register(dto: CreateUserDto) {
     const existing = await this.usersService.findByEmail(dto.email);
     if (existing) throw new ConflictException('Email already exists');
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = this.generateOtp();
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const registrationData: RegistrationData = {
@@ -171,10 +218,7 @@ export class AuthService implements OnModuleDestroy {
       throw new BadRequestException('Failed to send OTP email, please try again');
     }
 
-    return {
-      message: 'OTP sent to your email for registration verification',
-      email: dto.email,
-    };
+    return { message: 'OTP sent to your email for registration verification', email: dto.email };
   }
 
   async verifyRegister(email: string, otp: string) {
@@ -182,10 +226,9 @@ export class AuthService implements OnModuleDestroy {
     if (!dataStr) {
       throw new BadRequestException('OTP expired or registration session not found. Please register again.');
     }
-
     const registrationData = JSON.parse(dataStr) as RegistrationData;
 
-    if (registrationData.otp !== otp) {
+    if (!this.safeCompare(registrationData.otp, otp)) {
       throw new BadRequestException('Invalid OTP');
     }
 
@@ -203,32 +246,66 @@ export class AuthService implements OnModuleDestroy {
     });
 
     await this.safeDel(`register:${email}`);
-
-    return {
-      message: 'Account created successfully. Please sign in.',
-    };
+    return { message: 'Account created successfully. Please sign in.' };
   }
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    if (!user || user.isDeleted) throw new UnauthorizedException('Account disabled or invalid credentials');
+    if (!user || user.isDeleted) throw new UnauthorizedException('Invalid credentials');
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const tokens = await this.getTokens(user.id, user.email, user.role);
+    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
 
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
       user: { id: user.id, email: user.email, name: user.name, role: user.role },
     };
+  }
+
+  async refreshTokens(refreshToken: string) {
+    let payload: any;
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const user = await this.usersService.findById(payload.sub);
+    if (!user || user.isDeleted || !user.refreshTokenHash) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const isValid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+    if (!isValid) {
+      throw new UnauthorizedException('Refresh token reused or revoked');
+    }
+
+    const tokens = await this.getTokens(user.id, user.email, user.role);
+    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+    };
+  }
+
+  async logout(userId: string) {
+    await this.usersService.updateById(userId, { refreshTokenHash: null });
+    return { message: 'Logged out successfully' };
   }
 
   async forgotPassword(email: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user || user.isDeleted) throw new NotFoundException('User not found');
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = this.generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     await this.usersService.updateByEmail(email, {
@@ -238,34 +315,30 @@ export class AuthService implements OnModuleDestroy {
     });
 
     await this.mailService.sendOtp(email, otp);
-
     return { message: 'OTP sent to your email', email };
   }
 
   async verifyOtp(email: string, otp: string) {
     const user = await this.usersService.findByEmail(email);
-    if (!user || user.isDeleted || !user.otpCode) throw new BadRequestException('No OTP found, request forgot-password first');
-
+    if (!user || user.isDeleted || !user.otpCode) {
+      throw new BadRequestException('No OTP found, request forgot-password first');
+    }
     if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
       throw new BadRequestException('OTP expired, request new one');
     }
-
-    if (user.otpCode !== otp) throw new BadRequestException('Invalid OTP');
+    if (!this.safeCompare(user.otpCode, otp)) throw new BadRequestException('Invalid OTP');
 
     await this.usersService.updateByEmail(email, { otpVerified: true });
-
     return { message: 'OTP verified successfully, you can now reset password' };
   }
 
   async resetPasswordWithOtp(email: string, otp: string, newPassword: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user || user.isDeleted || !user.otpCode) throw new BadRequestException('No OTP found');
-
     if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
       throw new BadRequestException('OTP expired');
     }
-
-    if (user.otpCode !== otp) throw new BadRequestException('Invalid OTP');
+    if (!this.safeCompare(user.otpCode, otp)) throw new BadRequestException('Invalid OTP');
     if (!user.otpVerified) throw new BadRequestException('OTP not verified, verify first');
 
     const hashed = await bcrypt.hash(newPassword, 10);
@@ -275,6 +348,7 @@ export class AuthService implements OnModuleDestroy {
       otpCode: null,
       otpExpiresAt: null,
       otpVerified: false,
+      refreshTokenHash: null,
     });
 
     return { message: 'Password reset successfully' };

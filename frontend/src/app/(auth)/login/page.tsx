@@ -18,17 +18,29 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const { data } = await api.post("/auth/login", { email, password });
-      const payload = data?.data ?? data;
-      if (payload?.access_token) {
-        localStorage.setItem("access_token", payload.access_token);
+      let payload: any = data;
+      while (payload?.data && typeof payload.data === "object") {
+        payload = payload.data;
+      }
+      const accessToken = payload?.accessToken || payload?.access_token;
+      const refreshToken = payload?.refreshToken || payload?.refresh_token;
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("access_token", accessToken);
+      }
+      if (refreshToken) {
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("refresh_token", refreshToken);
+      }
+      if (payload?.user) {
         localStorage.setItem("user", JSON.stringify(payload.user));
       }
       toast.success("Welcome back to ShelfLoop!");
       router.push("/");
     } catch (e: any) {
       toast.error(e.response?.data?.message || "Login failed");
-    } finally { 
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +81,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-6 text-center text-xs text-stone-400">
-        Don't have an account? <Link href="/register" className="text-amber-500 font-bold hover:underline">Register now</Link>
+        Don&apos;t have an account? <Link href="/register" className="text-amber-500 font-bold hover:underline">Register now</Link>
       </p>
     </motion.div>
   );

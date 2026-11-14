@@ -409,6 +409,13 @@ const t = {
     aiDesc: "Chat with our intelligent assistant to get instant book recommendations and insights.",
     aiPlaceholder: "Ask me about any book or programming topic...",
     aiSend: "Send",
+    logoutTitle: "Log Out?",
+    logoutDesc: "You are about to sign out of your ShelfLoop account.",
+    logoutNote: "Your borrowed books, purchases and favorites are saved. You can sign in again anytime to continue where you left off.",
+    logoutConfirmBtn: "Yes, Log Out",
+    logoutCancelBtn: "Stay Signed In",
+    loggingOutBtn: "Logging Out...",
+    logoutTitleShort: "Logout",
     cashApprovalsTitle: "Cash & Fines Approvals",
     approveBtn: "Approve Payment",
     userLabel: "User",
@@ -549,6 +556,13 @@ const t = {
     aiDesc: "تحدث مع المساعد الذكي للحصول على اقتراحات فورية للكتب والمراجع.",
     aiPlaceholder: "اسأل عن أي كتاب أو موضوع برمجي...",
     aiSend: "إرسال",
+    logoutTitle: "تسجيل الخروج؟",
+    logoutDesc: "أنت على وشك تسجيل الخروج من حسابك في ShelfLoop.",
+    logoutNote: "كتبك المستعارة ومشترياتك ومفضلتك محفوظة. تقدر تسجل دخول تاني في أي وقت وتكمل من مكان ما وقفت.",
+    logoutConfirmBtn: "نعم، تسجيل الخروج",
+    logoutCancelBtn: "البقاء مسجلاً",
+    loggingOutBtn: "جاري تسجيل الخروج...",
+    logoutTitleShort: "تسجيل الخروج",
     cashApprovalsTitle: "مراجعة الغرامات والمدفوعات المعلقة",
     approveBtn: "قبول الدفع",
     userLabel: "المستخدم",
@@ -684,6 +698,8 @@ export default function Page() {
   const [showBooksModal, setShowBooksModal] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
   const [showBorrowsModal, setShowBorrowsModal] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const [aiQuoteIndex, setAiQuoteIndex] = useState(0);
 
@@ -696,7 +712,7 @@ export default function Page() {
   const [newBook, setNewBook] = useState({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
   const [coverFile, setCoverFile] = useState<File | null>(null);
 
-  const text = t[lang];
+  const text: typeof t.en = t[lang];
   const isDark = theme === "dark";
   const dir: "rtl" | "ltr" = lang === "ar" ? "rtl" : "ltr";
 
@@ -742,8 +758,11 @@ export default function Page() {
     });
   };
 
-  const hardLogout = () => {
+  const clearLocalAuth = () => {
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("access_token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
     setUser(null);
     setBooks([]);
@@ -753,6 +772,26 @@ export default function Page() {
     setFines([]);
     setAdminFines([]);
     setAdminPurchases([]);
+  };
+
+  const hardLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch {
+    } finally {
+      clearLocalAuth();
+    }
+  };
+
+  const confirmLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await hardLogout();
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
+    }
   };
 
   const dismissFineCard = (fineId: string) => {
@@ -785,10 +824,10 @@ export default function Page() {
         setUser(JSON.parse(u));
         fetchAll();
       } else {
-        localStorage.clear();
+        clearLocalAuth();
       }
     } catch {
-      localStorage.clear();
+      clearLocalAuth();
     }
 
     const handlePaymentCallback = async () => {
@@ -843,7 +882,7 @@ export default function Page() {
       const list = unwrap(b);
       setBooks(Array.isArray(list) ? list : list?.items || []);
     } catch (err: any) {
-      if (err?.response?.status === 401) { hardLogout(); return; }
+      if (err?.response?.status === 401) { return; }
     }
 
     try {
@@ -851,7 +890,7 @@ export default function Page() {
       const list = unwrap(br);
       setBorrows(Array.isArray(list) ? list : list?.items || []);
     } catch (err: any) {
-      if (err?.response?.status === 401) { hardLogout(); }
+      if (err?.response?.status === 401) { return; }
     }
 
     try {
@@ -1143,7 +1182,7 @@ export default function Page() {
       setHint(null);
       fetchAll();
     } catch (err: any) {
-      if (err?.response?.status === 401) { hardLogout(); }
+      if (err?.response?.status === 401) { return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBorrow(false);
@@ -1179,7 +1218,7 @@ export default function Page() {
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
-      if (err?.response?.status === 401) { hardLogout(); }
+      if (err?.response?.status === 401) { return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBuy(false);
@@ -1205,7 +1244,9 @@ export default function Page() {
       const u = new URL(checkoutUrl, window.location.origin);
       if (lang === "ar" && !u.searchParams.has("lang")) u.searchParams.set("lang", "ar");
       window.location.href = u.toString();
-    } catch { openCheckoutFullPage(checkoutUrl); }
+    } catch {
+      window.location.href = checkoutUrl;
+    }
   };
   const payFineAction = async () => {
     if (!selectedFine) return;
@@ -1828,9 +1869,9 @@ export default function Page() {
             </div>
 
             <button 
-              onClick={hardLogout} 
+              onClick={() => setShowLogoutConfirm(true)} 
               className={`p-2.5 rounded-xl border transition-all duration-300 ${isDark ? "bg-stone-900/90 border-stone-800 text-stone-400 hover:text-rose-400 hover:border-rose-800/40" : "bg-white border-amber-200 text-stone-600 hover:text-rose-700"}`}
-              title="Logout"
+              title={text.logoutTitleShort}
             >
               <LogOut className="w-4 h-4"/>
             </button>
@@ -2223,23 +2264,23 @@ export default function Page() {
                         </div>
 
                         {/* تصغير الخطوط والأزرار للشاشات الصغيرة مع ضمان ظهور النص والايقونات بوضوح */}
-                        <div className="grid grid-cols-2 gap-2 sm:gap-2">
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => setHint(book)} 
                             disabled={isOutOfStock} 
-                            className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[11px] sm:text-xs font-bold transition shadow-md flex items-center justify-center gap-1.5 min-w-0"
+                            className="w-full h-9 sm:h-10 px-1 sm:px-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-stone-950 text-[10px] sm:text-xs font-bold transition shadow-md flex items-center justify-center gap-1 min-w-0"
                           >
-                            <BookOpen className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="leading-tight text-center text-[11px] sm:text-xs whitespace-nowrap">{text.borrowBtn}</span>
+                            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="leading-none text-center text-[10px] sm:text-xs whitespace-nowrap">{text.borrowBtn}</span>
                           </motion.button>
 
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
                             whileHover={{ scale: 1.02 }}
                             onClick={() => { setBuyHint(book); setBuyQuantity(1); setBuyError(""); setBuyPaymentMethod("CARD"); }} 
-                            className={`w-full py-2.5 px-2 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 min-w-0 ${
+                            className={`w-full h-9 sm:h-10 px-1 sm:px-3 rounded-lg sm:rounded-xl border text-[10px] sm:text-xs font-bold transition shadow-sm flex items-center justify-center gap-1 min-w-0 ${
                               purchased 
                                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" 
                                 : isDark 
@@ -2247,8 +2288,8 @@ export default function Page() {
                                 : "border-amber-300 bg-white text-amber-800 hover:bg-amber-50"
                             }`}
                           >
-                            <ShoppingBag className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
-                            <span className="leading-tight text-center text-[11px] sm:text-xs whitespace-nowrap">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : (lang === "ar" ? "شراء" : "Buy Book")}</span>
+                            <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.5} />
+                            <span className="leading-none text-center text-[10px] sm:text-xs whitespace-nowrap">{purchased ? (lang === "ar" ? "شراء مجدد" : "Buy Again") : (lang === "ar" ? "شراء" : "Buy Book")}</span>
                           </motion.button>
                         </div>
                       </div>
@@ -3677,6 +3718,44 @@ export default function Page() {
                       : text.confirmBuyBtn}
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => !isLoggingOut && setShowLogoutConfirm(false)} className="fixed inset-0 z-[100] bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 12, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.95, y: 12, opacity: 0 }} transition={{ type: "spring", damping: 24, stiffness: 300 }} onClick={(e) => e.stopPropagation()} className={`w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl border relative overflow-hidden ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500" />
+              <button onClick={() => !isLoggingOut && setShowLogoutConfirm(false)} className="absolute top-4 right-4 p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
+                <X className="w-4 h-4" />
+              </button>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4">
+                  <LogOut className="w-7 h-7 text-rose-400" />
+                </div>
+                <h3 className={`text-xl font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.logoutTitle}</h3>
+                <p className={`text-sm mt-2 leading-relaxed ${isDark ? "text-stone-400" : "text-stone-600"}`}>{text.logoutDesc}</p>
+                {user && (
+                  <div className={`mt-4 w-full p-3.5 rounded-2xl border flex items-center gap-3 text-left ${isDark ? "bg-stone-950 border-stone-800" : "bg-amber-50 border-amber-200"}`}>
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-stone-950 font-black text-sm shrink-0">
+                      {(user.name || user.email || "S").charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className={`text-sm font-bold truncate ${isDark ? "text-white" : "text-stone-900"}`}>{user.name || user.email}</div>
+                      <div className="text-xs text-stone-400 truncate">{user.email}</div>
+                    </div>
+                  </div>
+                )}
+                <p className={`text-xs mt-4 leading-relaxed ${isDark ? "text-stone-500" : "text-stone-500"}`}>{text.logoutNote}</p>
+              </div>
+              <div className="mt-6 flex gap-3">
+                <button onClick={() => !isLoggingOut && setShowLogoutConfirm(false)} disabled={isLoggingOut} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition disabled:opacity-50">{text.logoutCancelBtn}</button>
+                <button onClick={confirmLogout} disabled={isLoggingOut} className="flex-1 h-11 rounded-xl bg-gradient-to-r from-rose-500 to-red-500 text-white text-xs font-bold hover:from-rose-400 hover:to-red-400 transition shadow-lg shadow-rose-500/20 disabled:opacity-60 flex items-center justify-center gap-2">
+                  {isLoggingOut ? (<><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />{text.loggingOutBtn}</>) : (<><LogOut className="w-4 h-4" />{text.logoutConfirmBtn}</>)}
+                </button>
               </div>
             </motion.div>
           </motion.div>

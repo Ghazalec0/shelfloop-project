@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Body, UseGuards, ForbiddenException } from '@nestjs/common';
 import { FinesService } from './fines.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { PayFineDto } from './dto/fines.dto';
 

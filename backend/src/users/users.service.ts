@@ -93,4 +93,11 @@ export class UsersService {
       data,
     });
   }
+
+  async updateById(id: string, data: any) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
 }
