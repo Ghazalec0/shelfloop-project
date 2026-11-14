@@ -382,6 +382,14 @@ const t = {
     fine: "Late fine:",
     fineVal: "5 EGP / day",
     cancel: "Cancel",
+    updateCoverImage: "Update Cover Image",
+    sendDirectEmail: "Send Direct Email",
+    deleteUserBtn: "Delete User",
+    sendEmailWarning: "Send Email Warning",
+    subjectLabel: "Subject",
+    messageContentLabel: "Message Content",
+    otpLabel: "OTP",
+    proDeveloperCommunity: "Pro Developer Community",
     confirm: "Confirm Borrow",
     confirmBuyBtn: "Proceed to Checkout",
     totalBooks: "Total Books",
@@ -529,6 +537,14 @@ const t = {
     fine: "غرامة التأخير:",
     fineVal: "5 ج.م / يوم",
     cancel: "إلغاء",
+    updateCoverImage: "تحديث صورة الغلاف",
+    sendDirectEmail: "إرسال بريد مباشر",
+    deleteUserBtn: "حذف المستخدم",
+    sendEmailWarning: "إرسال تحذير بالبريد",
+    subjectLabel: "الموضوع",
+    messageContentLabel: "محتوى الرسالة",
+    otpLabel: "رمز التحقق",
+    proDeveloperCommunity: "مجتمع المطورين المحترفين",
     confirm: "تأكيد الاستعارة",
     confirmBuyBtn: "تأكيد وإتمام الحجز",
     totalBooks: "إجمالي كتب المكتبة",
@@ -715,6 +731,19 @@ export default function Page() {
   const text: typeof t.en = t[lang];
   const isDark = theme === "dark";
   const dir: "rtl" | "ltr" = lang === "ar" ? "rtl" : "ltr";
+
+  // تحويل أي رقم / حرف إنجليزي متبقي لعربي لما اللغة تبقى عربي
+  const AR_DIGITS: Record<string, string> = { "0": "٠", "1": "١", "2": "٢", "3": "٣", "4": "٤", "5": "٥", "6": "٦", "7": "٧", "8": "٨", "9": "٩" };
+  const locNum = (value: any): string => {
+    const s = String(value ?? "");
+    if (lang !== "ar") return s;
+    return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫");
+  };
+  const locText = (value: any): string => {
+    const s = String(value ?? "");
+    if (lang !== "ar") return s;
+    return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫").replace(/EGP/g, "ج.م").replace(/USD/g, "دولار").replace(/AM/g, "ص").replace(/PM/g, "م");
+  };
 
   useEffect(() => {
     if (msg) {
@@ -1220,7 +1249,7 @@ export default function Page() {
         return;
       }
 
-      setMsg({ text: lang === "ar" ? `تم تقديم طلب شراء "${getBookDisplayTitle(buyHint.title, lang)}" (${buyQuantity} نسخ) بنجاح! بانتظار موافقة الإدارة.` : `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
+      setMsg({ text: lang === "ar" ? `تم تقديم طلب شراء "${getBookDisplayTitle(buyHint.title, lang)}" (${locNum(buyQuantity)} نسخ) بنجاح! بانتظار موافقة الإدارة.` : `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
@@ -1631,7 +1660,7 @@ export default function Page() {
               </div>
               <div className="flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-orange-500"/>
-                <span className="font-semibold text-stone-300">Pro Developer Community</span>
+                <span className="font-semibold text-stone-300">{text.proDeveloperCommunity}</span>
               </div>
             </div>
           </div>
@@ -1705,7 +1734,7 @@ export default function Page() {
 
               {mode === "otp" && (
                 <div>
-                  <label className="block text-xs font-medium mb-1.5 text-stone-300">OTP</label>
+                  <label className="block text-xs font-medium mb-1.5 text-stone-300">{text.otpLabel}</label>
                   <input 
                     value={form.otp} 
                     onChange={e => setForm({ ...form, otp: e.target.value })} 
@@ -1823,7 +1852,7 @@ export default function Page() {
               <span>{text.finesTab}</span>
               {fines.filter((f: any) => f.status === "PENDING").length > 0 && (
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${activeTab === "fines" ? "bg-stone-950 text-rose-400" : "bg-rose-900/90 text-rose-200 border border-rose-700/50"}`}>
-                  {fines.filter((f: any) => f.status === "PENDING").length}
+                  {locNum(fines.filter((f: any) => f.status === "PENDING").length)}
                 </span>
               )}
             </button>
@@ -2228,7 +2257,7 @@ export default function Page() {
                       </div>
 
                       <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-stone-950/85 backdrop-blur-md border border-amber-500/25 text-[8px] sm:text-[11px] font-bold font-mono text-amber-400 shadow-md z-10">
-                        {av}/{tot} {text.availableCopies}
+                        {locNum(av)}/{locNum(tot)} {text.availableCopies}
                       </div>
 
                       {purchased && (
@@ -2355,10 +2384,10 @@ export default function Page() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
                   <span className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[11px] sm:text-xs font-medium ${isDark ? "bg-stone-900 border-stone-800 text-stone-400" : "bg-white border-stone-200 text-stone-600 shadow-sm"}`}>
-                    {text.page} {currentPage} {text.of} {totalPages}
+                    {text.page} {locNum(currentPage)} {text.of} {locNum(totalPages)}
                   </span>
                   <span className="hidden sm:block text-stone-400">•</span>
-                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs" dir={lang === "ar" ? "rtl" : "ltr"}>{lang === "ar" ? `${filtered.length} ${text.booksInPages} ${totalPages} ${text.pagesCount}` : `${filtered.length} ${text.booksCount} ${text.of} ${totalPages} ${text.pagesCount}`}</span>
+                  <span className="text-stone-500 font-medium text-[11px] sm:text-xs" dir={lang === "ar" ? "rtl" : "ltr"}>{lang === "ar" ? `${locNum(filtered.length)} ${text.booksInPages} ${locNum(totalPages)} ${text.pagesCount}` : `${locNum(filtered.length)} ${text.booksCount} ${text.of} ${locNum(totalPages)} ${text.pagesCount}`}</span>
                 </div>
               </div>
             )}
@@ -2412,7 +2441,7 @@ export default function Page() {
                         </button>
 
                         <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-1 rounded-full bg-stone-950/80 backdrop-blur-md border border-amber-500/20 text-[9px] sm:text-[11px] font-mono text-amber-400">
-                          {av}/{tot} {text.availableCopies}
+                          {locNum(av)}/{locNum(tot)} {text.availableCopies}
                         </div>
                       </div>
 
@@ -2496,7 +2525,7 @@ export default function Page() {
                             </div>
                             {isLate && (
                               <div className="text-[11px] font-bold text-rose-400 bg-rose-950/80 border border-rose-800/60 px-3 py-1 rounded-xl w-fit">
-                                {lang === "ar" ? `متأخر ${diffDays} يوم! غرامة: ${currentFine} جنيه` : `Overdue by ${diffDays} days! Fine: ${currentFine} EGP`}
+                                {lang === "ar" ? `متأخر ${locNum(diffDays)} يوم! غرامة: ${locNum(currentFine)} جنيه` : `Overdue by ${diffDays} days! Fine: ${currentFine} EGP`}
                               </div>
                             )}
                           </div>
@@ -2528,7 +2557,7 @@ export default function Page() {
               </div>
               <div className="text-right">
                 <span className="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-400 font-mono font-bold block">
-                  {text.grandTotal}: {grandTotalPurchases} EGP
+                  {text.grandTotal}: {locNum(grandTotalPurchases)} {text.currency}
                 </span>
               </div>
             </div>
@@ -2548,7 +2577,7 @@ export default function Page() {
                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-amber-500/10">
                       <h3 className="text-lg font-black text-amber-400 uppercase tracking-wider">{getCategoryLabel(group.category, lang)}</h3>
                       <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300">
-                        {text.categorySubtotal}: {group.subtotal} EGP
+                        {text.categorySubtotal}: {locNum(group.subtotal)} {text.currency}
                       </span>
                     </div>
 
@@ -2561,7 +2590,7 @@ export default function Page() {
                               <div>
                                 <h4 className={`font-bold text-sm line-clamp-3 break-words ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(p.book?.title, lang)}</h4>
                                 <p className="text-[11px] text-stone-400 mt-0.5">{p.book?.author}</p>
-                                <p className="text-[11px] font-mono text-amber-400 mt-1">{lang === "ar" ? `النسخ: ${p.quantity || 1} | السعر: ${p.price} جنيه` : `Copies: ${p.quantity || 1} | Price: ${p.price} EGP`}</p>
+                                <p className="text-[11px] font-mono text-amber-400 mt-1">{lang === "ar" ? `النسخ: ${locNum(p.quantity || 1)} | السعر: ${locNum(p.price)} جنيه` : `Copies: ${p.quantity || 1} | Price: ${p.price} EGP`}</p>
                               </div>
                               <div className={`mt-2 text-[10px] border px-2.5 py-1 rounded-lg w-fit font-bold ${p.status === 'PAID' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-orange-400 bg-orange-500/10 border-orange-500/20'}`}>
                                 {p.status === 'PAID' ? `✓ ${text.ownedPermanently}` : `⏳ ${text.pendingApproval}`}
@@ -2603,7 +2632,7 @@ export default function Page() {
                     }`}
                   >
                     <span className="truncate">
-                      {lang === "ar" ? (fineFilter === "ALL" ? "جميع الغرامات" : fineFilter === "PENDING" ? `معلق (${fines.filter((f: any) => f.status === "PENDING").length})` : "مدفوع") : (fineFilter === "ALL" ? "All Fines" : fineFilter === "PENDING" ? `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` : "Paid")}
+                      {lang === "ar" ? (fineFilter === "ALL" ? "جميع الغرامات" : fineFilter === "PENDING" ? `معلق (${locNum(fines.filter((f: any) => f.status === "PENDING").length)})` : "مدفوع") : (fineFilter === "ALL" ? "All Fines" : fineFilter === "PENDING" ? `Pending (${locNum(fines.filter((f: any) => f.status === "PENDING").length)})` : "Paid")}
                     </span>
                     <ChevronDown className={`w-4 h-4 text-amber-500 transition-transform duration-300 ${fineDropdownOpen ? "rotate-180" : ""}`} />
                   </button>
@@ -2629,7 +2658,7 @@ export default function Page() {
                         >
                           {[
                             { id: "ALL", label: lang === "ar" ? "جميع الغرامات" : "All Fines" },
-                            { id: "PENDING", label: lang === "ar" ? `معلق (${fines.filter((f: any) => f.status === "PENDING").length})` : `Pending (${fines.filter((f: any) => f.status === "PENDING").length})` },
+                            { id: "PENDING", label: lang === "ar" ? `معلق (${locNum(fines.filter((f: any) => f.status === "PENDING").length)})` : `Pending (${locNum(fines.filter((f: any) => f.status === "PENDING").length)})` },
                             { id: "PAID", label: lang === "ar" ? "مدفوع" : "Paid" }
                           ].map((item) => {
                             const isSelected = fineFilter === item.id;
@@ -2711,7 +2740,7 @@ export default function Page() {
                             </div>
                             <div className="flex items-center justify-between">
                               <span>{text.amountLabel}</span>
-                              <span className="font-bold text-amber-400">{fine.amount} EGP</span>
+                              <span className="font-bold text-amber-400">{locNum(fine.amount)} {text.currency}</span>
                             </div>
                           </div>
                         </div>
@@ -2854,7 +2883,7 @@ export default function Page() {
                     </span>
                     <BookOpen className="w-4 h-4 text-amber-500"/>
                   </div>
-                  <div className={`text-2xl font-black ${isDark ? "text-white" : "text-stone-900"}`}>{books.length}</div>
+                  <div className={`text-2xl font-black ${isDark ? "text-white" : "text-stone-900"}`}>{locNum(books.length)}</div>
                 </div>
 
                 <div 
@@ -2891,7 +2920,7 @@ export default function Page() {
                     <TrendingUp className="w-4 h-4 text-emerald-500"/>
                   </div>
                   <div className="text-2xl font-black text-emerald-500">
-                    {books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0}%
+                    {locNum(books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0)}%
                   </div>
                 </div>
               </div>
@@ -3070,7 +3099,7 @@ export default function Page() {
                                 </div>
                                 <div className="text-right sm:text-left">
                                   <div className="hidden sm:block text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-1">{lang === "ar" ? "المبلغ" : "Amount"}</div>
-                                  <div className="text-[14px] sm:text-[15px] font-black text-amber-500">{f.amount} EGP</div>
+                                  <div className="text-[14px] sm:text-[15px] font-black text-amber-500">{locNum(f.amount)} {text.currency}</div>
                                 </div>
                               </div>
                               
@@ -3127,13 +3156,13 @@ export default function Page() {
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-stone-400">{text.borrowedRatio}</span>
                         <span className="text-amber-500 font-bold">
-                          {books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0}%
+                          {locNum(books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0)}%
                         </span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-stone-800 overflow-hidden">
                         <div 
                           className="h-full bg-amber-500 rounded-full" 
-                          style={{ width: `${books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0}%` }} 
+                          style={{ width: `${locNum(books.length > 0 ? Math.round((allBorrowsList.length / books.length) * 100) : 0)}%` }} 
                         />
                       </div>
                     </div>
@@ -3207,7 +3236,7 @@ export default function Page() {
               <div className={`p-4 sm:p-6 rounded-2xl border ${isDark ? "bg-stone-950/40 border-stone-800" : "bg-amber-50/30 border-amber-200"}`}>
                 <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDark ? "text-stone-200" : "text-stone-800"}`}>
                   <BookOpen className="w-4 h-4 text-amber-500"/> {text.manageBooks}
-                  <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{lang === "ar" ? `${books.length} كتاب` : `${books.length} books`}</span>
+                  <span className="ml-auto text-[11px] font-normal px-2.5 py-1 rounded-full bg-stone-800 text-stone-400">{lang === "ar" ? `${locNum(books.length)} كتاب` : `${locNum(books.length)} books`}</span>
                 </h4>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[65vh] sm:max-h-[70vh] overflow-y-auto overscroll-contain pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-stone-900/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-500/80 hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-thumb]:rounded-full pb-2">
                   {books.map((b: any) => (
@@ -3219,8 +3248,8 @@ export default function Page() {
                           <p className="text-[10px] sm:text-[11px] text-stone-400 mt-0.5 truncate">{b.author}</p>
                           <div className="flex flex-wrap items-center gap-1.5 mt-2">
                             <span className="px-2 py-0.5 rounded-full bg-stone-800 text-stone-300 text-[9px] font-bold">{getCategoryLabel(b.category || "Programming", lang)}</span>
-                            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/20 text-amber-500 text-[9px] font-black">{b.price ?? 150} EGP</span>
-                            <span className="px-2 py-0.5 rounded-full bg-stone-800/60 text-stone-400 text-[8px] font-mono">{getAvail(b)}/{getTotal(b)} {lang === "ar" ? "متاح" : "avail"}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/20 text-amber-500 text-[9px] font-black">{locNum(b.price ?? 150)} {text.currency}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-stone-800/60 text-stone-400 text-[8px] font-mono">{locNum(getAvail(b))}/{locNum(getTotal(b))} {lang === "ar" ? "متاح" : "avail"}</span>
                           </div>
                         </div>
                       </div>
@@ -3260,7 +3289,7 @@ export default function Page() {
                 <div className={`p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                   <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.bookWord}:</span><span className="font-bold text-end" dir="auto">{getBookDisplayTitle(selectedFine.borrowing?.book?.title, lang)}</span></div>
                   <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.daysLateLabel}</span><span className="font-bold text-orange-400" dir="ltr">{selectedFine.daysLate} {text.daysUnit}</span></div>
-                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.amountLabel}</span><span className="font-bold text-amber-400" dir="ltr">{selectedFine.amount} {text.currency}</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.amountLabel}</span><span className="font-bold text-amber-400">{locNum(selectedFine.amount)} {text.currency}</span></div>
                 </div>
 
                 <div>
@@ -3341,7 +3370,7 @@ export default function Page() {
                 </div>
 
                 <div>
-                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>Update Cover Image</label>
+                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.updateCoverImage}</label>
                   <input 
                     type="file" 
                     accept="image/*" 
@@ -3367,7 +3396,7 @@ export default function Page() {
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-5 h-5 text-amber-500"/>
-                  <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.totalBooks} ({books.length})</h3>
+                  <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.totalBooks} ({locNum(books.length)})</h3>
                 </div>
                 <button onClick={() => setShowBooksModal(false)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
                   <X className="w-4 h-4"/>
@@ -3384,11 +3413,11 @@ export default function Page() {
                         <img src={getCover(b)} className="w-12 h-14 object-cover rounded-xl shadow-md" />
                         <div>
                           <div className={`text-sm font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(b.title, lang)}</div>
-                          <div className="text-xs text-stone-400">{b.author} • <span className="text-amber-500 font-semibold">{getCategoryLabel(b.category || "Programming", lang)}</span> • Price: <span className="text-amber-400 font-bold">{b.price ?? 0} EGP</span></div>
+                          <div className="text-xs text-stone-400">{b.author} • <span className="text-amber-500 font-semibold">{getCategoryLabel(b.category || "Programming", lang)}</span> • Price: <span className="text-amber-400 font-bold">{locNum(b.price ?? 0)} {text.currency}</span></div>
                         </div>
                       </div>
                       <div className="text-right font-mono text-xs text-amber-400">
-                        Available: {getAvail(b)} / Total: {getTotal(b)}
+                        Available: {locNum(getAvail(b))} / Total: {locNum(getTotal(b))}
                       </div>
                     </div>
                   ))
@@ -3493,7 +3522,7 @@ export default function Page() {
                                     }`}
                                   >
                                     <Mail className="w-4 h-4 text-orange-500"/>
-                                    <span>Send Direct Email</span>
+                                    <span>{text.sendDirectEmail}</span>
                                   </button>
 
                                   <button
@@ -3505,7 +3534,7 @@ export default function Page() {
                                     }`}
                                   >
                                     <Trash2 className="w-4 h-4 text-rose-500"/>
-                                    <span>Delete User</span>
+                                    <span>{text.deleteUserBtn}</span>
                                   </button>
                                 </motion.div>
                               </>
@@ -3532,7 +3561,7 @@ export default function Page() {
                     <Mail className="w-5 h-5"/>
                   </div>
                   <div>
-                    <h3 className={`text-base font-bold ${isDark ? "text-white" : "text-stone-900"}`}>Send Email Warning</h3>
+                    <h3 className={`text-base font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.sendEmailWarning}</h3>
                     <p className="text-[11px] text-stone-400">To: <span className="text-amber-400 font-semibold">{emailUserTarget.email}</span></p>
                   </div>
                 </div>
@@ -3543,7 +3572,7 @@ export default function Page() {
 
               <form onSubmit={handleSendDirectEmail} className="space-y-4">
                 <div>
-                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>Subject</label>
+                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.subjectLabel}</label>
                   <input 
                     value={emailSubject} 
                     onChange={e => setEmailSubject(e.target.value)} 
@@ -3554,7 +3583,7 @@ export default function Page() {
                 </div>
 
                 <div>
-                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>Message Content</label>
+                  <label className={`block text-xs font-medium mb-1 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.messageContentLabel}</label>
                   <textarea 
                     value={emailMessage} 
                     onChange={e => setEmailMessage(e.target.value)} 
@@ -3585,7 +3614,7 @@ export default function Page() {
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-stone-800">
                 <div className="flex items-center gap-3">
                   <Library className="w-5 h-5 text-amber-500"/>
-                  <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.borrowedBooks} ({allBorrowsList.length})</h3>
+                  <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.borrowedBooks} ({locNum(allBorrowsList.length)})</h3>
                 </div>
                 <button onClick={() => setShowBorrowsModal(false)} className="p-2 rounded-xl bg-stone-800 text-stone-400 hover:text-white transition">
                   <X className="w-4 h-4"/>
@@ -3631,7 +3660,7 @@ export default function Page() {
               
               <div className={`mt-4 p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                 <div className="flex items-center justify-between"><span>{text.period}</span><span className="font-bold text-amber-500">{text.days}</span></div>
-                <div className="flex items-center justify-between"><span>{text.fine}</span><span className="font-bold text-orange-500">{text.fineVal}</span></div>
+                <div className="flex items-center justify-between"><span>{text.fine}</span><span className="font-bold text-orange-500">{locText(text.fineVal)}</span></div>
               </div>
 
               <div className="mt-6 flex gap-3">
@@ -3665,11 +3694,11 @@ export default function Page() {
                 <div className={`p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                   <div className="flex justify-between items-center font-bold text-sm">
                     <span>{text.unitPriceLabel}:</span>
-                    <span className="text-amber-400 text-base">{buyHint.price ?? 150} {text.currency}</span>
+                    <span className="text-amber-400 text-base">{locNum(buyHint.price ?? 150)} {text.currency}</span>
                   </div>
                   <div className="flex justify-between items-center font-bold text-sm">
                     <span>{text.availableCopiesLabel}:</span>
-                    <span className="text-emerald-400 text-base">{getAvail(buyHint)}</span>
+                    <span className="text-emerald-400 text-base">{locNum(getAvail(buyHint))}</span>
                   </div>
                 </div>
 
@@ -3684,7 +3713,7 @@ export default function Page() {
                       const val = parseInt(e.target.value) || 1;
                       setBuyQuantity(val);
                       if (val > getAvail(buyHint)) {
-                        setBuyError(lang === "ar" ? `خطأ: الكمية المطلوبة (${val}) أكبر من النسخ المتاحة (${getAvail(buyHint)}).` : `Error: Requested quantity (${val}) exceeds available copies (${getAvail(buyHint)}).`);
+                        setBuyError(lang === "ar" ? `خطأ: الكمية المطلوبة (${locNum(val)}) أكبر من النسخ المتاحة (${locNum(getAvail(buyHint))}).` : `Error: Requested quantity (${val}) exceeds available copies (${getAvail(buyHint)}).`);
                       } else {
                         setBuyError("");
                       }
@@ -3702,7 +3731,7 @@ export default function Page() {
 
                 <div className={`p-3 rounded-xl border flex justify-between items-center text-xs font-bold ${isDark ? "bg-stone-950 border-stone-800 text-amber-300" : "bg-amber-50 border-amber-200 text-amber-900"}`}>
                   <span>{text.totalCalculatedPriceLabel}:</span>
-                  <span className="text-base text-amber-400">{(buyHint.price ?? 150) * buyQuantity} {text.currency}</span>
+                  <span className="text-base text-amber-400">{locNum((buyHint.price ?? 150) * buyQuantity)} {text.currency}</span>
                 </div>
 
                 <div>
