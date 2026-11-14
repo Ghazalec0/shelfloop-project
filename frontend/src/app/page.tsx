@@ -80,7 +80,6 @@ const getCategoryLabel = (cat: string, lang: "en" | "ar") => {
   return categoryTranslations[cat]?.[lang] || cat;
 };
 
-
 const bookTitleTranslations: Record<string, string> = {
   // Programming & Tech - complete
   "Cracking the Coding Interview": "كسر مقابلة البرمجة",
@@ -269,8 +268,6 @@ const isArabicText = (text: string): boolean => {
   return /[\u0600-\u06FF]/.test(text);
 };
 
-
-
 const getBookDisplayTitle = (title: string, lang: "en" | "ar"): string => {
   if (!title) return title;
   const trimmed = title.trim();
@@ -307,8 +304,6 @@ const autoRegisterBookTranslation = (englishTitle: string, arabicTitle: string) 
     arabicToEnglishTranslations[arabicTitle] = englishTitle;
   }
 };
-
-
 
 const t = {
   en: {
@@ -382,14 +377,6 @@ const t = {
     fine: "Late fine:",
     fineVal: "5 EGP / day",
     cancel: "Cancel",
-    updateCoverImage: "Update Cover Image",
-    sendDirectEmail: "Send Direct Email",
-    deleteUserBtn: "Delete User",
-    sendEmailWarning: "Send Email Warning",
-    subjectLabel: "Subject",
-    messageContentLabel: "Message Content",
-    otpLabel: "OTP",
-    proDeveloperCommunity: "Pro Developer Community",
     confirm: "Confirm Borrow",
     confirmBuyBtn: "Proceed to Checkout",
     totalBooks: "Total Books",
@@ -417,6 +404,7 @@ const t = {
     aiDesc: "Chat with our intelligent assistant to get instant book recommendations and insights.",
     aiPlaceholder: "Ask me about any book or programming topic...",
     aiSend: "Send",
+    processing: "Processing...",
     logoutTitle: "Log Out?",
     logoutDesc: "You are about to sign out of your ShelfLoop account.",
     logoutNote: "Your borrowed books, purchases and favorites are saved. You can sign in again anytime to continue where you left off.",
@@ -424,6 +412,14 @@ const t = {
     logoutCancelBtn: "Stay Signed In",
     loggingOutBtn: "Logging Out...",
     logoutTitleShort: "Logout",
+    updateCoverImage: "Update Cover Image",
+    sendDirectEmail: "Send Direct Email",
+    deleteUserBtn: "Delete User",
+    sendEmailWarning: "Send Email Warning",
+    subjectLabel: "Subject",
+    messageContentLabel: "Message Content",
+    otpLabel: "OTP",
+    proDeveloperCommunity: "Pro Developer Community",
     cashApprovalsTitle: "Cash & Fines Approvals",
     approveBtn: "Approve Payment",
     userLabel: "User",
@@ -537,14 +533,6 @@ const t = {
     fine: "غرامة التأخير:",
     fineVal: "5 ج.م / يوم",
     cancel: "إلغاء",
-    updateCoverImage: "تحديث صورة الغلاف",
-    sendDirectEmail: "إرسال بريد مباشر",
-    deleteUserBtn: "حذف المستخدم",
-    sendEmailWarning: "إرسال تحذير بالبريد",
-    subjectLabel: "الموضوع",
-    messageContentLabel: "محتوى الرسالة",
-    otpLabel: "رمز التحقق",
-    proDeveloperCommunity: "مجتمع المطورين المحترفين",
     confirm: "تأكيد الاستعارة",
     confirmBuyBtn: "تأكيد وإتمام الحجز",
     totalBooks: "إجمالي كتب المكتبة",
@@ -572,6 +560,7 @@ const t = {
     aiDesc: "تحدث مع المساعد الذكي للحصول على اقتراحات فورية للكتب والمراجع.",
     aiPlaceholder: "اسأل عن أي كتاب أو موضوع برمجي...",
     aiSend: "إرسال",
+    processing: "جاري المعالجة...",
     logoutTitle: "تسجيل الخروج؟",
     logoutDesc: "أنت على وشك تسجيل الخروج من حسابك في ShelfLoop.",
     logoutNote: "كتبك المستعارة ومشترياتك ومفضلتك محفوظة. تقدر تسجل دخول تاني في أي وقت وتكمل من مكان ما وقفت.",
@@ -579,6 +568,14 @@ const t = {
     logoutCancelBtn: "البقاء مسجلاً",
     loggingOutBtn: "جاري تسجيل الخروج...",
     logoutTitleShort: "تسجيل الخروج",
+    updateCoverImage: "تحديث صورة الغلاف",
+    sendDirectEmail: "إرسال بريد مباشر",
+    deleteUserBtn: "حذف المستخدم",
+    sendEmailWarning: "إرسال تحذير بالبريد",
+    subjectLabel: "الموضوع",
+    messageContentLabel: "محتوى الرسالة",
+    otpLabel: "رمز التحقق",
+    proDeveloperCommunity: "مجتمع المطورين المحترفين",
     cashApprovalsTitle: "مراجعة الغرامات والمدفوعات المعلقة",
     approveBtn: "قبول الدفع",
     userLabel: "المستخدم",
@@ -728,11 +725,9 @@ export default function Page() {
   const [newBook, setNewBook] = useState({ title: "", author: "Robert Martin", totalCopies: 5, category: "Programming", price: 150 });
   const [coverFile, setCoverFile] = useState<File | null>(null);
 
-  const text: typeof t.en = t[lang];
+  const text = t[lang];
   const isDark = theme === "dark";
   const dir: "rtl" | "ltr" = lang === "ar" ? "rtl" : "ltr";
-
-  // تحويل أي رقم / حرف إنجليزي متبقي لعربي لما اللغة تبقى عربي
   const AR_DIGITS: Record<string, string> = { "0": "٠", "1": "١", "2": "٢", "3": "٣", "4": "٤", "5": "٥", "6": "٦", "7": "٧", "8": "٨", "9": "٩" };
   const locNum = (value: any): string => {
     const s = String(value ?? "");
@@ -742,7 +737,7 @@ export default function Page() {
   const locText = (value: any): string => {
     const s = String(value ?? "");
     if (lang !== "ar") return s;
-    return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫").replace(/EGP/g, "ج.م").replace(/USD/g, "دولار").replace(/AM/g, "ص").replace(/PM/g, "م");
+    return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫").replace(/EGP/g, "ج.م").replace(/USD/g, "دولار");
   };
 
   useEffect(() => {
@@ -788,40 +783,33 @@ export default function Page() {
   };
 
   const clearLocalAuth = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setBooks([]);
-    setBorrows([]);
-    setPurchases([]);
-    setFavorites([]);
-    setFines([]);
-    setAdminFines([]);
-    setAdminPurchases([]);
-  };
-
-  const hardLogout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch {
-    } finally {
-      clearLocalAuth();
-    }
-  };
-
-  const confirmLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    try {
-      await hardLogout();
-    } finally {
-      setIsLoggingOut(false);
-      setShowLogoutConfirm(false);
-    }
-  };
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user");
+  setUser(null);
+  setBooks([]);
+  setBorrows([]);
+  setPurchases([]);
+  setFavorites([]);
+  setFines([]);
+  setAdminFines([]);
+  setAdminPurchases([]);
+};
+const hardLogout = async () => {
+  try {
+    await api.post("/auth/logout");
+  } catch {
+  } finally {
+    clearLocalAuth();
+  }
+};
+const confirmLogout = async () => {
+  if (isLoggingOut) return;
+  setIsLoggingOut(true);
+  try { await hardLogout(); } finally { setIsLoggingOut(false); setShowLogoutConfirm(false); }
+};
 
   const dismissFineCard = (fineId: string) => {
     setDismissedFines(prev => [...prev, fineId]);
@@ -1150,9 +1138,12 @@ export default function Page() {
     e.preventDefault();
     setMsg({ text: lang === "ar" ? "جاري المعالجة..." : "Processing...", type: "info" });
     try {
-      if (mode === "login") {
+            if (mode === "login") {
         const res = await api.post("/auth/login", { email: form.email, password: form.password });
-        const payload = unwrap(res);
+        let payload: any = unwrap(res);
+        while (payload?.data && typeof payload.data === "object") {
+          payload = payload.data;
+        }
         const token = payload?.accessToken || payload?.access_token || payload?.token;
         const refreshToken = payload?.refreshToken || payload?.refresh_token;
         if (!token) throw new Error("No token returned");
@@ -1249,7 +1240,7 @@ export default function Page() {
         return;
       }
 
-      setMsg({ text: lang === "ar" ? `تم تقديم طلب شراء "${getBookDisplayTitle(buyHint.title, lang)}" (${locNum(buyQuantity)} نسخ) بنجاح! بانتظار موافقة الإدارة.` : `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
+      setMsg({ text: lang === "ar" ? `تم تقديم طلب شراء "${getBookDisplayTitle(buyHint.title, lang)}" (${buyQuantity} نسخ) بنجاح! بانتظار موافقة الإدارة.` : `Purchase request for "${buyHint.title}" (${buyQuantity} copies) submitted successfully! Waiting for admin approval.`, type: "success" });
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
@@ -1271,9 +1262,6 @@ export default function Page() {
     }
   };
 
-  // Paymob: افتح بوابة الدفع صفحة كاملة، مش iframe.
-  // الـ iframe بعرض ثابت هو اللي كان بيقص فورم Paymob على موبايل 375px.
-  // وبنبعت lang=ar عشان صفحة Paymob نفسها تفتح عربي لما اللغة عربي.
   const openCheckoutFullPage = (checkoutUrl: string) => {
     try {
       const u = new URL(checkoutUrl, window.location.origin);
@@ -2217,7 +2205,7 @@ export default function Page() {
               </div>
             </div>
 
-            {/* تم ضبط شبكة الكتب في الشاشات الصغيرة لتكون كتابين بالعرض مع تقليص حجم الـ div وتصغير الخط والحفاظ على المحتوى وزر التعديل والحذف والقلب مرتبة رأسياً على الجنب */}
+            {}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
               {paginatedBooks.map((book: any) => {
                 const av = getAvail(book);
@@ -2234,7 +2222,7 @@ export default function Page() {
                       src={getCover(book)} className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
                       
-                      {/* الأزرار (المفضلة، التعديل، الحذف) تظهر على الجنب فوق بعضها بشكل احترافي */}
+                      {}
                       <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 sm:gap-2 z-20">
                         <button 
                           onClick={() => toggleFavorite(getBookId(book))}
@@ -2298,7 +2286,7 @@ export default function Page() {
                           </div>
                         </div>
 
-                        {/* تصغير الخطوط والأزرار للشاشات الصغيرة مع ضمان ظهور النص والايقونات بوضوح */}
+                        {}
                         <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                           <motion.button 
                             whileTap={{ scale: 0.96 }}
@@ -2337,7 +2325,7 @@ export default function Page() {
             {totalPages > 1 && (
               <div className="mt-8 sm:mt-12 flex flex-col items-center gap-3 sm:gap-5 pb-6 sm:pb-0">
                 <div className="w-full flex justify-center">
-                  <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 rounded-2xl p-2 sm:p-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 max-w-full overflow-x-auto scrollbar-hide">
+                  <div dir={dir} className="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 rounded-2xl p-2 sm:p-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 max-w-full overflow-x-auto scrollbar-hide">
                     <button
                       onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                       disabled={currentPage === 1}
@@ -2368,7 +2356,7 @@ export default function Page() {
                             onClick={() => { setCurrentPage(pageNum as number); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                             className={`shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl text-[13px] sm:text-[15px] font-bold border transition-all duration-200 ${currentPage === pageNum ? "bg-[#FF8A4C] border-[#FF8A4C] text-white shadow-[0_4px_14px_rgba(255,138,76,0.35)] scale-105" : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 shadow-sm dark:border-stone-700 dark:bg-stone-800 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-white"}`}
                           >
-                            {pageNum}
+                            {locNum(pageNum)}
                           </button>
                         );
                       });
@@ -2486,7 +2474,7 @@ export default function Page() {
                 </div>
               </div>
               <span className="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-500 font-mono font-bold">
-                {borrows.length} {text.borrowedBooks}
+                {locNum(borrows.length)} {text.borrowedBooks}
               </span>
             </div>
 
@@ -2897,7 +2885,7 @@ export default function Page() {
                     </span>
                     <Library className="w-4 h-4 text-amber-500"/>
                   </div>
-                  <div className="text-2xl font-black text-amber-500">{allBorrowsList.length}</div>
+                  <div className="text-2xl font-black text-amber-500">{locNum(allBorrowsList.length)}</div>
                 </div>
 
                 <div 
@@ -3288,13 +3276,13 @@ export default function Page() {
               <div className="space-y-4">
                 <div className={`p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
                   <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.bookWord}:</span><span className="font-bold text-end" dir="auto">{getBookDisplayTitle(selectedFine.borrowing?.book?.title, lang)}</span></div>
-                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.daysLateLabel}</span><span className="font-bold text-orange-400" dir="ltr">{selectedFine.daysLate} {text.daysUnit}</span></div>
-                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.amountLabel}</span><span className="font-bold text-amber-400">{locNum(selectedFine.amount)} {text.currency}</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.daysLateLabel}</span><span className="font-bold text-orange-400" dir="ltr">{locNum(selectedFine.daysLate)} {text.daysUnit}</span></div>
+                  <div className="flex items-center justify-between gap-3"><span className="shrink-0">{text.amountLabel}</span><span className="font-bold text-amber-400" dir="ltr">{locNum(selectedFine.amount)} {text.currency}</span></div>
                 </div>
 
                 <div>
                   <label className={`block text-xs font-medium mb-2 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.paymentMethodLabel}</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button type="button" onClick={() => setPaymentMethod("CARD")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${paymentMethod === "CARD" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
                       <CreditCard className="w-4 h-4"/>
                       <span>{text.cardWord}</span>
@@ -3413,7 +3401,7 @@ export default function Page() {
                         <img src={getCover(b)} className="w-12 h-14 object-cover rounded-xl shadow-md" />
                         <div>
                           <div className={`text-sm font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{getBookDisplayTitle(b.title, lang)}</div>
-                          <div className="text-xs text-stone-400">{b.author} • <span className="text-amber-500 font-semibold">{getCategoryLabel(b.category || "Programming", lang)}</span> • Price: <span className="text-amber-400 font-bold">{locNum(b.price ?? 0)} {text.currency}</span></div>
+                          <div className="text-xs text-stone-400">{b.author} • <span className="text-amber-500 font-semibold">{getCategoryLabel(b.category || "Programming", lang)}</span> • Price: <span className="text-amber-400 font-bold">{b.price ?? 0} EGP</span></div>
                         </div>
                       </div>
                       <div className="text-right font-mono text-xs text-amber-400">
@@ -3655,18 +3643,27 @@ export default function Page() {
         {hint && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} className={`border w-full max-w-[95vw] sm:max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+              <div className="flex items-center justify-between mb-3">
+                <button type="button" onClick={toggleLanguage} className={`px-3 py-2 rounded-xl text-[11px] font-bold border flex items-center gap-1.5 transition ${isDark ? "border-amber-500/30 bg-stone-950 text-amber-400 hover:bg-stone-800" : "border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"}`}>
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{lang === "en" ? "العربية" : "English"}</span>
+                </button>
+                <button type="button" onClick={() => { setHint(null); setActiveTab("catalog"); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label={text.cancel} className={`p-2 rounded-xl transition ${isDark ? "bg-stone-950 text-stone-400 hover:text-white" : "bg-stone-100 text-stone-500 hover:text-stone-900"}`}>
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
               <img src={getCover(hint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBorrowTitle}: "{getBookDisplayTitle(hint.title, lang)}"</h3>
               
               <div className={`mt-4 p-4 rounded-2xl border space-y-2 text-xs ${isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-amber-50 border-amber-200 text-stone-700"}`}>
-                <div className="flex items-center justify-between"><span>{text.period}</span><span className="font-bold text-amber-500">{text.days}</span></div>
+                <div className="flex items-center justify-between"><span>{text.period}</span><span className="font-bold text-amber-500">{locText(text.days)}</span></div>
                 <div className="flex items-center justify-between"><span>{text.fine}</span><span className="font-bold text-orange-500">{locText(text.fineVal)}</span></div>
               </div>
 
               <div className="mt-6 flex gap-3">
-                <button onClick={() => setHint(null)} disabled={isProcessingBorrow} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition">{text.cancel}</button>
+                <button onClick={() => { setHint(null); setActiveTab("catalog"); window.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={isProcessingBorrow} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition">{text.cancel}</button>
                 <button onClick={confirmBorrow} disabled={isProcessingBorrow} className="flex-1 h-11 rounded-xl bg-amber-500 text-stone-950 text-xs font-bold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
-                  {isProcessingBorrow ? "Processing..." : text.confirm}
+                  {isProcessingBorrow ? text.processing : text.confirm}
                 </button>
               </div>
             </motion.div>
@@ -3736,7 +3733,7 @@ export default function Page() {
 
                 <div>
                   <label className={`block text-xs font-medium mb-2 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.paymentMethodLabel}</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <button type="button" onClick={() => setBuyPaymentMethod("CARD")} className={`min-h-12 py-3 px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1.5 ${buyPaymentMethod === "CARD" ? "bg-amber-500 text-stone-950 border-amber-500 shadow-md shadow-amber-500/20" : isDark ? "bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700" : "bg-white border-amber-200 text-stone-700"}`}>
                       <CreditCard className="w-4 h-4 shrink-0"/>
                       <span className="leading-tight text-center">{text.cardMethod}</span>
