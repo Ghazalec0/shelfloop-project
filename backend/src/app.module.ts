@@ -11,8 +11,6 @@ import { BorrowingModule } from './borrowing/borrowing.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MailModule } from './mail/mail.module';
 import { FinesModule } from './fines/fines.module';
-import { AiService } from './ai/ai.service';
-import { AiController } from './ai/ai.controller';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
@@ -35,9 +33,9 @@ import { AiModule } from './ai/ai.module';
     FavoritesModule,
     PurchasesModule,
     CloudinaryModule,
-    AiModule
+    AiModule,
   ],
-  controllers: [AppController, AiController],
-  providers: [AppService, AiService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
