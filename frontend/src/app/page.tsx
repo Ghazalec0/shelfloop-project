@@ -3698,25 +3698,24 @@ export default function Page() {
 
                 <div>
                   <label className={`block text-xs font-medium mb-2 ${isDark ? "text-stone-300" : "text-stone-700"}`}>{text.paymentMethodLabel}</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button type="button" onClick={() => setBuyPaymentMethod("CARD")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${buyPaymentMethod === "CARD" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
-                      <CreditCard className="w-4 h-4"/>
-                      <span>{text.cardMethod}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button type="button" onClick={() => setBuyPaymentMethod("CARD")} className={`min-h-12 py-3 px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1.5 ${buyPaymentMethod === "CARD" ? "bg-amber-500 text-stone-950 border-amber-500 shadow-md shadow-amber-500/20" : isDark ? "bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700" : "bg-white border-amber-200 text-stone-700"}`}>
+                      <CreditCard className="w-4 h-4 shrink-0"/>
+                      <span className="leading-tight text-center">{text.cardMethod}</span>
                     </button>
-                    <button type="button" onClick={() => setBuyPaymentMethod("WALLET")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${buyPaymentMethod === "WALLET" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
-                      <Wallet className="w-4 h-4"/>
-                      <span>{text.walletMethod}</span>
+                    <button type="button" onClick={() => setBuyPaymentMethod("WALLET")} className={`min-h-12 py-3 px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1.5 ${buyPaymentMethod === "WALLET" ? "bg-amber-500 text-stone-950 border-amber-500 shadow-md shadow-amber-500/20" : isDark ? "bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700" : "bg-white border-amber-200 text-stone-700"}`}>
+                      <Wallet className="w-4 h-4 shrink-0"/>
+                      <span className="leading-tight text-center">{text.walletMethod}</span>
                     </button>
-                    <button type="button" onClick={() => setBuyPaymentMethod("CASH")} className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${buyPaymentMethod === "CASH" ? "bg-amber-500 text-stone-950 border-amber-500" : isDark ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-white border-amber-200 text-stone-700"}`}>
-                      <DollarSign className="w-4 h-4"/>
-                      <span>{text.cashMethod}</span>
+                    <button type="button" onClick={() => setBuyPaymentMethod("CASH")} className={`min-h-12 py-3 px-3 rounded-xl border text-[11px] sm:text-xs font-bold transition flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1.5 ${buyPaymentMethod === "CASH" ? "bg-amber-500 text-stone-950 border-amber-500 shadow-md shadow-amber-500/20" : isDark ? "bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700" : "bg-white border-amber-200 text-stone-700"}`}>
+                      <DollarSign className="w-4 h-4 shrink-0"/>
+                      <span className="leading-tight text-center">{text.cashMethod}</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
-                  <button onClick={() => { setBuyHint(null); setBuyError(""); }} disabled={isProcessingBuy} className="flex-1 h-11 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition">{text.cancel}</button>
-                  <button onClick={confirmPurchase} disabled={isProcessingBuy || Boolean(buyError)} className="flex-1 h-11 rounded-xl bg-amber-500 disabled:opacity-50 text-stone-950 text-xs font-bold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
+                <div className="mt-6 flex flex-col gap-2.5">
+                  <button onClick={confirmPurchase} disabled={isProcessingBuy || Boolean(buyError)} className="w-full h-12 rounded-xl bg-amber-500 disabled:opacity-50 text-stone-950 text-sm font-bold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20 flex items-center justify-center">
                     {isProcessingBuy 
                       ? text.redirectingPay 
                       : buyPaymentMethod === "CASH" 
