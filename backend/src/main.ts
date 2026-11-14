@@ -26,8 +26,8 @@ async function bootstrap() {
   );
 
   const allowedOrigins = [
-    // 'https://shelfloop-frontend.vercel.app',
-    // 'https://shelfloop-project.vercel.app',
+    'https://shelfloop-frontend.vercel.app',
+    'https://shelfloop-project.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001',
     process.env.FRONTEND_URL,
