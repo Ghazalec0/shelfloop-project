@@ -1124,10 +1124,16 @@ export default function Page() {
       if (mode === "login") {
         const res = await api.post("/auth/login", { email: form.email, password: form.password });
         const payload = unwrap(res);
-        const token = payload?.access_token || payload?.token;
+        const token = payload?.accessToken || payload?.access_token || payload?.token;
+        const refreshToken = payload?.refreshToken || payload?.refresh_token;
         if (!token) throw new Error("No token returned");
         const safe = payload.user || { name: form.email.split("@")[0], email: form.email, role: "USER" };
+        localStorage.setItem("accessToken", token);
         localStorage.setItem("access_token", token);
+        if (refreshToken) {
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("refresh_token", refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify(safe));
         setUser(safe);
         setMsg({ text: lang === "ar" ? "مرحبا بعودتك!" : "Welcome back!", type: "success" });
