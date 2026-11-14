@@ -16,6 +16,7 @@ import { AiController } from './ai/ai.controller';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     FavoritesModule,
     PurchasesModule,
     CloudinaryModule,
+    AiModule
   ],
   controllers: [AppController, AiController],
   providers: [AppService, AiService],
