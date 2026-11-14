@@ -110,10 +110,20 @@ api.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
       clearTokens();
-      if (typeof window !== "undefined" && window.location.pathname !== "/") {
-        window.location.href = "/";
+      if (typeof window !== "undefined") {
+        // أمان: أي فشل في الـ Refresh = التوكن اتلعب فيه أو انتهى
+        // اطرد المستخدم فوراً، حتى لو هو أصلاً في صفحة "/" (الكتالوج)
+        // لأن من غير Reload هيفضل الـ user في ذاكرة React وكأنه لسه داخل
+        window.dispatchEvent(new Event("auth:force-logout"));
+        if (window.location.pathname !== "/") {
+          window.location.href = "/";
+        } else {
+          window.location.reload();
+        }
       }
-      return Promise.reject(refreshError);
+      const authError: any = new Error("Session expired. Please sign in again.");
+      authError.response = { status: 401 };
+      return Promise.reject(authError);
     } finally {
       isRefreshing = false;
     }
