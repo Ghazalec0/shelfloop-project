@@ -735,6 +735,7 @@ export default function Page() {
     return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫");
   };
   const locText = (value: any): string => {
+  const isAuthError = (err: any): boolean => { const m = String(err?.message || ""); const s = err?.response?.status; if (s === 401 || s === 403) return true; return /no refresh|invalid refresh|refresh token|unauthorized|invalid token|token expired|jwt/i.test(m + " " + String(err?.response?.data?.message || "")); };
     const s = String(value ?? "");
     if (lang !== "ar") return s;
     return s.replace(/[0-9]/g, (d) => AR_DIGITS[d] || d).replace(".", "٫").replace(/EGP/g, "ج.م").replace(/USD/g, "دولار");
@@ -818,6 +819,12 @@ const confirmLogout = async () => {
   const dismissAdminFineCard = (fineId: string) => {
     setDismissedAdminFines(prev => [...prev, fineId]);
   };
+
+  useEffect(() => {
+    const onForceLogout = () => { clearLocalAuth(); };
+    window.addEventListener("auth:force-logout", onForceLogout);
+    return () => window.removeEventListener("auth:force-logout", onForceLogout);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -1208,7 +1215,7 @@ const confirmLogout = async () => {
       setHint(null);
       fetchAll();
     } catch (err: any) {
-      if (err?.response?.status === 401) { return; }
+      if (isAuthError(err)) { await hardLogout(); return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBorrow(false);
@@ -1244,7 +1251,7 @@ const confirmLogout = async () => {
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
-      if (err?.response?.status === 401) { return; }
+      if (isAuthError(err)) { await hardLogout(); return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBuy(false);
