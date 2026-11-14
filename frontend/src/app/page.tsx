@@ -3649,6 +3649,15 @@ export default function Page() {
         {buyHint && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} dir={dir} className={`border w-full max-w-[calc(100vw-1.5rem)] sm:max-w-md rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full ${isDark ? "bg-stone-900 border-amber-500/20" : "bg-white border-amber-200"}`}>
+              <div className="flex items-center justify-between mb-3">
+                <button type="button" onClick={toggleLanguage} className={`px-3 py-2 rounded-xl text-[11px] font-bold border flex items-center gap-1.5 transition ${isDark ? "border-amber-500/30 bg-stone-950 text-amber-400 hover:bg-stone-800" : "border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"}`}>
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{lang === "en" ? "العربية" : "English"}</span>
+                </button>
+                <button type="button" onClick={() => { setBuyHint(null); setBuyError(""); setActiveTab("catalog"); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label={text.cancel} className={`p-2 rounded-xl transition ${isDark ? "bg-stone-950 text-stone-400 hover:text-white" : "bg-stone-100 text-stone-500 hover:text-stone-900"}`}>
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
               <img src={getCover(buyHint)} className="w-full h-40 object-cover rounded-2xl mb-4" />
               <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-stone-900"}`}>{text.confirmBuyTitle}: "{getBookDisplayTitle(buyHint.title, lang)}"</h3>
               
@@ -3721,6 +3730,10 @@ export default function Page() {
                       : buyPaymentMethod === "CASH" 
                       ? text.submitCashPurchase 
                       : text.confirmBuyBtn}
+                  </button>
+                  <button type="button" onClick={() => { setBuyHint(null); setBuyError(""); setActiveTab("catalog"); window.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={isProcessingBuy} className="w-full h-12 rounded-xl bg-stone-800 text-stone-300 text-sm font-bold hover:bg-stone-700 transition flex items-center justify-center disabled:opacity-50">
+                    <X className="w-4 h-4 mr-2" />
+                    {text.cancel}
                   </button>
                 </div>
               </div>
