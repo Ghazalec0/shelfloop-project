@@ -111,6 +111,11 @@ api.interceptors.response.use(
       processQueue(refreshError, null);
       clearTokens();
       if (typeof window !== "undefined") {
+        // أمان: أي فشل في الـ Refresh = التوكن اتلعب فيه أو انتهى
+        // اطرد المستخدم فوراً، حتى لو هو أصلاً في صفحة "/" (الكتالوج)
+        // لأن من غير Reload هيفضل الـ user في ذاكرة React وكأنه لسه داخل
+        // + سيب علامة عشان بعد الـ Reload نعرض رسالة "انتهت الجلسة" بشكل احترافي
+        try { sessionStorage.setItem("shelfloop_session_expired", "1"); } catch {}
         window.dispatchEvent(new Event("auth:force-logout"));
         if (window.location.pathname !== "/") {
           window.location.href = "/";
