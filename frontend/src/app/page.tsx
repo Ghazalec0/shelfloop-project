@@ -404,6 +404,7 @@ const t = {
     aiDesc: "Chat with our intelligent assistant to get instant book recommendations and insights.",
     aiPlaceholder: "Ask me about any book or programming topic...",
     aiSend: "Send",
+    sessionExpired: "Your session has ended. Please sign in again to continue.",
     processing: "Processing...",
     logoutTitle: "Log Out?",
     logoutDesc: "You are about to sign out of your ShelfLoop account.",
@@ -560,6 +561,7 @@ const t = {
     aiDesc: "تحدث مع المساعد الذكي للحصول على اقتراحات فورية للكتب والمراجع.",
     aiPlaceholder: "اسأل عن أي كتاب أو موضوع برمجي...",
     aiSend: "إرسال",
+    sessionExpired: "انتهت جلستك. سجّل دخول تاني عشان تكمل.",
     processing: "جاري المعالجة...",
     logoutTitle: "تسجيل الخروج؟",
     logoutDesc: "أنت على وشك تسجيل الخروج من حسابك في ShelfLoop.",
@@ -827,9 +829,19 @@ const confirmLogout = async () => {
   };
 
   useEffect(() => {
-    const onForceLogout = () => { clearLocalAuth(); };
+    const onForceLogout = () => { try { sessionStorage.setItem("shelfloop_session_expired", "1"); } catch {} clearLocalAuth(); };
     window.addEventListener("auth:force-logout", onForceLogout);
     return () => window.removeEventListener("auth:force-logout", onForceLogout);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("shelfloop_session_expired") === "1") {
+        sessionStorage.removeItem("shelfloop_session_expired");
+        // رسالة طرد واضحة واحترافية بدل الطرد الساكت
+        setTimeout(() => setMsg({ text: text.sessionExpired, type: "info" }), 350);
+      }
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -1221,7 +1233,7 @@ const confirmLogout = async () => {
       setHint(null);
       fetchAll();
     } catch (err: any) {
-      if (isAuthError(err)) { await hardLogout(); return; }
+      if (isAuthError(err)) { try { sessionStorage.setItem("shelfloop_session_expired", "1"); } catch {} await hardLogout(); setMsg({ text: text.sessionExpired, type: "info" }); return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBorrow(false);
@@ -1257,7 +1269,7 @@ const confirmLogout = async () => {
       setBuyHint(null);
       fetchAll();
     } catch (err: any) {
-      if (isAuthError(err)) { await hardLogout(); return; }
+      if (isAuthError(err)) { try { sessionStorage.setItem("shelfloop_session_expired", "1"); } catch {} await hardLogout(); setMsg({ text: text.sessionExpired, type: "info" }); return; }
       setMsg({ text: errMsg(err), type: "error" });
     } finally {
       setIsProcessingBuy(false);
